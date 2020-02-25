@@ -8,15 +8,18 @@ defmodule Eventer.Event do
     field(:time, :utc_datetime)
     field(:place, :string)
     has_many(:decisions, Eventer.Decision, on_replace: :delete)
+    belongs_to(:user, Eventer.User, foreign_key: :creator_id)
     timestamps()
   end
 
   def create_changeset(item, params \\ %{}) do
     item
-    |> cast(params, [:title, :description, :time, :place])
+    |> cast(params, [:title, :description, :time, :place, :creator_id])
     |> cast_assoc(:decisions)
     |> validate_required(:title, message: "Title can't be blank")
     |> validate_required(:description, message: "Description can't be blank")
+    |> validate_required(:creator_id, message: "Creator has to be specified")
+    |> assoc_constraint(:user, message: "User does not exist")
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
     |> validate_change(:time, &is_in_future/2)
