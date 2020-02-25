@@ -1,0 +1,20 @@
+defmodule Eventer.User do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "users" do
+    field(:email, :string)
+    field(:display_name, :string)
+    timestamps()
+  end
+
+  def create_changeset(user, params \\ %{}) do
+    user
+    |> cast(params, [:email, :display_name])
+    |> validate_required(:email, message: "Email must be specified")
+    |> validate_required(:display_name, message: "Display name must be specified")
+    |> validate_length(:display_name, min: 3)
+    |> unique_constraint(:email, message: "Email already taken")
+    |> unique_constraint(:display_name, message: "Display name already taken")
+  end
+end
