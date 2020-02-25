@@ -72,7 +72,6 @@ defmodule EventTest do
       assert Repo.one(count_query) == before_count + 1
     end
 
-    @tag :wip
     test "insert without creator id fails" do
       {:error, changeset} =
         Eventer.insert_event(%{
@@ -88,7 +87,6 @@ defmodule EventTest do
       assert message === "Creator has to be specified"
     end
 
-    @tag :wip
     test "insert if creator doesn't exist fails" do
       {:error, changeset} =
         Eventer.insert_event(%{

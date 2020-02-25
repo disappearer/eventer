@@ -12,7 +12,7 @@ defmodule Eventer.Event do
     timestamps()
   end
 
-  def create_changeset(item, params \\ %{}) do
+  def changeset(item, params \\ %{}) do
     item
     |> cast(params, [:title, :description, :time, :place, :creator_id])
     |> cast_assoc(:decisions)

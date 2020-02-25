@@ -8,7 +8,7 @@ defmodule Eventer.User do
     timestamps()
   end
 
-  def create_changeset(user, params \\ %{}) do
+  def changeset(user, params \\ %{}) do
     user
     |> cast(params, [:email, :display_name])
     |> validate_required(:email, message: "Email must be specified")
