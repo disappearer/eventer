@@ -1,4 +1,4 @@
-defmodule EventerTest do
+defmodule EventTest do
   use Eventer.DataCase
   import Ecto.Query
 
@@ -22,7 +22,6 @@ defmodule EventerTest do
       assert Repo.one(count_query) == before_count + 1
     end
 
-    @tag :wip
     test "insert success - without time and with time decisions" do
       count_query = from(e in Event, select: count(e.id))
       before_count = Repo.one(count_query)
