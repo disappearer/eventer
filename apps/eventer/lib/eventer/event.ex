@@ -11,11 +11,12 @@ defmodule Eventer.Event do
     timestamps()
   end
 
-  def changeset(item, params \\ %{}) do
+  def create_changeset(item, params \\ %{}) do
     item
     |> cast(params, [:title, :description, :time, :place])
     |> cast_assoc(:decisions)
-    |> validate_required([:title, :description])
+    |> validate_required(:title, message: "Title can't be blank")
+    |> validate_required(:description, message: "Description can't be blank")
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
     |> validate_change(:time, &is_in_future/2)
@@ -30,8 +31,15 @@ defmodule Eventer.Event do
   end
 
   defp validate_decisions(changeset) do
-    case {Map.get(changeset.data, :time), Map.get(changeset.changes, :time)} do
-      {nil, nil} -> validate_decision_objective(changeset, "time")
+    changeset
+    |> validate_decisions(:time)
+    |> validate_decisions(:place)
+  end
+
+  defp validate_decisions(changeset, objective) do
+    case {Map.get(changeset.data, objective),
+          Map.get(changeset.changes, objective)} do
+      {nil, nil} -> validate_decision_objective(changeset, objective)
       _ -> changeset
     end
   end
@@ -42,8 +50,8 @@ defmodule Eventer.Event do
     else
       add_error(
         changeset,
-        String.to_atom(objective),
-        "no #{objective} or #{objective} decision specified"
+        objective,
+        "No #{objective} or #{objective} decision specified"
       )
     end
   end
@@ -68,12 +76,12 @@ defmodule Eventer.Event do
 
       [%Ecto.Changeset{} | _] = changesets ->
         Enum.any?(changesets, fn changeset ->
-          Map.get(changeset.changes, :objective) === objective
+          Map.get(changeset.changes, :objective) === Atom.to_string(objective)
         end)
 
       _ ->
         Enum.any?(decisions, fn decision ->
-          Map.get(decision, :objective) === objective
+          Map.get(decision, :objective) === Atom.to_string(objective)
         end)
     end
   end
