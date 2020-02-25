@@ -1,18 +1,9 @@
 defmodule Eventer do
-  @moduledoc """
-  Documentation for `Eventer`.
-  """
+  alias Eventer.{Event, Repo}
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Eventer.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def insert_event(attrs) do
+    %Event{}
+    |> Event.create_changeset(attrs)
+    |> Repo.insert()
   end
 end

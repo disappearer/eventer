@@ -9,8 +9,7 @@ defmodule Eventer.Poll do
     field(:answers, {:array, :map})
     field(:autoresolve, :boolean)
     field(:options, {:array, :string})
-    belongs_to(:event, Eventer.Event)
-    has_one(:poll, Eventer.Poll)
+    belongs_to(:decision, Eventer.Decision)
     timestamps()
   end
 
