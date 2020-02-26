@@ -14,8 +14,31 @@ defmodule Eventer.Decision do
     timestamps()
   end
 
-  def non_standalone_changeset(decision, params, creator_id) do
-    changeset(decision, Map.put_new(params, :creator_id, creator_id))
+  def non_standalone_changeset(
+        decision,
+        params,
+        creator_id,
+        time,
+        place
+      ) do
+    new_params = Map.put_new(params, :creator_id, creator_id)
+
+    changeset(decision, new_params)
+    |> validate_objective(time, "time")
+    |> validate_objective(place, "place")
+  end
+
+  defp validate_objective(changeset, event_value, decision_value) do
+    if event_value do
+      validate_exclusion(
+        changeset,
+        :objective,
+        [decision_value],
+        message: "#{String.capitalize(decision_value)} is already defined"
+      )
+    else
+      changeset
+    end
   end
 
   def standalone_changeset(decision, params \\ %{}) do

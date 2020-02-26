@@ -15,11 +15,6 @@ defmodule Eventer.Event do
   def changeset(item, params \\ %{}) do
     item
     |> cast(params, [:title, :description, :time, :place, :creator_id])
-    |> cast_assoc(:decisions,
-      with:
-        {Eventer.Decision, :non_standalone_changeset,
-         [Map.get(params, :creator_id)]}
-    )
     |> validate_required(:title, message: "Title can't be blank")
     |> validate_required(:description, message: "Description can't be blank")
     |> validate_required(:creator_id, message: "Creator has to be specified")
@@ -27,7 +22,7 @@ defmodule Eventer.Event do
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
     |> validate_change(:time, &is_in_future/2)
-    |> validate_decisions()
+    |> validate_and_cast_decisions()
   end
 
   defp is_in_future(:time, time) do
@@ -37,22 +32,24 @@ defmodule Eventer.Event do
     end
   end
 
-  defp validate_decisions(changeset) do
+  defp validate_and_cast_decisions(changeset) do
+    event_time = get_field(changeset, :time)
+    event_place = get_field(changeset, :place)
+    creator_id = get_field(changeset, :creator_id)
+
     changeset
-    |> validate_decisions(:time)
-    |> validate_decisions(:place)
+    |> cast_assoc(:decisions,
+      with:
+        {Eventer.Decision, :non_standalone_changeset,
+         [creator_id, event_time, event_place]}
+    )
+    |> validate_objective(event_time, :time)
+    |> validate_objective(event_place, :place)
   end
 
-  defp validate_decisions(changeset, objective) do
-    case {Map.get(changeset.data, objective),
-          Map.get(changeset.changes, objective)} do
-      {nil, nil} -> validate_decision_objective(changeset, objective)
-      _ -> changeset
-    end
-  end
-
-  defp validate_decision_objective(changeset, objective) do
-    if decisions_objectives_valid?(changeset, objective) do
+  defp validate_objective(changeset, event_value, objective) do
+    if not is_nil(event_value) or
+         any_decision_has_objective?(changeset, objective) do
       changeset
     else
       add_error(
@@ -63,33 +60,11 @@ defmodule Eventer.Event do
     end
   end
 
-  defp decisions_objectives_valid?(changeset, objective) do
-    existing_decisions = Map.get(changeset.data, :decisions)
-    new_decisions = Map.get(changeset.changes, :decisions)
-
-    case {has_objective?(existing_decisions, objective), new_decisions} do
-      {true, nil} -> true
-      _ -> has_objective?(new_decisions, objective)
-    end
-  end
-
-  defp has_objective?(decisions, objective) do
-    case decisions do
-      nil ->
-        false
-
-      %Ecto.Association.NotLoaded{} ->
-        false
-
-      [%Ecto.Changeset{} | _] = changesets ->
-        Enum.any?(changesets, fn changeset ->
-          Map.get(changeset.changes, :objective) === Atom.to_string(objective)
-        end)
-
-      _ ->
-        Enum.any?(decisions, fn decision ->
-          Map.get(decision, :objective) === Atom.to_string(objective)
-        end)
-    end
+  defp any_decision_has_objective?(changeset, objective) do
+    changeset
+    |> get_field(:decisions)
+    |> Enum.any?(fn decision ->
+      Map.get(decision, :objective) === Atom.to_string(objective)
+    end)
   end
 end
