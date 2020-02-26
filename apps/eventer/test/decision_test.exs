@@ -34,7 +34,7 @@ defmodule DecisionTest do
         Eventer.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
-          title: "test decision",
+          title: "test decision 1",
           description: "test description",
           objective: "general"
         })
@@ -46,7 +46,7 @@ defmodule DecisionTest do
           creator_id: user.id,
           event_id: event.id,
           title: "test decision",
-          description: "test description",
+          description: "test description 2",
           objective: "time"
         })
 
@@ -56,7 +56,7 @@ defmodule DecisionTest do
         Eventer.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
-          title: "test decision",
+          title: "test decision 3",
           description: "test description",
           objective: "place"
         })
@@ -152,6 +152,29 @@ defmodule DecisionTest do
 
       {message, _} = Keyword.get(changeset.errors, :event)
       assert message === "Event does not exist"
+    end
+
+    test "title is unique per event", %{event: event, user: user} do
+      {:ok, _item} =
+        Eventer.insert_decision(%{
+          creator_id: user.id,
+          event_id: event.id,
+          title: "test decision",
+          description: "test description",
+          objective: "general"
+        })
+
+      {:error, changeset} =
+        Eventer.insert_decision(%{
+          creator_id: user.id,
+          event_id: event.id,
+          title: "test decision",
+          description: "test description",
+          objective: "general"
+        })
+
+      {message, _} = Keyword.get(changeset.errors, :title)
+      assert message === "Event decisions must have unique titles"
     end
   end
 end

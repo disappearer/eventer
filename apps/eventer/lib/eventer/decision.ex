@@ -40,6 +40,10 @@ defmodule Eventer.Decision do
     |> validate_required(:description, message: "Description can't be blank")
     |> validate_required(:creator_id, message: "Event creator must be provided")
     |> assoc_constraint(:user, message: "User (creator) does not exist")
+    |> unique_constraint(:title,
+      name: :decisions_title_event_id_index,
+      message: "Event decisions must have unique titles"
+    )
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
     |> validate_inclusion(:objective, ["general", "time", "place"],
