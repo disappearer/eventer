@@ -15,7 +15,11 @@ defmodule Eventer.Event do
   def changeset(item, params \\ %{}) do
     item
     |> cast(params, [:title, :description, :time, :place, :creator_id])
-    |> cast_assoc(:decisions)
+    |> cast_assoc(:decisions,
+      with:
+        {Eventer.Decision, :non_standalone_changeset,
+         [Map.get(params, :creator_id)]}
+    )
     |> validate_required(:title, message: "Title can't be blank")
     |> validate_required(:description, message: "Description can't be blank")
     |> validate_required(:creator_id, message: "Creator has to be specified")

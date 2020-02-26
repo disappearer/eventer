@@ -23,15 +23,16 @@ defmodule DecisionTest do
           place: "nowhere"
         })
 
-      %{event: event}
+      %{event: event, user: user}
     end
 
-    test "insert success (general, time, place)", %{event: event} do
+    test "insert success (general, time, place)", %{event: event, user: user} do
       count_query = from(d in Decision, select: count(d.id))
       before_count = Repo.one(count_query)
 
       {:ok, _item} =
         Eventer.insert_decision(%{
+          creator_id: user.id,
           event_id: event.id,
           title: "test decision",
           description: "test description",
@@ -42,6 +43,7 @@ defmodule DecisionTest do
 
       {:ok, _item} =
         Eventer.insert_decision(%{
+          creator_id: user.id,
           event_id: event.id,
           title: "test decision",
           description: "test description",
@@ -52,6 +54,7 @@ defmodule DecisionTest do
 
       {:ok, _item} =
         Eventer.insert_decision(%{
+          creator_id: user.id,
           event_id: event.id,
           title: "test decision",
           description: "test description",
@@ -59,6 +62,33 @@ defmodule DecisionTest do
         })
 
       assert Repo.one(count_query) == before_count + 3
+    end
+
+    test "insert without creator_id fails", %{event: event} do
+      {:error, changeset} =
+        Eventer.insert_decision(%{
+          event_id: event.id,
+          title: "test title",
+          description: "test description",
+          objective: "general"
+        })
+
+      assert Keyword.get(changeset.errors, :creator_id) ===
+               {"Event creator must be provided", [{:validation, :required}]}
+    end
+
+    test "insert fails when creator doesn't exist", %{event: event} do
+      {:error, changeset} =
+        Eventer.insert_decision(%{
+          creator_id: 420,
+          event_id: event.id,
+          title: "test title",
+          description: "test description",
+          objective: "general"
+        })
+
+      {message, _} = Keyword.get(changeset.errors, :user)
+      assert message === "User (creator) does not exist"
     end
 
     test "insert without title fails", %{event: event} do
@@ -110,9 +140,10 @@ defmodule DecisionTest do
       assert message === "Event must be provided"
     end
 
-    test "event must exist" do
+    test "event must exist", %{user: user} do
       {:error, changeset} =
         Eventer.insert_decision(%{
+          creator_id: user.id,
           event_id: 420,
           title: "test title",
           description: "test description",

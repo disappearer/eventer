@@ -5,6 +5,7 @@ defmodule Eventer.User do
   schema "users" do
     field(:email, :string)
     field(:display_name, :string)
+    has_many(:events_created, Eventer.Event, foreign_key: :creator_id)
     timestamps()
   end
 
