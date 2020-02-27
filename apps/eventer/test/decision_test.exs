@@ -176,5 +176,63 @@ defmodule DecisionTest do
       {message, _} = Keyword.get(changeset.errors, :title)
       assert message === "Event decisions must have unique titles"
     end
+
+    test "only one time objective per event", %{user: user} do
+      {:ok, event} =
+        Eventer.insert_event(%{
+          creator_id: user.id,
+          title: "test event",
+          description: "test description",
+          place: "nowhere",
+          decisions: [
+            %{
+              title: "test decision",
+              description: "test description",
+              objective: "time"
+            }
+          ]
+        })
+
+      {:error, changeset} =
+        Eventer.insert_decision(%{
+          creator_id: user.id,
+          event_id: event.id,
+          title: "test decision 1",
+          description: "test description",
+          objective: "time"
+        })
+
+      {message, _} = Keyword.get(changeset.errors, :objective)
+      assert message === "Time decision already exists for this event"
+    end
+
+    test "only one place objective per event", %{user: user} do
+      {:ok, event} =
+        Eventer.insert_event(%{
+          creator_id: user.id,
+          title: "test event",
+          description: "test description",
+          time: tomorrow(),
+          decisions: [
+            %{
+              title: "test decision",
+              description: "test description",
+              objective: "place"
+            }
+          ]
+        })
+
+      {:error, changeset} =
+        Eventer.insert_decision(%{
+          creator_id: user.id,
+          event_id: event.id,
+          title: "test decision 1",
+          description: "test description",
+          objective: "place"
+        })
+
+      {message, _} = Keyword.get(changeset.errors, :objective)
+      assert message === "Place decision already exists for this event"
+    end
   end
 end

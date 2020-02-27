@@ -8,7 +8,12 @@ defmodule EventTest do
 
   describe "Event" do
     setup do
-      {:ok, user} = Eventer.insert_user(%{email: "test@example.com", display_name: "Test User"})
+      {:ok, user} =
+        Eventer.insert_user(%{
+          email: "test@example.com",
+          display_name: "Test User"
+        })
+
       %{user: user}
     end
 
@@ -50,7 +55,9 @@ defmodule EventTest do
       assert Repo.one(count_query) == before_count + 1
     end
 
-    test "insert success - without place and with place decisions", %{user: user} do
+    test "insert success - without place and with place decisions", %{
+      user: user
+    } do
       count_query = from(e in Event, select: count(e.id))
       before_count = Repo.one(count_query)
 
@@ -82,7 +89,6 @@ defmodule EventTest do
           place: "nowhere"
         })
 
-
       {message, _} = Keyword.get(changeset.errors, :creator_id)
       assert message === "Creator has to be specified"
     end
@@ -97,13 +103,14 @@ defmodule EventTest do
           place: "nowhere"
         })
 
-      {message, _} = Keyword.get(changeset.errors, :user)
+      {message, _} = Keyword.get(changeset.errors, :creator)
       assert message === "User does not exist"
     end
 
-    test "insert without time fails" do
+    test "insert without time fails", %{user: user} do
       {:error, changeset} =
         Eventer.insert_event(%{
+          creator_id: user.id,
           title: "test event",
           description: "test description",
           place: "nowhere"
@@ -113,9 +120,10 @@ defmodule EventTest do
                {"No time or time decision specified", []}
     end
 
-    test "insert without place fails" do
+    test "insert without place fails", %{user: user} do
       {:error, changeset} =
         Eventer.insert_event(%{
+          creator_id: user.id,
           title: "test event",
           description: "test description",
           time: tomorrow()
@@ -147,6 +155,68 @@ defmodule EventTest do
 
       assert Keyword.get(changeset.errors, :description) ===
                {"Description can't be blank", [{:validation, :required}]}
+    end
+
+    test "can't have both time defined and a pending time decision", %{
+      user: user
+    } do
+      {:error, changeset} =
+        Eventer.insert_event(%{
+          creator_id: user.id,
+          title: "test title",
+          description: "test description",
+          time: tomorrow(),
+          place: "somewhere",
+          decisions: [
+            %{
+              title: "time decision",
+              description: "when?",
+              objective: "time"
+            }
+          ]
+        })
+
+      {message, _} =
+        changeset
+        |> Map.get(:changes)
+        |> Map.get(:decisions)
+        |> List.first()
+        |> Map.get(:errors)
+        |> Keyword.get(:objective)
+
+      assert message ===
+               "Time is already defined"
+    end
+
+    test "can't have both place defined and a pending place decision", %{
+      user: user
+    } do
+      {:error, changeset} =
+        Eventer.insert_event(%{
+          creator_id: user.id,
+          title: "test title",
+          description: "test description",
+          time: tomorrow(),
+          place: "somewhere",
+          decisions: [
+            %{
+              title: "place decision",
+              description: "when?",
+              objective: "place"
+            }
+          ]
+        })
+
+      {message, _} =
+        changeset
+        |> Map.get(:changes)
+        |> Map.get(:decisions)
+        |> List.first()
+        |> Map.get(:errors)
+        |> Keyword.get(:objective)
+
+      assert message ===
+               "Place is already defined"
     end
   end
 end
