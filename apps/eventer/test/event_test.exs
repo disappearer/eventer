@@ -103,7 +103,7 @@ defmodule EventTest do
           place: "nowhere"
         })
 
-      {message, _} = Keyword.get(changeset.errors, :user)
+      {message, _} = Keyword.get(changeset.errors, :creator)
       assert message === "User does not exist"
     end
 

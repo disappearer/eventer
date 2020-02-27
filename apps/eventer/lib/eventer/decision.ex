@@ -67,6 +67,14 @@ defmodule Eventer.Decision do
       name: :decisions_title_event_id_index,
       message: "Event decisions must have unique titles"
     )
+    |> unique_constraint(:objective,
+      message: "Time decision already exists for this event",
+      name: "single_time_decision"
+    )
+    |> unique_constraint(:objective,
+      message: "Place decision already exists for this event",
+      name: "single_place_decision"
+    )
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
     |> validate_inclusion(:objective, ["general", "time", "place"],
