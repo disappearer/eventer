@@ -5,6 +5,7 @@ defmodule DecisionTest do
   # doctest Eventer
 
   alias Eventer.{Decision, Repo}
+  alias Eventer.Persistence.EventPersistence
 
   describe "Decision" do
     setup do
@@ -15,7 +16,7 @@ defmodule DecisionTest do
         })
 
       {:ok, event} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -157,7 +158,7 @@ defmodule DecisionTest do
 
     test "only one time objective per event", %{user: user} do
       {:ok, event} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -186,7 +187,7 @@ defmodule DecisionTest do
 
     test "only one place objective per event", %{user: user} do
       {:ok, event} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",

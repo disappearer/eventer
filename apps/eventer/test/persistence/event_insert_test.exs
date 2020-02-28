@@ -1,12 +1,11 @@
-defmodule EventTest do
+defmodule Persistence.EventInsertTest do
   use Eventer.DataCase
   import Ecto.Query
 
-  # doctest Eventer
-
   alias Eventer.{Event, Repo}
+  alias Eventer.Persistence.EventPersistence
 
-  describe "Event" do
+  describe "Event insert" do
     setup do
       {:ok, user} =
         Eventer.insert_user(%{
@@ -17,12 +16,12 @@ defmodule EventTest do
       %{user: user}
     end
 
-    test "insert success", %{user: user} do
+    test "success", %{user: user} do
       count_query = from(e in Event, select: count(e.id))
       before_count = Repo.one(count_query)
 
       {:ok, _item} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -33,12 +32,13 @@ defmodule EventTest do
       assert Repo.one(count_query) == before_count + 1
     end
 
-    test "insert success - without time and with time decisions", %{user: user} do
+
+    test "success - without time and with time decisions", %{user: user} do
       count_query = from(e in Event, select: count(e.id))
       before_count = Repo.one(count_query)
 
       {:ok, _item} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -55,14 +55,14 @@ defmodule EventTest do
       assert Repo.one(count_query) == before_count + 1
     end
 
-    test "insert success - without place and with place decisions", %{
+    test "success - without place and with place decisions", %{
       user: user
     } do
       count_query = from(e in Event, select: count(e.id))
       before_count = Repo.one(count_query)
 
       {:ok, _item} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -79,9 +79,9 @@ defmodule EventTest do
       assert Repo.one(count_query) == before_count + 1
     end
 
-    test "insert without creator id fails" do
+    test "without creator id fails" do
       {:error, changeset} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           # creator_id: user.id
           title: "test event",
           description: "test description",
@@ -93,9 +93,9 @@ defmodule EventTest do
       assert message === "Creator has to be specified"
     end
 
-    test "insert if creator doesn't exist fails" do
+    test "if creator doesn't exist fails" do
       {:error, changeset} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: 1000,
           title: "test event",
           description: "test description",
@@ -107,9 +107,9 @@ defmodule EventTest do
       assert message === "User does not exist"
     end
 
-    test "insert without time fails", %{user: user} do
+    test "without time fails", %{user: user} do
       {:error, changeset} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -120,9 +120,9 @@ defmodule EventTest do
                {"No time or time decision specified", []}
     end
 
-    test "insert without place fails", %{user: user} do
+    test "without place fails", %{user: user} do
       {:error, changeset} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -133,9 +133,9 @@ defmodule EventTest do
                {"No place or place decision specified", []}
     end
 
-    test "insert without title fails" do
+    test "without title fails" do
       {:error, changeset} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           description: "test description",
           time: tomorrow(),
           place: "somewhere"
@@ -145,9 +145,9 @@ defmodule EventTest do
                {"Title can't be blank", [{:validation, :required}]}
     end
 
-    test "insert without description fails" do
+    test "without description fails" do
       {:error, changeset} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           title: "test title",
           time: tomorrow(),
           place: "somewhere"
@@ -161,7 +161,7 @@ defmodule EventTest do
       user: user
     } do
       {:error, changeset} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test title",
           description: "test description",
@@ -192,7 +192,7 @@ defmodule EventTest do
       user: user
     } do
       {:error, changeset} =
-        Eventer.insert_event(%{
+        EventPersistence.insert(%{
           creator_id: user.id,
           title: "test title",
           description: "test description",
