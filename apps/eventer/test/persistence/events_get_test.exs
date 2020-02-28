@@ -1,7 +1,7 @@
 defmodule Persistence.EventGetTest do
   use Eventer.DataCase
 
-  alias Eventer.Persistence.EventPersistence
+  alias Eventer.Persistence.Events
   alias Eventer.Repo
 
   describe "Event get" do
@@ -13,7 +13,7 @@ defmodule Persistence.EventGetTest do
         })
 
       {:ok, event} =
-        EventPersistence.insert(%{
+        Events.insert_event(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -25,17 +25,17 @@ defmodule Persistence.EventGetTest do
     end
 
     test "success", %{event: event} do
-      assert EventPersistence.get(event.id) === Repo.preload(event, :decisions)
+      assert Events.get_event(event.id) === Repo.preload(event, :decisions)
     end
 
     test "returns nil if not found" do
-      assert EventPersistence.get(420) === nil
+      assert Events.get_event(420) === nil
     end
 
     test "get events created by user sorted by id", %{user: user, event: event1} do
       # add more events by user
       {:ok, event2} =
-        EventPersistence.insert(%{
+        Events.insert_event(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -44,7 +44,7 @@ defmodule Persistence.EventGetTest do
         })
 
       {:ok, event3} =
-        EventPersistence.insert(%{
+        Events.insert_event(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -52,7 +52,7 @@ defmodule Persistence.EventGetTest do
           place: "nowhere"
         })
 
-      assert EventPersistence.get_created_by_user(user.id) === [
+      assert Events.get_events_created_by_user(user.id) === [
                event1,
                event2,
                event3
@@ -65,7 +65,7 @@ defmodule Persistence.EventGetTest do
         })
 
       {:ok, new_user_event} =
-        EventPersistence.insert(%{
+        Events.insert_event(%{
           creator_id: new_user.id,
           title: "test event",
           description: "test description",
@@ -73,7 +73,7 @@ defmodule Persistence.EventGetTest do
           place: "nowhere"
         })
 
-      assert EventPersistence.get_created_by_user(new_user.id) === [
+      assert Events.get_events_created_by_user(new_user.id) === [
                new_user_event
              ]
     end
