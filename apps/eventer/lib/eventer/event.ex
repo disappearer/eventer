@@ -12,8 +12,8 @@ defmodule Eventer.Event do
     timestamps()
   end
 
-  def changeset(item, params \\ %{}) do
-    item
+  def changeset(event, params \\ %{}) do
+    event
     |> cast(params, [:title, :description, :time, :place, :creator_id])
     |> validate_required(:title, message: "Title can't be blank")
     |> validate_required(:description, message: "Description can't be blank")
@@ -23,6 +23,13 @@ defmodule Eventer.Event do
     |> validate_length(:description, max: 200)
     |> validate_change(:time, &is_in_future/2)
     |> validate_and_cast_decisions()
+  end
+
+  def update_changeset(event, params \\ %{}) do
+    event
+    |> cast(params, [:title, :description])
+    |> validate_length(:title, min: 3)
+    |> validate_length(:description, max: 200)
   end
 
   defp is_in_future(:time, time) do
