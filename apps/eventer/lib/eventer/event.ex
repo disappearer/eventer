@@ -7,6 +7,7 @@ defmodule Eventer.Event do
     field(:description, :string)
     field(:time, :utc_datetime)
     field(:place, :string)
+    field(:cancelled, :boolean, default: false)
     has_many(:decisions, Eventer.Decision, on_replace: :delete)
     belongs_to(:creator, Eventer.User, foreign_key: :creator_id)
     timestamps()
@@ -27,7 +28,7 @@ defmodule Eventer.Event do
 
   def update_changeset(event, params \\ %{}) do
     event
-    |> cast(params, [:title, :description])
+    |> cast(params, [:title, :description, :cancelled])
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
   end

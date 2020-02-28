@@ -24,7 +24,6 @@ defmodule Persistence.EventUpdateTest do
       %{user: user, event: Repo.preload(event, :decisions)}
     end
 
-    @tag :wip
     test "success", %{event: event} do
       attrs = %{
         title: "new title",
@@ -36,7 +35,6 @@ defmodule Persistence.EventUpdateTest do
       assert updated_event === Map.merge(event, attrs)
     end
 
-    @tag :wip
     test "only title and description get updated", %{event: event} do
       attrs = %{
         title: "new title",
@@ -55,6 +53,13 @@ defmodule Persistence.EventUpdateTest do
       assert updated_event.time === event.time
       assert updated_event.place === event.place
       assert updated_event.decisions === event.decisions
+    end
+
+    test "includes cancelling", %{event: event} do
+      refute event.cancelled
+      {:ok, _} = EventPersistence.cancel(event.id)
+      cancelled_event = EventPersistence.get(event.id)
+      assert cancelled_event.cancelled
     end
   end
 end

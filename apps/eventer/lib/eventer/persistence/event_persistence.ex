@@ -28,4 +28,8 @@ defmodule Eventer.Persistence.EventPersistence do
     |> Event.update_changeset(attrs)
     |> Repo.update()
   end
+
+  def cancel(event_id) do
+    update(event_id, %{cancelled: true})
+  end
 end
