@@ -41,7 +41,7 @@ defmodule Eventer.Event do
     |> cast_assoc(:decisions,
       with:
         {Eventer.Decision, :non_standalone_changeset,
-         [creator_id, event_time, event_place]}
+         [creator_id]}
     )
     |> validate_objective(event_time, :time)
     |> validate_objective(event_place, :place)

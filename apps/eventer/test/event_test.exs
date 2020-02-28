@@ -185,7 +185,7 @@ defmodule EventTest do
         |> Keyword.get(:objective)
 
       assert message ===
-               "Time is already defined"
+               "Time is already defined for this event"
     end
 
     test "can't have both place defined and a pending place decision", %{
@@ -216,7 +216,7 @@ defmodule EventTest do
         |> Keyword.get(:objective)
 
       assert message ===
-               "Place is already defined"
+               "Place is already defined for this event"
     end
   end
 end

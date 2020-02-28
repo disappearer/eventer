@@ -26,7 +26,7 @@ defmodule DecisionTest do
       %{event: event, user: user}
     end
 
-    test "insert success (general, time, place)", %{event: event, user: user} do
+    test "insert success (general)", %{event: event, user: user} do
       count_query = from(d in Decision, select: count(d.id))
       before_count = Repo.one(count_query)
 
@@ -40,28 +40,6 @@ defmodule DecisionTest do
         })
 
       assert Repo.one(count_query) == before_count + 1
-
-      {:ok, _item} =
-        Eventer.insert_decision(%{
-          creator_id: user.id,
-          event_id: event.id,
-          title: "test decision",
-          description: "test description 2",
-          objective: "time"
-        })
-
-      assert Repo.one(count_query) == before_count + 2
-
-      {:ok, _item} =
-        Eventer.insert_decision(%{
-          creator_id: user.id,
-          event_id: event.id,
-          title: "test decision 3",
-          description: "test description",
-          objective: "place"
-        })
-
-      assert Repo.one(count_query) == before_count + 3
     end
 
     test "insert without creator_id fails", %{event: event} do
@@ -87,8 +65,8 @@ defmodule DecisionTest do
           objective: "general"
         })
 
-      {message, _} = Keyword.get(changeset.errors, :user)
-      assert message === "User (creator) does not exist"
+      {message, _} = Keyword.get(changeset.errors, :creator)
+      assert message === "Creator does not exist"
     end
 
     test "insert without title fails", %{event: event} do
@@ -233,6 +211,35 @@ defmodule DecisionTest do
 
       {message, _} = Keyword.get(changeset.errors, :objective)
       assert message === "Place decision already exists for this event"
+    end
+
+    test "insert with time objective fails when event time defined", %{user: user, event: event} do
+      {:error, changeset} =
+        Eventer.insert_decision(%{
+          creator_id: user.id,
+          event_id: event.id,
+          title: "test decision 1",
+          description: "test description",
+          objective: "time"
+        })
+
+      {message, _} = Keyword.get(changeset.errors, :objective)
+      assert message === "Time is already defined for this event"
+    end
+
+    @tag :wip
+    test "insert with place objective fails when event place defined", %{user: user, event: event} do
+      {:error, changeset} =
+        Eventer.insert_decision(%{
+          creator_id: user.id,
+          event_id: event.id,
+          title: "test decision 1",
+          description: "test description",
+          objective: "place"
+        })
+
+      {message, _} = Keyword.get(changeset.errors, :objective)
+      assert message === "Place is already defined for this event"
     end
   end
 end
