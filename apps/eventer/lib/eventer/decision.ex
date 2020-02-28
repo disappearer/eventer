@@ -9,7 +9,7 @@ defmodule Eventer.Decision do
     field(:resolution, :string)
     field(:objective, :string, default: "general")
     belongs_to(:event, Eventer.Event)
-    belongs_to(:user, Eventer.User, foreign_key: :creator_id)
+    belongs_to(:creator, Eventer.User, foreign_key: :creator_id)
     has_one(:poll, Eventer.Poll)
     timestamps()
   end
@@ -17,28 +17,10 @@ defmodule Eventer.Decision do
   def non_standalone_changeset(
         decision,
         params,
-        creator_id,
-        time,
-        place
+        creator_id
       ) do
     new_params = Map.put_new(params, :creator_id, creator_id)
-
     changeset(decision, new_params)
-    |> validate_objective(time, "time")
-    |> validate_objective(place, "place")
-  end
-
-  defp validate_objective(changeset, event_value, decision_value) do
-    if event_value do
-      validate_exclusion(
-        changeset,
-        :objective,
-        [decision_value],
-        message: "#{String.capitalize(decision_value)} is already defined"
-      )
-    else
-      changeset
-    end
   end
 
   def standalone_changeset(decision, params \\ %{}) do
@@ -62,10 +44,21 @@ defmodule Eventer.Decision do
     |> validate_required(:title, message: "Title can't be blank")
     |> validate_required(:description, message: "Description can't be blank")
     |> validate_required(:creator_id, message: "Event creator must be provided")
-    |> assoc_constraint(:user, message: "User (creator) does not exist")
+    |> validate_length(:title, min: 3)
+    |> validate_length(:description, max: 200)
+    |> assoc_constraint(:creator, message: "Creator does not exist")
     |> unique_constraint(:title,
       name: :decisions_title_event_id_index,
       message: "Event decisions must have unique titles"
+    )
+    |> validate_objective()
+    |> validate_resolution()
+  end
+
+  defp validate_objective(changeset) do
+    changeset
+    |> validate_inclusion(:objective, ["general", "time", "place"],
+      message: "Objective should be one of [time, place, general]"
     )
     |> unique_constraint(:objective,
       message: "Time decision already exists for this event",
@@ -75,16 +68,18 @@ defmodule Eventer.Decision do
       message: "Place decision already exists for this event",
       name: "single_place_decision"
     )
-    |> validate_length(:title, min: 3)
-    |> validate_length(:description, max: 200)
-    |> validate_inclusion(:objective, ["general", "time", "place"],
-      message: "Objective should be one of [time, place, general]"
+    |> unique_constraint(:objective,
+      message: "Time is already defined for this event",
+      name: "event_time_already_defined"
     )
-    |> validate_resolution()
+    |> unique_constraint(:objective,
+      message: "Place is already defined for this event",
+      name: "event_place_already_defined"
+    )
   end
 
   defp validate_resolution(changeset) do
-    case fetch_change(changeset, :pending) do
+    case get_field(changeset, :pending) do
       {:ok, false} ->
         changeset
         |> validate_required(:resolution,
