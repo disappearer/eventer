@@ -55,6 +55,23 @@ defmodule Eventer.Decision do
     |> validate_resolution()
   end
 
+  def update_changeset(decision, params \\ %{}) do
+    decision
+    |> cast(params, [:title, :description, :resolution, :pending])
+    |> validate_length(:title, min: 3)
+    |> validate_length(:description, max: 200)
+  end
+
+  def delete_changeset(decision) do
+    changeset = cast(decision, %{}, [])
+
+    if Enum.member?(["time", "place"], decision.objective) do
+      add_error(changeset, :objective, "Can't delete time or place decision")
+    else
+      changeset
+    end
+  end
+
   defp validate_objective(changeset) do
     changeset
     |> validate_inclusion(:objective, ["general", "time", "place"],
