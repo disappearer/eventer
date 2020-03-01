@@ -23,13 +23,13 @@ defmodule Eventer.Persistence.Events do
     Repo.all(query)
   end
 
-  def update_event(event_id, attrs) do
-    %Event{id: event_id}
+  def update_event(event, attrs) do
+    event
     |> Event.update_changeset(attrs)
     |> Repo.update()
   end
 
-  def cancel_event(event_id) do
-    update_event(event_id, %{cancelled: true})
+  def cancel_event(event) do
+    update_event(event, %{cancelled: true})
   end
 end

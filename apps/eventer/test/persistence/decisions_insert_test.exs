@@ -1,13 +1,9 @@
-defmodule DecisionTest do
+defmodule Persistence.DecisionsInsertTest do
   use Eventer.DataCase
-  import Ecto.Query
 
-  # doctest Eventer
+  alias Eventer.Persistence.{Events, Decisions}
 
-  alias Eventer.{Decision, Repo}
-  alias Eventer.Persistence.EventPersistence
-
-  describe "Decision" do
+  describe "Decision insert" do
     setup do
       {:ok, user} =
         Eventer.insert_user(%{
@@ -16,7 +12,7 @@ defmodule DecisionTest do
         })
 
       {:ok, event} =
-        EventPersistence.insert(%{
+        Events.insert_event(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -24,15 +20,12 @@ defmodule DecisionTest do
           place: "nowhere"
         })
 
-      %{event: event, user: user}
+      %{user: user, event: event}
     end
 
-    test "insert success (general)", %{event: event, user: user} do
-      count_query = from(d in Decision, select: count(d.id))
-      before_count = Repo.one(count_query)
-
-      {:ok, _item} =
-        Eventer.insert_decision(%{
+    test "success", %{event: event, user: user} do
+      {:ok, decision} =
+        Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
           title: "test decision 1",
@@ -40,12 +33,12 @@ defmodule DecisionTest do
           objective: "general"
         })
 
-      assert Repo.one(count_query) == before_count + 1
+      assert decision.id !== nil
     end
 
-    test "insert without creator_id fails", %{event: event} do
+    test "without creator_id fails", %{event: event} do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           event_id: event.id,
           title: "test title",
           description: "test description",
@@ -56,9 +49,9 @@ defmodule DecisionTest do
                {"Event creator must be provided", [{:validation, :required}]}
     end
 
-    test "insert fails when creator doesn't exist", %{event: event} do
+    test "fails when creator doesn't exist", %{event: event} do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           creator_id: 420,
           event_id: event.id,
           title: "test title",
@@ -70,9 +63,9 @@ defmodule DecisionTest do
       assert message === "Creator does not exist"
     end
 
-    test "insert without title fails", %{event: event} do
+    test "without title fails", %{event: event} do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           event_id: event.id,
           description: "test description",
           objective: "general"
@@ -82,9 +75,9 @@ defmodule DecisionTest do
                {"Title can't be blank", [{:validation, :required}]}
     end
 
-    test "insert without description fails", %{event: event} do
+    test "without description fails", %{event: event} do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           event_id: event.id,
           title: "test title",
           objective: "general"
@@ -96,7 +89,7 @@ defmodule DecisionTest do
 
     test "objective can't be other than [time, place, general]", %{event: event} do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           event_id: event.id,
           title: "test title",
           description: "test description",
@@ -109,7 +102,7 @@ defmodule DecisionTest do
 
     test "insert without event_id" do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           title: "test title",
           description: "test description",
           objective: "general"
@@ -121,7 +114,7 @@ defmodule DecisionTest do
 
     test "event must exist", %{user: user} do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: 420,
           title: "test title",
@@ -133,9 +126,10 @@ defmodule DecisionTest do
       assert message === "Event does not exist"
     end
 
+    @tag :wip
     test "title is unique per event", %{event: event, user: user} do
       {:ok, _item} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
           title: "test decision",
@@ -144,7 +138,7 @@ defmodule DecisionTest do
         })
 
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
           title: "test decision",
@@ -158,7 +152,7 @@ defmodule DecisionTest do
 
     test "only one time objective per event", %{user: user} do
       {:ok, event} =
-        EventPersistence.insert(%{
+        Events.insert_event(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -173,7 +167,7 @@ defmodule DecisionTest do
         })
 
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
           title: "test decision 1",
@@ -187,7 +181,7 @@ defmodule DecisionTest do
 
     test "only one place objective per event", %{user: user} do
       {:ok, event} =
-        EventPersistence.insert(%{
+        Events.insert_event(%{
           creator_id: user.id,
           title: "test event",
           description: "test description",
@@ -202,7 +196,7 @@ defmodule DecisionTest do
         })
 
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
           title: "test decision 1",
@@ -214,9 +208,12 @@ defmodule DecisionTest do
       assert message === "Place decision already exists for this event"
     end
 
-    test "insert with time objective fails when event time defined", %{user: user, event: event} do
+    test "insert with time objective fails when event time defined", %{
+      user: user,
+      event: event
+    } do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
           title: "test decision 1",
@@ -228,10 +225,12 @@ defmodule DecisionTest do
       assert message === "Time is already defined for this event"
     end
 
-    @tag :wip
-    test "insert with place objective fails when event place defined", %{user: user, event: event} do
+    test "insert with place objective fails when event place defined", %{
+      user: user,
+      event: event
+    } do
       {:error, changeset} =
-        Eventer.insert_decision(%{
+        Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
           title: "test decision 1",

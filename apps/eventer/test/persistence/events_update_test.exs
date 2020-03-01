@@ -26,13 +26,16 @@ defmodule Persistence.EventsUpdateTest do
 
     test "success", %{event: event} do
       attrs = %{
+        id: event.id,
         title: "new title",
         description: "new description"
       }
 
-      {:ok, _} = Events.update_event(event.id, attrs)
+      {:ok, _} = Events.update_event(event, attrs)
       updated_event = Events.get_event(event.id)
-      assert updated_event === Map.merge(event, attrs)
+
+      assert updated_event |> Map.drop([:updated_at]) ===
+               Map.merge(event, attrs) |> Map.drop([:updated_at])
     end
 
     test "only title and description get updated", %{event: event} do
@@ -48,7 +51,7 @@ defmodule Persistence.EventsUpdateTest do
         }
       }
 
-      {:ok, _} = Events.update_event(event.id, attrs)
+      {:ok, _} = Events.update_event(event, attrs)
       updated_event = Events.get_event(event.id)
       assert updated_event.time === event.time
       assert updated_event.place === event.place
@@ -57,7 +60,7 @@ defmodule Persistence.EventsUpdateTest do
 
     test "includes cancelling", %{event: event} do
       refute event.cancelled
-      {:ok, _} = Events.cancel_event(event.id)
+      {:ok, _} = Events.cancel_event(event)
       cancelled_event = Events.get_event(event.id)
       assert cancelled_event.cancelled
     end
