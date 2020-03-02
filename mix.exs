@@ -1,4 +1,4 @@
-defmodule Eventer.MixProject do
+defmodule EventerUmbrella.MixProject do
   use Mix.Project
 
   def project do

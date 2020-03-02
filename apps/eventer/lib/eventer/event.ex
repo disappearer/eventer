@@ -2,14 +2,17 @@ defmodule Eventer.Event do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Eventer.{User, Decision, Participation}
+
   schema "events" do
     field(:title, :string)
     field(:description, :string)
     field(:time, :utc_datetime)
     field(:place, :string)
     field(:cancelled, :boolean, default: false)
-    has_many(:decisions, Eventer.Decision, on_replace: :delete)
-    belongs_to(:creator, Eventer.User, foreign_key: :creator_id)
+    has_many(:decisions, Decision, on_replace: :delete)
+    belongs_to(:creator, User, foreign_key: :creator_id)
+    many_to_many(:participants, User, join_through: Participation)
     timestamps()
   end
 
@@ -47,9 +50,7 @@ defmodule Eventer.Event do
 
     changeset
     |> cast_assoc(:decisions,
-      with:
-        {Eventer.Decision, :non_standalone_changeset,
-         [creator_id]}
+      with: {Eventer.Decision, :non_standalone_changeset, [creator_id]}
     )
     |> validate_objective(event_time, :time)
     |> validate_objective(event_place, :place)
