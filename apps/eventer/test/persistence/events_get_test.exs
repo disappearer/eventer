@@ -25,7 +25,8 @@ defmodule Persistence.EventGetTest do
     end
 
     test "success", %{event: event} do
-      assert Events.get_event(event.id) === Repo.preload(event, :decisions)
+      assert Events.get_event(event.id) ===
+               Repo.preload(event, [:decisions, :participants])
     end
 
     test "returns nil if not found" do

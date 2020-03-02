@@ -21,7 +21,7 @@ defmodule Persistence.EventsUpdateTest do
           place: "nowhere"
         })
 
-      %{user: user, event: Repo.preload(event, :decisions)}
+      %{user: user, event: Repo.preload(event, [:decisions, :participants])}
     end
 
     test "success", %{event: event} do
@@ -53,9 +53,12 @@ defmodule Persistence.EventsUpdateTest do
 
       {:ok, _} = Events.update_event(event, attrs)
       updated_event = Events.get_event(event.id)
-      assert updated_event.time === event.time
-      assert updated_event.place === event.place
-      assert updated_event.decisions === event.decisions
+      {changes, _, _} = diff(event, updated_event)
+
+      assert changes === [
+               {[:description], "test description", "new description"},
+               {[:title], "test event", "new title"}
+             ]
     end
 
     test "includes cancelling", %{event: event} do

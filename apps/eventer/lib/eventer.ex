@@ -1,15 +1,9 @@
 defmodule Eventer do
-  alias Eventer.{User, Event, Decision, Repo}
+  alias Eventer.{User, Repo}
 
   def insert_user(attrs) do
     %User{}
     |> User.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  def insert_decision(attrs) do
-    %Decision{}
-    |> Decision.standalone_changeset(attrs)
     |> Repo.insert()
   end
 end
