@@ -30,7 +30,10 @@ defmodule Persistence.DecisionsInsertTest do
           event_id: event.id,
           title: "test decision 1",
           description: "test description",
-          objective: "general"
+          objective: "general",
+          poll: %{
+            question: "What?"
+          }
         })
 
       assert decision.id !== nil
