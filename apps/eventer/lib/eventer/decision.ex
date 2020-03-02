@@ -10,7 +10,7 @@ defmodule Eventer.Decision do
     field(:objective, :string, default: "general")
     belongs_to(:event, Eventer.Event)
     belongs_to(:creator, Eventer.User, foreign_key: :creator_id)
-    has_one(:poll, Eventer.Poll)
+    embeds_one(:poll, Eventer.Poll, on_replace: :update)
     timestamps()
   end
 
@@ -41,6 +41,7 @@ defmodule Eventer.Decision do
       :objective,
       :creator_id
     ])
+    |> cast_embed(:poll)
     |> validate_required(:title, message: "Title can't be blank")
     |> validate_required(:description, message: "Description can't be blank")
     |> validate_required(:creator_id, message: "Event creator must be provided")
@@ -58,6 +59,7 @@ defmodule Eventer.Decision do
   def update_changeset(decision, params \\ %{}) do
     decision
     |> cast(params, [:title, :description, :resolution, :pending])
+    |> cast_embed(:poll)
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
   end
