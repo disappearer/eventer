@@ -1,13 +1,13 @@
 defmodule Persistence.EventGetTest do
   use Eventer.DataCase
 
-  alias Eventer.Persistence.Events
+  alias Eventer.Persistence.{Events, Users}
   alias Eventer.Repo
 
   describe "Event get" do
     setup do
       {:ok, user} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test@example.com",
           display_name: "Test User"
         })
@@ -60,7 +60,7 @@ defmodule Persistence.EventGetTest do
              ]
 
       {:ok, new_user} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test1@example.com",
           display_name: "Test User 1"
         })

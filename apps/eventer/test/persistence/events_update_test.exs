@@ -1,13 +1,13 @@
 defmodule Persistence.EventsUpdateTest do
   use Eventer.DataCase
 
-  alias Eventer.Persistence.Events
+  alias Eventer.Persistence.{Events, Users}
   alias Eventer.Repo
 
   describe "Event update" do
     setup do
       {:ok, user} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test@example.com",
           display_name: "Test User"
         })

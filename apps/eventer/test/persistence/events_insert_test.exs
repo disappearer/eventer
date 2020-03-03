@@ -3,12 +3,12 @@ defmodule Persistence.EventsInsertTest do
   import Ecto.Query
 
   alias Eventer.{Event, Repo}
-  alias Eventer.Persistence.Events
+  alias Eventer.Persistence.{Events, Users}
 
   describe "Event insert" do
     setup do
       {:ok, user} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test@example.com",
           display_name: "Test User"
         })
