@@ -23,12 +23,15 @@ defmodule EventerWeb.ConnCase do
       use Phoenix.ConnTest
       alias EventerWeb.Router.Helpers, as: Routes
 
+      import EventerWeb.Factory
+
       # The default endpoint for testing
       @endpoint EventerWeb.Endpoint
     end
   end
 
   setup _tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Eventer.Repo)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
