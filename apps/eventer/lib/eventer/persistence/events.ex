@@ -1,5 +1,5 @@
 defmodule Eventer.Persistence.Events do
-  alias Eventer.{Event, Participation, Repo}
+  alias Eventer.{User, Event, Participation, Repo}
 
   import Ecto.Query, only: [from: 2]
 
@@ -14,12 +14,23 @@ defmodule Eventer.Persistence.Events do
     |> Repo.preload([:decisions, :participants])
   end
 
-  def get_events_created_by_user(user_id) do
+  def get_events_created_by_user(%User{} = user) do
     query =
       from(e in Event,
-        where: e.creator_id == ^user_id,
+        where: e.creator_id == ^user.id,
         select: e,
         order_by: e.id
+      )
+
+    Repo.all(query)
+  end
+
+  def get_events_participating(%User{} = user) do
+    query =
+      from(e in Event,
+        left_join: p in assoc(e, :participants),
+        where: p.id == ^user.id or e.creator_id == ^user.id,
+        order_by: [desc: e.time]
       )
 
     Repo.all(query)
