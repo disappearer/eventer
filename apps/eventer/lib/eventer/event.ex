@@ -11,7 +11,7 @@ defmodule Eventer.Event do
     field(:place, :string)
     field(:cancelled, :boolean, default: false)
     has_many(:decisions, Decision, on_replace: :delete)
-    belongs_to(:creator, User, foreign_key: :creator_id)
+    belongs_to(:creator, User)
     many_to_many(:participants, User, join_through: Participation)
     timestamps()
   end
