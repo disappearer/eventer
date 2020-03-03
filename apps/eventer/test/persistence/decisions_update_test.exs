@@ -1,14 +1,14 @@
 defmodule Persistence.DecisionsUpdateTest do
   use Eventer.DataCase
 
-  alias Eventer.Persistence.{Events, Decisions}
+  alias Eventer.Persistence.{Events, Decisions, Users}
   alias Eventer.Decision
   alias Eventer.Repo
 
   describe "Decision update" do
     setup do
       {:ok, user} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test@example.com",
           display_name: "Test User"
         })

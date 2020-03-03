@@ -1,13 +1,13 @@
 defmodule Persistence.EventsParticipantsTest do
   use Eventer.DataCase
 
-  alias Eventer.Persistence.Events
+  alias Eventer.Persistence.{Events, Users}
   alias Eventer.Repo
 
   describe "Event participation" do
     setup do
       {:ok, user} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test@example.com",
           display_name: "Test User"
         })
@@ -26,7 +26,7 @@ defmodule Persistence.EventsParticipantsTest do
 
     test "join", %{event: event} do
       {:ok, user} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test1@example.com",
           display_name: "New User"
         })
@@ -53,13 +53,13 @@ defmodule Persistence.EventsParticipantsTest do
 
     test "leave", %{event: event} do
       {:ok, user1} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test1@example.com",
           display_name: "New User 1"
         })
 
       {:ok, user2} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test2@example.com",
           display_name: "New User 2"
         })

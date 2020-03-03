@@ -1,12 +1,12 @@
 defmodule Persistence.DecisionsInsertTest do
   use Eventer.DataCase
 
-  alias Eventer.Persistence.{Events, Decisions}
+  alias Eventer.Persistence.{Events, Decisions, Users}
 
   describe "Decision insert" do
     setup do
       {:ok, user} =
-        Eventer.insert_user(%{
+        Users.insert_user(%{
           email: "test@example.com",
           display_name: "Test User"
         })

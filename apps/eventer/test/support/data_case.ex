@@ -14,7 +14,15 @@ defmodule Eventer.DataCase do
   end
 
   def tomorrow() do
-    Timex.now() |> Timex.add(Timex.Duration.from_days(1))
+    days_in_future(1)
+  end
+
+  def days_in_future(days) do
+    Timex.now() |> Timex.add(Timex.Duration.from_days(days))
+  end
+
+  def days_in_past(days) do
+    Timex.now() |> Timex.subtract(Timex.Duration.from_days(days))
   end
 
   def diff(struct1, struct2) do
