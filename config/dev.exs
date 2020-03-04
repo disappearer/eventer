@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -55,3 +55,5 @@ config :eventer_web, EventerWeb.Endpoint,
       ~r"lib/eventer_web/templates/.*(eex)$"
     ]
   ]
+
+import_config "dev.secret.exs"

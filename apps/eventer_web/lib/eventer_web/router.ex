@@ -13,14 +13,33 @@ defmodule EventerWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :guardian_auth do
+    plug Guardian.Plug.Pipeline, module: EventerWeb.Guardian,
+                                 error_handler: EventerWeb.AuthErrorHandler
+
+    plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
+    plug Guardian.Plug.EnsureAuthenticated
+    plug Guardian.Plug.LoadResource, allow_blank: true
+  end
+
   scope "/", EventerWeb do
     pipe_through :browser
 
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", EventerWeb do
-  #   pipe_through :api
-  # end
+  scope "/auth", EventerWeb do
+    pipe_through :browser
+
+    get "/logout", AuthController, :logout
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+  end
+
+  scope "/api", EventerWeb do
+    pipe_through :api
+    pipe_through :guardian_auth
+
+    get "/me", UserController, :index
+  end
 end

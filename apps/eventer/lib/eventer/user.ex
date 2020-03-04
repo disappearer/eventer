@@ -21,6 +21,5 @@ defmodule Eventer.User do
     )
     |> validate_length(:display_name, min: 3)
     |> unique_constraint(:email, message: "Email already taken")
-    |> unique_constraint(:display_name, message: "Display name already taken")
   end
 end

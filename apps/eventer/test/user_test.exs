@@ -22,6 +22,24 @@ defmodule UserTest do
       assert Repo.one(count_query) == before_count + 1
     end
 
+    test "insert success when display name not unique" do
+      count_query = from(u in User, select: count(u.id))
+      before_count = Repo.one(count_query)
+
+      Users.insert_user(%{
+        email: "user1@example.com",
+        display_name: "Test User"
+      })
+
+      {:ok, _} =
+        Users.insert_user(%{
+          email: "user2@example.com",
+          display_name: "Test User"
+        })
+
+      assert Repo.one(count_query) == before_count + 2
+    end
+
     test "insert fails when no email" do
       {:error, changeset} = Users.insert_user(%{display_name: "Test User"})
 
@@ -52,24 +70,19 @@ defmodule UserTest do
       assert message === "Email already taken"
     end
 
-    test "insert fails when display name not unique" do
-      Users.insert_user(%{
-        email: "user1@example.com",
-        display_name: "Test User"
-      })
-
-      {:error, changeset} =
+    test "get" do
+      {:ok, user} =
         Users.insert_user(%{
-          email: "user2@example.com",
+          email: "user@example.com",
           display_name: "Test User"
         })
 
-      {message, _} = Keyword.get(changeset.errors, :display_name)
-      assert message === "Display name already taken"
+      assert Users.get(user.id) === user
     end
 
     test "get by email" do
       email = "user@example.com"
+
       {:ok, user} =
         Users.insert_user(%{
           email: email,
@@ -77,6 +90,20 @@ defmodule UserTest do
         })
 
       assert Users.get_by_email(email) === user
+    end
+
+    test "find_or_create" do
+      info = %{
+        email: "test@example.com",
+        name: "Test Name"
+      }
+
+      assert Users.get_by_email(info.email) === nil
+
+      {:ok, user1} = Users.find_or_create(info)
+      {:ok, user2} = Users.find_or_create(info)
+
+      assert user1 === user2
     end
   end
 end

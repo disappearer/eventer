@@ -17,6 +17,8 @@ defmodule EventerWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  alias EventerWeb.Guardian
+
   using do
     quote do
       # Import conveniences for testing with connections
@@ -27,6 +29,24 @@ defmodule EventerWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint EventerWeb.Endpoint
+
+      setup tags do
+        if tags[:authorized] do
+          user = insert(:user)
+
+          {:ok, token, _} =
+            Guardian.encode_and_sign(user, %{}, token_type: :access)
+
+          conn =
+            build_conn()
+            |> put_req_header("accept", "application/json")
+            |> put_req_header("authorization", "Bearer #{token}")
+
+          {:ok, %{conn: conn, authorized_user: user}}
+        else
+          {:ok, %{conn: build_conn()}}
+        end
+      end
     end
   end
 
