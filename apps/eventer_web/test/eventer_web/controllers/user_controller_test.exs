@@ -1,6 +1,5 @@
 defmodule EventerWeb.UserControllerTest do
   use EventerWeb.ConnCase
-  alias EventerWeb.Guardian
 
   @tag :authorized
   test "GET /auth/me returns user data when authorized", %{conn: conn, authorized_user: user} do

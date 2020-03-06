@@ -41,5 +41,6 @@ defmodule EventerWeb.Router do
     pipe_through :guardian_auth
 
     get "/me", UserController, :index
+    resources "/events", EventController, only: [:create]
   end
 end

@@ -34,7 +34,7 @@ defmodule Eventer.MixProject do
       {:postgrex, "~> 0.15"},
       {:jason, "~> 1.1.2"},
       {:timex, "~> 3.5"},
-      {:kitchen_sink, "~>1.3.8", only: :test}
+      {:kitchen_sink, "~>1.3.8", only: :test},
     ]
   end
 end
