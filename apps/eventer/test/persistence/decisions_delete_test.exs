@@ -47,9 +47,9 @@ defmodule Persistence.DecisionsDeleteTest do
           place: "nowhere",
           decisions: [
             %{
-              title: "test decision 1",
-              description: "test description",
-              objective: "time"
+              "title" => "test decision 1",
+              "description" => "test description",
+              "objective" => "time"
             }
           ]
         })
@@ -70,9 +70,9 @@ defmodule Persistence.DecisionsDeleteTest do
           time: tomorrow(),
           decisions: [
             %{
-              title: "test decision 1",
-              description: "test description",
-              objective: "place"
+              "title" => "test decision 1",
+              "description" => "test description",
+              "objective" => "place"
             }
           ]
         })

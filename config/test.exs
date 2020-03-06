@@ -20,4 +20,6 @@ config :eventer, Eventer.Repo,
   port: "5432",
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :logger, level: :info
+config :logger, level: :warning
+
+import_config "test.secret.exs"

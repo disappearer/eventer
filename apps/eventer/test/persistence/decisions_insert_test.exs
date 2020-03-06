@@ -162,9 +162,9 @@ defmodule Persistence.DecisionsInsertTest do
           place: "nowhere",
           decisions: [
             %{
-              title: "test decision",
-              description: "test description",
-              objective: "time"
+              "title" => "test decision",
+              "description" => "test description",
+              "objective" => "time"
             }
           ]
         })
@@ -191,9 +191,9 @@ defmodule Persistence.DecisionsInsertTest do
           time: tomorrow(),
           decisions: [
             %{
-              title: "test decision",
-              description: "test description",
-              objective: "place"
+              "title" => "test decision 1",
+              "description" => "test description",
+              "objective" => "place"
             }
           ]
         })
@@ -202,7 +202,7 @@ defmodule Persistence.DecisionsInsertTest do
         Decisions.insert_decision(%{
           creator_id: user.id,
           event_id: event.id,
-          title: "test decision 1",
+          title: "test decision 2",
           description: "test description",
           objective: "place"
         })

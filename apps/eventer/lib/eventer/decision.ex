@@ -19,7 +19,7 @@ defmodule Eventer.Decision do
         params,
         creator_id
       ) do
-    new_params = Map.put_new(params, :creator_id, creator_id)
+    new_params = Map.put_new(params, "creator_id", creator_id)
     changeset(decision, new_params)
   end
 
