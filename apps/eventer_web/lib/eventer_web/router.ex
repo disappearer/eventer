@@ -14,18 +14,13 @@ defmodule EventerWeb.Router do
   end
 
   pipeline :guardian_auth do
-    plug Guardian.Plug.Pipeline, module: EventerWeb.Guardian,
-                                 error_handler: EventerWeb.AuthErrorHandler
+    plug Guardian.Plug.Pipeline,
+      module: EventerWeb.Guardian,
+      error_handler: EventerWeb.AuthErrorHandler
 
     plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
     plug Guardian.Plug.EnsureAuthenticated
     plug Guardian.Plug.LoadResource, allow_blank: true
-  end
-
-  scope "/", EventerWeb do
-    pipe_through :browser
-
-    get "/", PageController, :index
   end
 
   scope "/auth", EventerWeb do
@@ -42,5 +37,12 @@ defmodule EventerWeb.Router do
 
     get "/me", UserController, :index
     resources "/events", EventController, only: [:create]
+  end
+
+  scope "/", EventerWeb do
+    pipe_through :browser
+
+    get "/", PageController, :index
+    get "/*path", PageController, :index
   end
 end
