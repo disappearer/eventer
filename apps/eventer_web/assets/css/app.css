@@ -1,3 +1,50 @@
 /* This file is for your main application css. */
 
-@import "./phoenix.css";
+@import './phoenix.css';
+
+body {
+  height: 100%;
+}
+
+h1 {
+  font-size: 4.6rem;
+  line-height: 1.2;
+}
+
+span#display-name {
+  margin-left: 50px;
+}
+
+li {
+  float: left;
+  margin-left: 30px;
+}
+#root {
+  height: 100%;
+}
+
+section {
+  height: 100%;
+}
+
+.row {
+  height: 100%;
+}
+
+.box {
+  padding: 20px 40px 20px 40px;
+  max-width: 500px;
+}
+
+#decisions {
+  padding: 20px 40px 20px 40px;
+
+  max-width: 500px;
+  height: 100%;
+  border-right: 1px solid rgb(230, 230, 230);
+}
+
+#block {
+  border-bottom: 1px solid rgb(230, 230, 230);
+  border-right: 1px solid rgb(230, 230, 230);
+}
