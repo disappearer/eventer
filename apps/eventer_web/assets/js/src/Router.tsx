@@ -11,11 +11,11 @@ const Router: React.FC = () => {
         <Nav />
 
         <Switch>
-          <Route path="/about">
-            <About />
-          </Route>
           <Route exact path="/">
             <Home />
+          </Route>
+          <Route path="/about">
+            <About />
           </Route>
         </Switch>
       </div>

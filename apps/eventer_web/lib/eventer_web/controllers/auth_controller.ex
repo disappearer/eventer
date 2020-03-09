@@ -39,7 +39,6 @@ defmodule EventerWeb.AuthController do
   def logout(conn, _) do
     conn
     |> delete_resp_cookie("token", http_only: false)
-    |> put_flash(:info, "You have logged out")
     |> redirect(to: Routes.page_path(conn, :index))
   end
 end
