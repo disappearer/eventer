@@ -19,6 +19,7 @@ li {
   float: left;
   margin-left: 30px;
 }
+
 #root {
   height: 100%;
 }
@@ -47,4 +48,10 @@ section {
 #block {
   border-bottom: 1px solid rgb(230, 230, 230);
   border-right: 1px solid rgb(230, 230, 230);
+}
+
+.input-group {
+  display: flex;
+  align-content: left;
+  vertical-align: center;
 }
