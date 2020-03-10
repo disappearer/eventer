@@ -26,8 +26,18 @@ export const createEvent: createEventT = async eventData => {
   return event;
 };
 
-type listEventsT = (data: eventDataT) => Promise<createEventResponseT>;
-export const listEvents: listEventsT = async eventData => {
-  const event = await get<createEventResponseT>('/api/events');
-  return event;
+export type eventT = {
+  title: string;
+  time: string;
+  place: string;
+  id_hash: string;
+};
+type getEventsResponseT = {
+  events: eventT[];
+};
+
+type getEventsT = () => Promise<getEventsResponseT>;
+export const getEvents: getEventsT = async () => {
+  const events = await get<getEventsResponseT>('/api/events');
+  return events;
 };

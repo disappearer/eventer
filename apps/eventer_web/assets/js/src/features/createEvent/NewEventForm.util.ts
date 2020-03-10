@@ -1,4 +1,4 @@
-import { eventDataT } from "../../util/event_service";
+import { eventDataT } from '../../util/event_service';
 
 type decisionT = {
   title: string;
@@ -41,7 +41,7 @@ export const addDecisionIfUndecided: addDecisionIfUndecidedT = (
   setFieldValue,
 ) => {
   const isUndecidedObjective =
-  objective === 'time' ? values.timeUndecided : values.placeUndecided;
+    objective === 'time' ? values.timeUndecided : values.placeUndecided;
   if (isUndecidedObjective) {
     const { decisions } = values;
     const index = decisions.findIndex(
@@ -53,7 +53,6 @@ export const addDecisionIfUndecided: addDecisionIfUndecidedT = (
           title: objective === 'time' ? 'When' : 'Where',
           description: '',
           objective: objective,
-          fixedObjective: true,
         },
         ...decisions,
       ]);
