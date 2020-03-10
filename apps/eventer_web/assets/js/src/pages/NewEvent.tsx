@@ -4,7 +4,7 @@ import NewEventForm from '../features/createEvent/NewEventForm';
 const NewEvent: React.FC = () => {
   return (
     <section>
-      <NewEventForm onSuccess={() => {}} />
+      <NewEventForm />
     </section>
   );
 };

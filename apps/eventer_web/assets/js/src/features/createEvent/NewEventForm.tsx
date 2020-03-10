@@ -9,6 +9,7 @@ import {
   shouldShowDecision,
   valuesT,
 } from './NewEventForm.util';
+import { useHistory } from 'react-router-dom';
 
 const initialValues = {
   title: '',
@@ -20,10 +21,9 @@ const initialValues = {
   decisions: [],
 };
 
-type newEventFormPropT = {
-  onSuccess: () => void;
-};
-const NewEventForm: React.FC<newEventFormPropT> = ({ onSuccess }) => {
+
+const NewEventForm: React.FC = () => {
+  const history = useHistory();
   return (
     <Formik<valuesT>
       initialValues={initialValues}
@@ -34,12 +34,13 @@ const NewEventForm: React.FC<newEventFormPropT> = ({ onSuccess }) => {
             console.log('NewEventForm -> response.errors', response.errors);
             break;
           case true:
-            onSuccess();
+            history.push('/');
             break;
         }
       }}
     >
       {({ values, handleChange, setFieldValue }) => {
+        console.log('values', values);
         addDecisionIfUndecided('time', values, setFieldValue);
         addDecisionIfUndecided('place', values, setFieldValue);
         return (
