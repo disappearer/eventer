@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Home from './Home';
 import Nav from './Nav';
-import About from './About';
+import About from './pages/About';
+import Home from './pages/Home';
+import NewEvent from './pages/NewEvent';
 
 const Router: React.FC = () => {
   return (
@@ -16,6 +17,10 @@ const Router: React.FC = () => {
           </Route>
           <Route path="/about">
             <About />
+          </Route>
+
+          <Route path="/event/new">
+            <NewEvent />
           </Route>
         </Switch>
       </div>

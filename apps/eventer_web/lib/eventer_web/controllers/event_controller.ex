@@ -16,7 +16,9 @@ defmodule EventerWeb.EventController do
         errors =
           Ecto.Changeset.traverse_errors(changeset, fn {msg, _} -> msg end)
 
-        render(conn, "error.json", %{errors: errors})
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render("error.json", %{errors: errors})
     end
   end
 end

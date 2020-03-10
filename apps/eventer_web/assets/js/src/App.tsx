@@ -1,13 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
-import Router from './Router';
 import store from './common/store';
-import { fetchUserIfAuthenticated } from './util/user_service';
+import useCheckAuthentication from './features/authentication/useCheckAuthentication';
+import Router from './Router';
 
 const App: React.FC = () => {
-  useEffect(() => {
-    fetchUserIfAuthenticated();
-  }, []);
+  useCheckAuthentication(); 
 
   return (
     <Provider store={store}>
