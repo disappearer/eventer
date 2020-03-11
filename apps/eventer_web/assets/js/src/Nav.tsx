@@ -18,7 +18,7 @@ const Nav: React.FC = () => {
         </li>
         {!user.data.isEmpty() && (
           <li>
-            <Link to="/event/new">New Event</Link>
+            <Link to="/events/new">New Event</Link>
           </li>
         )}
         {user.data.fold(

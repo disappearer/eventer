@@ -1,15 +1,12 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import store from './common/store';
-import useCheckAuthentication from './features/authentication/useCheckAuthentication';
-import Router from './Router';
+import Loader from './Loader';
 
 const App: React.FC = () => {
-  useCheckAuthentication(); 
-
   return (
     <Provider store={store}>
-      <Router />
+      <Loader />
     </Provider>
   );
 };

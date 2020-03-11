@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Nav from './Nav';
-import About from './pages/About';
-import Home from './pages/Home';
-import NewEvent from './pages/NewEvent';
+import About from './pages/AboutPage';
+import EventPage from './pages/EventPage';
+import HomePage from './pages/HomePage';
+import NewEventPage from './pages/NewEventPage';
 
 const Router: React.FC = () => {
   return (
@@ -13,14 +14,17 @@ const Router: React.FC = () => {
 
         <Switch>
           <Route exact path="/">
-            <Home />
+            <HomePage />
           </Route>
           <Route path="/about">
             <About />
           </Route>
 
-          <Route path="/event/new">
-            <NewEvent />
+          <Route path="/events/new">
+            <NewEventPage />
+          </Route>
+          <Route path="/events/:id_hash">
+            <EventPage />
           </Route>
         </Switch>
       </div>
