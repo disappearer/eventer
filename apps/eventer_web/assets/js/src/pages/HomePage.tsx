@@ -5,7 +5,7 @@ import { userT } from '../features/authentication/userReducer';
 import EventList from '../features/listEvents/EventList';
 import Welcome from '../features/welcome/Welcome';
 
-const Home: React.FC = () => {
+const HomePage: React.FC = () => {
   const user = useSelector<reduxStateT, userT>(({ user }) => user);
   return user.data.fold(
     () => <Welcome />,
@@ -13,4 +13,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default HomePage;

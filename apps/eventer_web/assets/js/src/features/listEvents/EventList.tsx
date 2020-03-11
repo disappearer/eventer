@@ -10,10 +10,10 @@ const EventList: React.FC = () => {
       <div className="row">
         <div id="block" className="box">
           <h1>Your events</h1>
-          <p>Organize events with your friends</p>
+          <p>These are the events of which you are the creator or a participant.</p>
         </div>
         <div className="box">
-          <h2>This is what you need</h2>
+          <h2>Something, something...</h2>
         </div>
       </div>
       <div>

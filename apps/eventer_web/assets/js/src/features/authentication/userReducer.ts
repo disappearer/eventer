@@ -5,6 +5,7 @@ import { Option, None, Some } from 'funfix';
 export type userDataT = {
   email: string;
   displayName: string;
+  token: string;
 };
 
 export type userT = {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Home: React.FC = () => {
+const AboutPage: React.FC = () => {
   return (
     <section>
       <h1>Welcome to About</h1>
@@ -9,4 +9,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default AboutPage;
