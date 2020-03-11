@@ -46,6 +46,7 @@ defmodule EventerWeb.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:ueberauth_google, "~> 0.8"},
       {:guardian, "~> 2.0"},
+      {:guardian_phoenix, "~> 2.0"},
       {:ex_machina, "~> 2.3", only: :test},
       {:hashids, "~> 2.0"},
       {:eventer, in_umbrella: true}

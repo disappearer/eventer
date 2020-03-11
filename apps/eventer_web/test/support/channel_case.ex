@@ -22,12 +22,20 @@ defmodule EventerWeb.ChannelCase do
       # Import conveniences for testing with channels
       use Phoenix.ChannelTest
 
+      import EventerWeb.Factory
+
       # The default endpoint for testing
       @endpoint EventerWeb.Endpoint
     end
   end
 
-  setup _tags do
+  setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Eventer.Repo)
+
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(Eventer.Repo, {:shared, self()})
+    end
+
     :ok
   end
 end

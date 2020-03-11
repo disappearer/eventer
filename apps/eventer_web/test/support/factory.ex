@@ -1,5 +1,6 @@
 defmodule EventerWeb.Factory do
   use ExMachina.Ecto, repo: Eventer.Repo
+  import TestUtil
 
   alias Eventer.{User, Event, Decision}
 
@@ -27,9 +28,5 @@ defmodule EventerWeb.Factory do
       event: build(:event),
       creator: build(:user)
     }
-  end
-
-  defp days_in_future(days) do
-    Timex.now() |> Timex.add(Timex.Duration.from_days(days))
   end
 end

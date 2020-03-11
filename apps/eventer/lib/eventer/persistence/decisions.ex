@@ -61,4 +61,17 @@ defmodule Eventer.Persistence.Decisions do
   def remove_poll(decision) do
     update_poll(decision, nil)
   end
+
+  def to_map(%Decision{} = decision) do
+    %{
+      id: decision.id,
+      title: decision.title,
+      description: decision.description,
+      objective: decision.objective,
+      pending: decision.pending,
+      resolution: decision.resolution,
+      creator_id: decision.creator_id,
+      poll: decision.poll
+    }
+  end
 end

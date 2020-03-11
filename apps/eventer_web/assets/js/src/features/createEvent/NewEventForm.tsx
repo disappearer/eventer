@@ -40,7 +40,6 @@ const NewEventForm: React.FC = () => {
       }}
     >
       {({ values, handleChange, setFieldValue }) => {
-        console.log('values', values);
         addDecisionIfUndecided('time', values, setFieldValue);
         addDecisionIfUndecided('place', values, setFieldValue);
         return (
