@@ -1,5 +1,5 @@
 defmodule Eventer.Converter do
-  alias Eventer.{Event, Decision}
+  alias Eventer.{Event}
 
   def to_state_map(%Event{} = event) do
     event

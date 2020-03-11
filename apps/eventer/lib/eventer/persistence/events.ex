@@ -1,6 +1,8 @@
 defmodule Eventer.Persistence.Events do
   alias Eventer.{User, Event, Participation, Repo}
 
+  alias Eventer.Persistence.{Users, Decisions}
+
   import Ecto.Query, only: [from: 2]
 
   def insert_event(attrs) do
@@ -11,7 +13,7 @@ defmodule Eventer.Persistence.Events do
 
   def get_event(id) do
     Repo.get(Event, id)
-    |> Repo.preload([:decisions, :participants])
+    |> Repo.preload([:creator, :decisions, :participants])
   end
 
   def get_events_created_by_user(%User{} = user) do
@@ -60,5 +62,18 @@ defmodule Eventer.Persistence.Events do
       where: p.event_id == ^event_id and p.user_id == ^user_id
     )
     |> Repo.delete_all()
+  end
+
+  def to_map(%Event{} = event) do
+    %{
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      time: event.time,
+      place: event.place,
+      creator: Users.to_map(event.creator),
+      decisions: Enum.map(event.decisions, &Decisions.to_map/1),
+      participants: Enum.map(event.participants, &Users.to_map/1)
+    }
   end
 end
