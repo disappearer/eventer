@@ -1,3 +1,13 @@
-http://localhost:4000/api/me
+GET http://localhost:4000/api/me
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJldmVudGVyX3dlYiIsImV4cCI6MTU4NTc0MjIwMywiaWF0IjoxNTgzMzIzMDAzLCJpc3MiOiJldmVudGVyX3dlYiIsImp0aSI6IjY1Y2Q5Y2I2LTRkNWMtNDRiMi05YjY2LWFiNzY2MGExYmE0MCIsIm5iZiI6MTU4MzMyMzAwMiwic3ViIjoiVXNlcjozIiwidHlwIjoiYWNjZXNzIn0.uV8Vwv-YzKxE0OiDRbwF7YG9XkEtBEJ_mW__P-9Kxvkvj8r0cpJLfcYAGpaBbwBrtU82KNMYgt4uYIxJw-bV1A
+
+###
+
+POST http://localhost:4000/api/events
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJldmVudGVyX3dlYiIsImV4cCI6MTU4NTc0MjIwMywiaWF0IjoxNTgzMzIzMDAzLCJpc3MiOiJldmVudGVyX3dlYiIsImp0aSI6IjY1Y2Q5Y2I2LTRkNWMtNDRiMi05YjY2LWFiNzY2MGExYmE0MCIsIm5iZiI6MTU4MzMyMzAwMiwic3ViIjoiVXNlcjozIiwidHlwIjoiYWNjZXNzIn0.uV8Vwv-YzKxE0OiDRbwF7YG9XkEtBEJ_mW__P-9Kxvkvj8r0cpJLfcYAGpaBbwBrtU82KNMYgt4uYIxJw-bV1A
+
+{
+  "event": {}
+}

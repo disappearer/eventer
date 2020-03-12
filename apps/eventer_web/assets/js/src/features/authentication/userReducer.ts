@@ -3,6 +3,7 @@ import { actionT, SET_USER, REMOVE_USER } from './userActions';
 import { Option, None, Some } from 'funfix';
 
 export type userDataT = {
+  id: number;
   email: string;
   displayName: string;
   token: string;
