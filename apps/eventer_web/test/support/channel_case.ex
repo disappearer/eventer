@@ -17,6 +17,8 @@ defmodule EventerWeb.ChannelCase do
 
   use ExUnit.CaseTemplate
 
+  alias EventerWeb.{Guardian, UserSocket}
+
   using do
     quote do
       # Import conveniences for testing with channels
@@ -26,6 +28,29 @@ defmodule EventerWeb.ChannelCase do
 
       # The default endpoint for testing
       @endpoint EventerWeb.Endpoint
+
+      setup tags do
+        case tags[:authorized] do
+          nil ->
+            :ok
+
+          number_of_users ->
+            IO.inspect(number_of_users, label: "number_of_users")
+
+            connections =
+              for n <- 1..number_of_users do
+                user = insert(:user)
+
+                {:ok, token, _} =
+                  Guardian.encode_and_sign(user, %{}, token_type: :access)
+
+                {:ok, socket} = connect(UserSocket, %{token: token}, %{})
+                %{socket: socket, user: user}
+              end
+
+            {:ok, %{connections: connections}}
+        end
+      end
     end
   end
 

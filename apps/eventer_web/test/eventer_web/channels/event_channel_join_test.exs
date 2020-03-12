@@ -1,42 +1,49 @@
-defmodule EventerWeb.EventChannelTest do
+defmodule EventerWeb.EventChannelJoinTest do
   use EventerWeb.ChannelCase
 
-  alias EventerWeb.{IdHasher, UserSocket, EventChannel}
-  alias Eventer.Persistence.Events
+  alias EventerWeb.{IdHasher, EventChannel}
+  alias Eventer.Persistence.Users
+  alias Eventer.Repo
 
-  describe "Event channel JOIN" do
-    test "returns event data" do
-      user = insert(:user)
-
-      event = insert(:event, %{creator: user})
-      insert(:decision, %{event: event, creator: user})
-
-      event = Events.get_event(event.id) |> Events.to_map()
+  describe "Event channel - join event" do
+    @tag authorized: 2
+    test "adds user to event participants", %{connections: connections} do
+      [creator, joiner] = connections
+      event = insert(:event, %{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
-      {:ok, reply, _} =
-        socket(UserSocket, "user:#{user.id}", %{})
-        |> subscribe_and_join(EventChannel, "event:#{event_id_hash}")
+      {:ok, _, joiner_socket} =
+        subscribe_and_join(
+          joiner.socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
 
-      assert reply === %{event: event}
+      ref = push(joiner_socket, "join_event", %{})
+      assert_reply(ref, :ok, %{})
+
+      participants =
+        event |> Repo.preload(:participants) |> Map.get(:participants)
+
+      assert participants === [joiner.user]
     end
 
-    test "socket authorization fails with wrong token" do
-      :error = connect(UserSocket, %{token: "invalid-token"}, %{})
-    end
+    @tag authorized: 2
+    test "broadcasts", %{connections: connections} do
+      [creator, joiner] = connections
+      event = insert(:event, %{creator: creator.user})
+      event_id_hash = IdHasher.encode(event.id)
 
-    test "socket authorization fails when missing token" do
-      :error = connect(UserSocket, %{}, %{})
-    end
+      {:ok, _, joiner_socket} =
+        subscribe_and_join(
+          joiner.socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
 
-    test "socket authorization success" do
-      user = insert(:user)
-      {:ok, token, _} = EventerWeb.Guardian.encode_and_sign(user)
-
-      {:ok, socket} = connect(UserSocket, %{token: token}, %{})
-      resource = Guardian.Phoenix.Socket.current_resource(socket)
-
-      assert resource === user
+      push(joiner_socket, "join_event", %{})
+      assert_broadcast("user_joined", payload)
+      assert payload === %{user: Users.to_map(joiner.user)}
     end
   end
 end
