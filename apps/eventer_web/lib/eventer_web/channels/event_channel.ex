@@ -22,4 +22,13 @@ defmodule EventerWeb.EventChannel do
     broadcast(socket, "user_joined", %{user: Users.to_map(user)})
     {:reply, {:ok, %{}}, socket}
   end
+
+  def handle_in("leave_event", %{}, socket) do
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+
+    Events.leave(socket.assigns.event_id, user.id)
+
+    broadcast(socket, "user_left", %{userId: user.id})
+    {:reply, {:ok, %{}}, socket}
+  end
 end

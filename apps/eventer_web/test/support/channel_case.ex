@@ -35,7 +35,6 @@ defmodule EventerWeb.ChannelCase do
             :ok
 
           number_of_users ->
-            IO.inspect(number_of_users, label: "number_of_users")
 
             connections =
               for n <- 1..number_of_users do
