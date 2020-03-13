@@ -2,7 +2,9 @@ defmodule Persistence.EventsParticipantsTest do
   use Eventer.DataCase
 
   alias Eventer.Persistence.{Events, Users}
-  alias Eventer.Repo
+  alias Eventer.{Repo, Participation}
+
+  import Ecto.Query
 
   describe "Event participation" do
     setup do
@@ -74,6 +76,31 @@ defmodule Persistence.EventsParticipantsTest do
       event_left = Events.get_event(event.id)
 
       assert event_left.participants === [user2]
+      assert event_left.ex_participants === [user1]
+    end
+
+    test "rejoining doesn't create a new participation record", %{event: event} do
+      {:ok, user} =
+        Users.insert_user(%{
+          email: "test1@example.com",
+          display_name: "New User 1"
+        })
+
+      Events.join(event.id, user.id)
+      Events.leave(event.id, user.id)
+      Events.join(event.id, user.id)
+
+      user_id = user.id
+      event_id = event.id
+
+      [participation] =
+        Repo.all(
+          from(p in Participation,
+            where: p.user_id == ^user_id and p.event_id == ^event_id
+          )
+        )
+
+      assert participation.has_left == false
     end
   end
 end

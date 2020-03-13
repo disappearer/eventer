@@ -21,7 +21,12 @@ defmodule Persistence.EventsUpdateTest do
           place: "nowhere"
         })
 
-      %{user: user, event: Repo.preload(event, [:creator, :decisions, :participants])}
+      event =
+        event
+        |> Repo.preload([:creator, :decisions])
+        |> Events.preload_participation_assocs()
+
+      %{user: user, event: event}
     end
 
     test "success", %{event: event} do

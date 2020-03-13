@@ -13,6 +13,7 @@ defmodule Eventer.Event do
     has_many(:decisions, Decision, on_replace: :delete)
     belongs_to(:creator, User)
     many_to_many(:participants, User, join_through: Participation)
+    many_to_many(:ex_participants, User, join_through: Participation)
     timestamps()
   end
 
