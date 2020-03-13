@@ -1,6 +1,10 @@
 defmodule Eventer.Persistence.Decisions do
   alias Eventer.{Decision, Repo}
 
+  def get_decision(id) do
+    Repo.get(Decision, id)
+  end
+
   def insert_decision(attrs) do
     %Decision{}
     |> Decision.standalone_changeset(attrs)

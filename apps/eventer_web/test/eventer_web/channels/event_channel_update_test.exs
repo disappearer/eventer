@@ -2,7 +2,6 @@ defmodule EventerWeb.EventChannelUpdateTest do
   use EventerWeb.ChannelCase
 
   alias EventerWeb.{IdHasher, EventChannel}
-  alias Eventer.Persistence.{Events}
   alias Eventer.{Event, Repo}
 
   describe "Event update" do
