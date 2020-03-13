@@ -4,6 +4,7 @@ import { reduxStateT } from '../../common/store';
 import { userT, userDataT } from './userReducer';
 
 const dummyUserData: userDataT = {
+  id: -1,
   email: '',
   displayName: '',
   token: '',

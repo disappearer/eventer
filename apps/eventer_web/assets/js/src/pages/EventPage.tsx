@@ -7,6 +7,7 @@ import {
   stateEventT,
   mapResponseEventToStateEvent,
   addUserToParticipants,
+  moveToExParticipants,
 } from '../features/eventPage/util';
 
 const EventPage: React.FC = () => {
@@ -35,18 +36,27 @@ const EventPage: React.FC = () => {
       });
     });
 
+    channel.on('user_left', ({ userId }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(moveToExParticipants(e, userId));
+      });
+    });
+
     setChannel(Some(channel));
 
     return () => {
       socket.disconnect();
-    }
+    };
   }, []);
 
   const joinEvent = useCallback(() => {
     channel.get().push('join_event', {});
   }, [channel]);
 
-  const leaveEvent = () => {};
+  const leaveEvent = useCallback(() => {    
+    channel.get().push('leave_event', {});
+  }, [channel]);
 
   return (
     <section>
@@ -64,7 +74,6 @@ const EventPage: React.FC = () => {
             creatorId,
             participants,
           } = event;
-          console.log('leaveEvent -> participants', participants);
           return (
             <>
               <div className="row">

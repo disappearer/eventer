@@ -17,18 +17,20 @@ defmodule Eventer.Persistence.Events do
     |> preload_participation_assocs()
   end
 
+  def preload_participation_assocs(nil), do: nil
+
   def preload_participation_assocs(event) do
     event
-    |> Repo.preload(participants: participants_query_left(false))
-    |> Repo.preload(ex_participants: participants_query_left(true))
+    |> Repo.preload(participants: participants_query_left(event.id, false))
+    |> Repo.preload(ex_participants: participants_query_left(event.id, true))
   end
 
-  defp participants_query_left(has_left) do
+  defp participants_query_left(event_id, has_left) do
     from(
       u in User,
       join: p in Participation,
       on: u.id == p.user_id,
-      where: p.has_left == ^has_left
+      where: p.has_left == ^has_left and p.event_id == ^event_id
     )
   end
 
@@ -102,7 +104,8 @@ defmodule Eventer.Persistence.Events do
       place: event.place,
       creator: Users.to_map(event.creator),
       decisions: Enum.map(event.decisions, &Decisions.to_map/1),
-      participants: Enum.map(event.participants, &Users.to_map/1)
+      participants: Enum.map(event.participants, &Users.to_map/1),
+      exParticipants: Enum.map(event.ex_participants, &Users.to_map/1)
     }
   end
 end
