@@ -31,4 +31,12 @@ defmodule EventerWeb.EventChannel do
     broadcast(socket, "user_left", %{userId: user.id})
     {:reply, {:ok, %{}}, socket}
   end
+
+  def handle_in("update_event", %{"event" => event_data}, socket) do
+    {:ok, _ } = Events.get_event(socket.assigns.event_id)
+    |> Events.update_event(event_data)
+
+    broadcast(socket, "event_updated", %{event: event_data})
+    {:reply, {:ok, %{}}, socket}
+  end
 end

@@ -25,6 +25,7 @@ defmodule EventerWeb.ChannelCase do
       use Phoenix.ChannelTest
 
       import EventerWeb.Factory
+      import EventerWeb.ChannelCase
 
       # The default endpoint for testing
       @endpoint EventerWeb.Endpoint
@@ -61,5 +62,16 @@ defmodule EventerWeb.ChannelCase do
     end
 
     :ok
+  end
+
+  def diff(struct1, struct2) do
+    map1 = KitchenSink.Struct.to_map(struct1)
+    map2 = KitchenSink.Struct.to_map(struct2)
+
+    delta =
+      KitchenSink.Map.diff(map1, map2)
+      |> Enum.sort()
+
+    {delta, map1, map2}
   end
 end
