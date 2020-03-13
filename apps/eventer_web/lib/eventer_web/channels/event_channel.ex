@@ -28,7 +28,7 @@ defmodule EventerWeb.EventChannel do
 
     Events.leave(socket.assigns.event_id, user.id)
 
-    # broadcast(socket, "user_joined", %{user: Users.to_map(user)})
+    broadcast(socket, "user_left", %{userId: user.id})
     {:reply, {:ok, %{}}, socket}
   end
 end

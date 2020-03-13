@@ -31,7 +31,7 @@ defmodule EventerWeb.EventChannelParticipationTest do
     end
 
     @tag authorized: 2
-    test "'join_event' broadcasts", %{connections: connections} do
+    test "'user_joined' is broadcasted", %{connections: connections} do
       [creator, joiner] = connections
       event = insert(:event, %{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
@@ -71,6 +71,26 @@ defmodule EventerWeb.EventChannelParticipationTest do
 
       assert event.participants === []
       assert event.ex_participants === [joiner.user]
+    end
+
+    @tag authorized: 2
+    test "'user_left' is broadcasted", %{connections: connections} do
+      [creator, joiner] = connections
+      event = insert(:event, %{creator: creator.user})
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, joiner_socket} =
+        subscribe_and_join(
+          joiner.socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      push(joiner_socket, "join_event", %{})
+      assert_broadcast("user_joined", payload)
+      push(joiner_socket, "leave_event", %{})
+      assert_broadcast("user_left", payload)
+      assert payload === %{userId: joiner.user.id}
     end
   end
 end
