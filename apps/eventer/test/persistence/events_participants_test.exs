@@ -26,17 +26,28 @@ defmodule Persistence.EventsParticipantsTest do
       %{user: user, event: Repo.preload(event, :decisions)}
     end
 
-    test "join", %{event: event} do
-      {:ok, user} =
+    test "join", %{event: event, user: user} do
+      {:ok, new_event} =
+        Events.insert_event(%{
+          creator_id: user.id,
+          title: "test event",
+          description: "test description",
+          time: tomorrow(),
+          place: "nowhere"
+        })
+
+      {:ok, new_user} =
         Users.insert_user(%{
           email: "test1@example.com",
           display_name: "New User"
         })
 
-      {:ok, _} = Events.join(event.id, user.id)
+      {:ok, _} = Events.join(event.id, new_user.id)
+      {:ok, _} = Events.join(new_event.id, new_user.id)
+
       updated_event = Events.get_event(event.id)
 
-      assert updated_event.participants === [user]
+      assert updated_event.participants === [new_user]
     end
 
     test "join fails for non-existent user", %{event: event} do
