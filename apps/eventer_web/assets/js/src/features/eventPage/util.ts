@@ -90,8 +90,8 @@ export const mapResponseEventToStateEvent: mapResponseEventToStateEventT = respo
   };
 };
 
-type eventTransformationT = (e: stateEventT, u: responseUserT) => stateEventT;
-export const addUserToParticipants: eventTransformationT = (
+type addUserToParticipantsT = (e: stateEventT, u: responseUserT) => stateEventT;
+export const addUserToParticipants: addUserToParticipantsT = (
   currentEvent,
   joiningUser,
 ) => {
@@ -119,5 +119,18 @@ export const moveToExParticipants: moveToExParticipantsT = (
     ...rest,
     participants: otherParticipants,
     exParticipants: { ...exParticipants, [userId]: leavingUser },
+  };
+};
+
+type updateStateEventT = (
+  e: stateEventT,
+  data: { title: string; description: string },
+) => stateEventT;
+export const updateStateEvent: updateStateEventT = (currentEvent, data) => {
+  const { title, description } = data;
+  return {
+    ...currentEvent,
+    title,
+    description,
   };
 };

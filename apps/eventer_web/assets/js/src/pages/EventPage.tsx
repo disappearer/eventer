@@ -8,13 +8,20 @@ import {
   mapResponseEventToStateEvent,
   addUserToParticipants,
   moveToExParticipants,
+  updateStateEvent,
 } from '../features/eventPage/util';
+import Modal from '../components/Modal';
+import EventUpdateForm, { updateEventT } from '../features/eventPage/EventUpdateForm';
+
+type modalFormT = 'update';
 
 const EventPage: React.FC = () => {
   const { token, id: currentUserId } = useAuthorizedUser();
   const { id_hash } = useParams();
   const [event, setEvent] = useState<Option<stateEventT>>(None);
   const [channel, setChannel] = useState<Option<Channel>>(None);
+  const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [modalForm, setModalForm] = useState<Option<modalFormT>>(None);
 
   useEffect(() => {
     const socket = new Socket('/socket', { params: { token } });
@@ -43,6 +50,13 @@ const EventPage: React.FC = () => {
       });
     });
 
+    channel.on('event_updated', ({ event: data }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(updateStateEvent(e, data));
+      });
+    });
+
     setChannel(Some(channel));
 
     return () => {
@@ -54,9 +68,23 @@ const EventPage: React.FC = () => {
     channel.get().push('join_event', {});
   }, [channel]);
 
-  const leaveEvent = useCallback(() => {    
+  const leaveEvent = useCallback(() => {
     channel.get().push('leave_event', {});
   }, [channel]);
+
+  const updateEvent = useCallback<updateEventT>((data) => {
+    channel.get().push('update_event', {event: data})
+  }, [channel])
+
+  const showEditModal = () => {
+    setModalForm(Some('update'));
+    setShouldShowModal(true);
+  };
+
+  const hideEditModal = () => {
+    setModalForm(None);
+    setShouldShowModal(false);
+  };
 
   return (
     <section>
@@ -81,6 +109,7 @@ const EventPage: React.FC = () => {
                   <h1>{title}</h1>
                   <p>{description}</p>
                   <p>Created by {participants[creatorId].displayName}</p>
+                  <button onClick={showEditModal}>Edit</button>
                 </div>
                 <div className="box">
                   <h3>Time</h3>
@@ -129,6 +158,26 @@ const EventPage: React.FC = () => {
                   ),
                 )}
               </div>
+              <Modal
+                shouldShowModal={shouldShowModal}
+                hideModal={hideEditModal}
+              >
+                {modalForm.fold(
+                  () => null,
+                  modalForm => {
+                    switch (modalForm) {
+                      case 'update':
+                        return (
+                          <EventUpdateForm
+                            initialValues={{ title, description }}
+                            onSuccess={hideEditModal}
+                            onSubmit={updateEvent}
+                          />
+                        );
+                    }
+                  },
+                )}
+              </Modal>
             </>
           );
         },
