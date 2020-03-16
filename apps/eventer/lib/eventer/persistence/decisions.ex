@@ -1,5 +1,6 @@
 defmodule Eventer.Persistence.Decisions do
   alias Eventer.{Decision, Repo}
+  alias Eventer.Persistence.Events
 
   def get_decision(id) do
     Repo.get(Decision, id)
@@ -24,7 +25,29 @@ defmodule Eventer.Persistence.Decisions do
   end
 
   def resolve_decision(decision, resolution) do
+    case decision.objective do
+      "time" -> update_event_time(decision, resolution)
+      "place" -> update_event_place(decision, resolution)
+      _ -> nil
+    end
+
     update_decision(decision, %{resolution: resolution, pending: false})
+  end
+
+  defp update_event_time(decision, time_string) do
+    {:ok, time, _} = DateTime.from_iso8601(time_string)
+
+    decision
+    |> Repo.preload(:event)
+    |> Map.get(:event)
+    |> Events.update_event(%{time: time})
+  end
+
+  defp update_event_place(decision, place) do
+    decision
+    |> Repo.preload(:event)
+    |> Map.get(:event)
+    |> Events.update_event(%{place: place})
   end
 
   def discard_resolution(decision) do

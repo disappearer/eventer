@@ -9,8 +9,16 @@ body {
 h1 {
   font-size: 4.6rem;
   line-height: 1.2;
+  color: rgb(153, 153, 153);
 }
 
+h2 {
+  color: rgb(153, 153, 153);
+}
+
+h3 {
+  color: rgb(153, 153, 153);
+}
 span#display-name {
   margin-left: 50px;
 }

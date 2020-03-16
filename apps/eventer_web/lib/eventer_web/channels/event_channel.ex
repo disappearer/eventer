@@ -44,14 +44,19 @@ defmodule EventerWeb.EventChannel do
   def handle_in("resolve_decision", %{"decision" => decision}, socket) do
     %{"id" => id, "resolution" => resolution} = decision
 
-    {:ok, _} =
-      Decisions.get_decision(id)
-      |> Decisions.resolve_decision(resolution)
+    case Decisions.get_decision(id)
+         |> Decisions.resolve_decision(resolution) do
+      {:ok, _} ->
+        broadcast(socket, "decision_resolved", %{
+          decision: %{id: id, resolution: resolution}
+        })
 
-    broadcast(socket, "decision_resolved", %{
-      decision: %{id: id, resolution: resolution}
-    })
+        {:reply, {:ok, %{}}, socket}
 
-    {:reply, {:ok, %{}}, socket}
+      {:error, changeset} ->
+        IO.inspect(changeset, label: "changeset")
+
+        {:reply, {:error, %{}}, socket}
+    end
   end
 end
