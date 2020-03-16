@@ -32,7 +32,7 @@ defmodule Eventer.Event do
 
   def update_changeset(event, params \\ %{}) do
     event
-    |> cast(params, [:title, :description, :cancelled])
+    |> cast(params, [:title, :description, :cancelled, :time, :place])
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
   end

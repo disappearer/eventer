@@ -2,7 +2,7 @@ defmodule EventerWeb.EventChannel do
   use EventerWeb, :channel
 
   alias EventerWeb.IdHasher
-  alias Eventer.Persistence.{Events, Users}
+  alias Eventer.Persistence.{Events, Users, Decisions}
 
   def join("event:" <> event_id_hash, _message, socket) do
     event =
@@ -33,10 +33,30 @@ defmodule EventerWeb.EventChannel do
   end
 
   def handle_in("update_event", %{"event" => event_data}, socket) do
-    {:ok, _ } = Events.get_event(socket.assigns.event_id)
-    |> Events.update_event(event_data)
+    {:ok, _} =
+      Events.get_event(socket.assigns.event_id)
+      |> Events.update_event(event_data)
 
     broadcast(socket, "event_updated", %{event: event_data})
     {:reply, {:ok, %{}}, socket}
+  end
+
+  def handle_in("resolve_decision", %{"decision" => decision}, socket) do
+    %{"id" => id, "resolution" => resolution} = decision
+
+    case Decisions.get_decision(id)
+         |> Decisions.resolve_decision(resolution) do
+      {:ok, _} ->
+        broadcast(socket, "decision_resolved", %{
+          decision: %{id: id, resolution: resolution}
+        })
+
+        {:reply, {:ok, %{}}, socket}
+
+      {:error, changeset} ->
+        IO.inspect(changeset, label: "changeset")
+
+        {:reply, {:error, %{}}, socket}
+    end
   end
 end
