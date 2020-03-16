@@ -6,23 +6,33 @@ type valuesT = {
   description: string;
 };
 
-export type updateDecisionT = (data: {title: string; description: string}) => void;
+export type updateDecisionT = (data: {
+  id: number;
+  title: string;
+  description: string;
+}) => void;
 
 type decisionUpdateFromPropT = {
   initialValues: {
     title: string;
     description: string;
   };
+  id: number;
   onSubmit: updateDecisionT;
   onSuccess: () => void;
 };
 
-const DecisionUpdateForm: React.FC<decisionUpdateFromPropT> = ({ initialValues, onSuccess, onSubmit }) => {
+const DecisionUpdateForm: React.FC<decisionUpdateFromPropT> = ({
+  initialValues,
+  id,
+  onSuccess,
+  onSubmit,
+}) => {
   return (
     <Formik<valuesT>
       initialValues={initialValues}
       onSubmit={async values => {
-        onSubmit(values);
+        onSubmit({ ...values, id });
         onSuccess();
       }}
     >

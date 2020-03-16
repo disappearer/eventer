@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ResolveForm, { resolveDecisionT } from './DecisionResolveForm';
-import DecisionUpdateForm from './DecisionUpdateForm';
+import DecisionUpdateForm, { updateDecisionT } from './DecisionUpdateForm';
 import { decisionT } from './util';
 
 export type updateEventT = (data: {
@@ -12,6 +12,7 @@ type decisionPropsT = {
   id: number;
   data: decisionT;
   onDecisionResolve: resolveDecisionT;
+  onDecisionUpdate: updateDecisionT;
 };
 
 type decisionActionT = 'view' | 'edit' | 'resolve';
@@ -20,6 +21,7 @@ const Decision: React.FC<decisionPropsT> = ({
   id,
   data,
   onDecisionResolve,
+  onDecisionUpdate,
 }) => {
   const [decisionAction, setDecisionAction] = useState<decisionActionT>('view');
 
@@ -47,8 +49,9 @@ const Decision: React.FC<decisionPropsT> = ({
         )}
         {decisionAction === 'edit' && (
           <DecisionUpdateForm
+            id={id}
             initialValues={{ title, description }}
-            onSubmit={() => {}}
+            onSubmit={onDecisionUpdate}
             onSuccess={showDecisionData}
           />
         )}

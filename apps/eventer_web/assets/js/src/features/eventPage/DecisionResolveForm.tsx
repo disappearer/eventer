@@ -12,11 +12,6 @@ type valuesT = {
 
 export type resolveDecisionT = (id: number, resolution: resolutionT) => void;
 
-export type updateDecisionT = (data: {
-  title: string;
-  description: string;
-}) => void;
-
 type resolveFormPropsT = {
   id: number;
   objective: objectiveT;

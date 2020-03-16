@@ -9,7 +9,8 @@ import {
   addUserToParticipants,
   moveToExParticipants,
   updateStateEvent,
-  setDecisionResolved,
+  resolveStateDecision,
+  updateStateDecision,
 } from '../features/eventPage/util';
 import Modal from '../components/Modal';
 import EventUpdateForm, {
@@ -17,6 +18,7 @@ import EventUpdateForm, {
 } from '../features/eventPage/EventUpdateForm';
 import Decision from '../features/eventPage/Decision';
 import { resolveDecisionT } from '../features/eventPage/DecisionResolveForm';
+import { updateDecisionT } from '../features/eventPage/DecisionUpdateForm';
 
 type eventUpdateFormModalChildT = {
   component: 'EventUpdateForm';
@@ -72,10 +74,17 @@ const EventPage: React.FC = () => {
       });
     });
 
+    channel.on('decision_updated', ({ decision }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(updateStateDecision(e, decision));
+      });
+    });
+
     channel.on('decision_resolved', ({ decision }) => {
       setEvent(event => {
         const e = event.get();
-        return Some(setDecisionResolved(e, decision));
+        return Some(resolveStateDecision(e, decision));
       });
     });
 
@@ -97,6 +106,13 @@ const EventPage: React.FC = () => {
   const updateEvent = useCallback<updateEventT>(
     data => {
       channel.get().push('update_event', { event: data });
+    },
+    [channel],
+  );
+
+  const updateDecision = useCallback<updateDecisionT>(
+    data => {
+      channel.get().push('update_decision', { decision: data });
     },
     [channel],
   );
@@ -219,6 +235,7 @@ const EventPage: React.FC = () => {
                             id={id}
                             data={decisions[id]}
                             onDecisionResolve={resolveDecision}
+                            onDecisionUpdate={updateDecision}
                           />
                         );
                     }
