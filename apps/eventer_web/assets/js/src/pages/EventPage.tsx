@@ -9,11 +9,26 @@ import {
   addUserToParticipants,
   moveToExParticipants,
   updateStateEvent,
+  setDecisionResolved,
 } from '../features/eventPage/util';
 import Modal from '../components/Modal';
-import EventUpdateForm, { updateEventT } from '../features/eventPage/EventUpdateForm';
+import EventUpdateForm, {
+  updateEventT,
+} from '../features/eventPage/EventUpdateForm';
+import Decision from '../features/eventPage/Decision';
+import { resolveDecisionT } from '../features/eventPage/DecisionResolveForm';
 
-type modalFormT = 'update';
+type eventUpdateFormModalChildT = {
+  component: 'EventUpdateForm';
+  props: {};
+};
+
+type decisionModalChildT = {
+  component: 'Decision';
+  id: number;
+};
+
+type modalChildT = eventUpdateFormModalChildT | decisionModalChildT;
 
 const EventPage: React.FC = () => {
   const { token, id: currentUserId } = useAuthorizedUser();
@@ -21,7 +36,7 @@ const EventPage: React.FC = () => {
   const [event, setEvent] = useState<Option<stateEventT>>(None);
   const [channel, setChannel] = useState<Option<Channel>>(None);
   const [shouldShowModal, setShouldShowModal] = useState(false);
-  const [modalForm, setModalForm] = useState<Option<modalFormT>>(None);
+  const [modalChild, setModalChild] = useState<Option<modalChildT>>(None);
 
   useEffect(() => {
     const socket = new Socket('/socket', { params: { token } });
@@ -57,6 +72,13 @@ const EventPage: React.FC = () => {
       });
     });
 
+    channel.on('decision_resolved', ({ decision }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(setDecisionResolved(e, decision));
+      });
+    });
+
     setChannel(Some(channel));
 
     return () => {
@@ -72,17 +94,32 @@ const EventPage: React.FC = () => {
     channel.get().push('leave_event', {});
   }, [channel]);
 
-  const updateEvent = useCallback<updateEventT>((data) => {
-    channel.get().push('update_event', {event: data})
-  }, [channel])
+  const updateEvent = useCallback<updateEventT>(
+    data => {
+      channel.get().push('update_event', { event: data });
+    },
+    [channel],
+  );
+
+  const resolveDecision = useCallback<resolveDecisionT>(
+    (id, resolution) => {
+      channel.get().push('resolve_decision', { decision: { id, resolution } });
+    },
+    [channel],
+  );
 
   const showEditModal = () => {
-    setModalForm(Some('update'));
+    setModalChild(Some({ component: 'EventUpdateForm', props: {} }));
     setShouldShowModal(true);
   };
 
-  const hideEditModal = () => {
-    setModalForm(None);
+  const showDecisionModal = (id: number) => {
+    setModalChild(Some({ component: 'Decision', id }));
+    setShouldShowModal(true);
+  };
+
+  const hideModal = () => {
+    setModalChild(None);
     setShouldShowModal(false);
   };
 
@@ -141,11 +178,15 @@ const EventPage: React.FC = () => {
               </div>
               <div>
                 <h2>Decisions</h2>
-                {Object.entries(decisions).map(
-                  ([id, { title, description, pending, objective }]) => (
+                {Object.entries(decisions).map(([id, data]) => {
+                  const { title, description, pending, objective } = data;
+                  return (
                     <div key={id} className="decision row">
                       <div className="decision-section">
-                        <h3>
+                        <h3
+                          className="decision-title"
+                          onClick={() => showDecisionModal(parseInt(id, 10))}
+                        >
                           {title}
                           {pending && ' (pending)'}
                         </h3>
@@ -155,23 +196,29 @@ const EventPage: React.FC = () => {
                         <p>Objective: {objective}</p>
                       </div>
                     </div>
-                  ),
-                )}
+                  );
+                })}
               </div>
-              <Modal
-                shouldShowModal={shouldShowModal}
-                hideModal={hideEditModal}
-              >
-                {modalForm.fold(
+              <Modal shouldShowModal={shouldShowModal} hideModal={hideModal}>
+                {modalChild.fold(
                   () => null,
-                  modalForm => {
-                    switch (modalForm) {
-                      case 'update':
+                  child => {
+                    switch (child.component) {
+                      case 'EventUpdateForm':
                         return (
                           <EventUpdateForm
                             initialValues={{ title, description }}
-                            onSuccess={hideEditModal}
+                            onSuccess={hideModal}
                             onSubmit={updateEvent}
+                          />
+                        );
+                      case 'Decision':
+                        const { id } = child;
+                        return (
+                          <Decision
+                            id={id}
+                            data={decisions[id]}
+                            onDecisionResolve={resolveDecision}
                           />
                         );
                     }
