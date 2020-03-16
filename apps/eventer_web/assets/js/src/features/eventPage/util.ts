@@ -137,11 +137,34 @@ export const updateStateEvent: updateStateEventT = (currentEvent, data) => {
   };
 };
 
-type setDecisionResolvedT = (
+
+type updateStateDecisionT = (
+  e: stateEventT,
+  data: { id: number; title: string; description: string },
+) => stateEventT;
+export const updateStateDecision: updateStateDecisionT = (
+  currentEvent,
+  data,
+) => {
+  const { id, title, description } = data;
+  const { decisions } = currentEvent;
+
+  const { [id]: decisionToUpdate } = decisions;
+
+  return {
+    ...currentEvent,
+    decisions: {
+      ...decisions,
+      [id]: { ...decisionToUpdate, title, description },
+    },
+  };
+};
+
+type resolveStateDecisionT = (
   e: stateEventT,
   data: { id: number; resolution: string },
 ) => stateEventT;
-export const setDecisionResolved: setDecisionResolvedT = (
+export const resolveStateDecision: resolveStateDecisionT = (
   currentEvent,
   data,
 ) => {
