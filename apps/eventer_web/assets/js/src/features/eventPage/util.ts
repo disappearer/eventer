@@ -17,13 +17,15 @@ type eventDataT = {
   title: string;
   description: string;
   place: string | null;
-  time: Date | null;
+  time: string | null;
 };
 
-type decisionT = {
+export type objectiveT = 'place' | 'time' | 'general';
+
+export type decisionT = {
   title: string;
   description: string;
-  objective: 'place' | 'time' | 'general';
+  objective: objectiveT;
   pending: boolean;
   creator_id: number;
   resolution: string | null;
@@ -132,5 +134,31 @@ export const updateStateEvent: updateStateEventT = (currentEvent, data) => {
     ...currentEvent,
     title,
     description,
+  };
+};
+
+type setDecisionResolvedT = (
+  e: stateEventT,
+  data: { id: number; resolution: string },
+) => stateEventT;
+export const setDecisionResolved: setDecisionResolvedT = (
+  currentEvent,
+  data,
+) => {
+  const { id, resolution } = data;
+  const { decisions } = currentEvent;
+
+  const { [id]: resolvedDecision } = decisions;
+
+  return {
+    ...currentEvent,
+    time:
+      resolvedDecision.objective === 'time' ? resolution : currentEvent.time,
+    place:
+      resolvedDecision.objective === 'place' ? resolution : currentEvent.place,
+    decisions: {
+      ...decisions,
+      [id]: { ...resolvedDecision, resolution, pending: false },
+    },
   };
 };

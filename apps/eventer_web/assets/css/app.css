@@ -36,10 +36,10 @@ section {
   height: 100%;
 }
 
-.row {
+/* .row {
   height: 100%;
   border-bottom: 1px solid rgb(230, 230, 230);
-}
+} */
 
 .box {
   padding: 20px 40px 20px 40px;
@@ -82,6 +82,10 @@ section {
 
 .decision-section {
   margin-right: 30px;
+}
+
+h3.decision-title {
+  cursor: pointer;
 }
 
 /* The Modal (background) */
