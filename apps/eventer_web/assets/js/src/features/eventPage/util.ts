@@ -31,7 +31,7 @@ export type decisionT = {
   resolution: string | null;
 };
 type responseDecisionT = decisionT & { id: number };
-type stateDecisionsT = {
+export type stateDecisionsT = {
   [key: number]: decisionT;
 };
 type responseDecisionsT = responseDecisionT[];
