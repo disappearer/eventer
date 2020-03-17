@@ -42,7 +42,16 @@ defmodule EventerWeb.EventChannel do
   end
 
   def handle_in("add_decision", %{"decision" => data}, socket) do
-    case Decisions.insert_decision(data) do
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+    event_id = socket.assigns.event_id
+
+    result =
+      data
+      |> Map.put_new("creator_id", user.id)
+      |> Map.put_new("event_id", event_id)
+      |> Decisions.insert_decision()
+
+    case result do
       {:ok, decision} ->
         broadcast(socket, "decision_added", %{
           decision: Decisions.to_map(decision)

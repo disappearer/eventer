@@ -6,18 +6,19 @@ type valuesT = {
   description: string;
 };
 
-export type updateEventT = (data: {title: string; description: string}) => void;
+const initialValues: valuesT = {
+  title: '',
+  description: ''
+}
 
-type eventUpdateFromPropsT = {
-  initialValues: {
-    title: string;
-    description: string;
-  };
-  onSubmit: updateEventT;
+export type addDecisionT = (data: {title: string; description: string}) => void;
+
+type addDecisionFromPropsT = {
+  onSubmit: addDecisionT;
   onSuccess: () => void;
 };
 
-const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({ initialValues, onSuccess, onSubmit }) => {
+const AddDecisionForm: React.FC<addDecisionFromPropsT> = ({ onSuccess, onSubmit }) => {
   return (
     <Formik<valuesT>
       initialValues={initialValues}
@@ -53,4 +54,4 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({ initialValues, onSuc
   );
 };
 
-export default EventUpdateForm;
+export default AddDecisionForm;

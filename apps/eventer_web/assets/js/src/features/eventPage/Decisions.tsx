@@ -4,14 +4,19 @@ import { stateDecisionsT } from './util';
 type decisionsPropsT = {
   decisions: stateDecisionsT;
   onDecisionClick: (n: number) => void;
+  onAddDecisionClick: () => void;
 };
 const Decisions: React.FC<decisionsPropsT> = ({
   decisions,
   onDecisionClick,
+  onAddDecisionClick,
 }) => {
   return (
     <div>
-      <h2>Decisions</h2>
+      <div className="row">
+        <h2>Decisions</h2>
+        <button onClick={onAddDecisionClick}>Add</button>
+      </div>
       {Object.entries(decisions).map(([id, data]) => {
         const { title, description, pending, objective } = data;
         return (

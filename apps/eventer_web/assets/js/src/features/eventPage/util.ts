@@ -138,6 +138,25 @@ export const updateStateEvent: updateStateEventT = (currentEvent, data) => {
   };
 };
 
+type addStateDecisionT = (
+  e: stateEventT,
+  decision: responseDecisionT,
+) => stateEventT;
+export const addStateDecision: addStateDecisionT = (
+  currentEvent,
+  data,
+) => {
+  const { id, ...decisionData } = data;
+  const { decisions } = currentEvent;
+  return {
+    ...currentEvent,
+    decisions: {
+      ...decisions,
+      [id]: decisionData,
+    },
+  };
+};
+
 type updateStateDecisionT = (
   e: stateEventT,
   data: { id: number; title: string; description: string },

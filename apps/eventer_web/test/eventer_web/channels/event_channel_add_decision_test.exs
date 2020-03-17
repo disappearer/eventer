@@ -23,8 +23,6 @@ defmodule EventerWeb.EventChannelAddDecisionTest do
 
       decision_data = %{
         decision: %{
-          creator_id: user.id,
-          event_id: event.id,
           title: "Da Decision",
           description: "Da Description"
         }
@@ -40,8 +38,8 @@ defmodule EventerWeb.EventChannelAddDecisionTest do
          {[:decisions], '', [new_decision]}
        ], _, _} = diff(event, updated_event)
 
-      assert new_decision.creator_id === decision_data.decision.creator_id
-      assert new_decision.event_id === decision_data.decision.event_id
+      assert new_decision.creator_id === user.id
+      assert new_decision.event_id === event.id
       assert new_decision.title === decision_data.decision.title
       assert new_decision.description === decision_data.decision.description
     end
@@ -62,8 +60,6 @@ defmodule EventerWeb.EventChannelAddDecisionTest do
 
       decision_data = %{
         decision: %{
-          creator_id: user.id,
-          event_id: event.id,
           title: "Da Decision",
           description: "Da Description"
         }
@@ -74,8 +70,8 @@ defmodule EventerWeb.EventChannelAddDecisionTest do
       assert_broadcast("decision_added", %{decision: new_decision})
 
       assert new_decision.id !== nil
-      assert new_decision.creator_id === decision_data.decision.creator_id
-      assert new_decision.event_id === decision_data.decision.event_id
+      assert new_decision.creator_id === user.id
+      assert new_decision.event_id === event.id
       assert new_decision.title === decision_data.decision.title
       assert new_decision.description === decision_data.decision.description
     end

@@ -10,6 +10,7 @@ import {
   resolveStateDecision,
   openStateDiscussion,
   stateEventT,
+  addStateDecision,
 } from './util';
 import { useParams } from 'react-router-dom';
 
@@ -54,6 +55,13 @@ const useChannel: useChannelT = (token, setEvent) => {
       setEvent(event => {
         const e = event.get();
         return Some(updateStateEvent(e, data));
+      });
+    });
+
+    channel.on('decision_added', ({ decision }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(addStateDecision(e, decision));
       });
     });
 
