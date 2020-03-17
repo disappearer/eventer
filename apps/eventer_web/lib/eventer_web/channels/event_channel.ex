@@ -41,6 +41,21 @@ defmodule EventerWeb.EventChannel do
     {:reply, {:ok, %{}}, socket}
   end
 
+  def handle_in("add_decision", %{"decision" => data}, socket) do
+    case Decisions.insert_decision(data) do
+      {:ok, decision} ->
+        broadcast(socket, "decision_added", %{
+          decision: Decisions.to_map(decision)
+        })
+
+        {:reply, {:ok, %{}}, socket}
+
+      {:error, changeset} ->
+        IO.inspect(changeset, label: "changeset")
+        {:reply, {:error, %{}}, socket}
+    end
+  end
+
   def handle_in("update_decision", %{"decision" => decision}, socket) do
     %{"id" => id, "title" => title, "description" => description} = decision
 
