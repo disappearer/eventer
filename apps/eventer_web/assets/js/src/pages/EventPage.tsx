@@ -9,10 +9,10 @@ import EventUpdateForm from '../features/eventPage/EventUpdateForm';
 import useChannel from '../features/eventPage/useChannel';
 import useChannelCallbacks from '../features/eventPage/useChannelCallbacks';
 import { stateEventT } from '../features/eventPage/util';
+import AddDecisionForm from '../features/eventPage/AddDecisionForm';
 
 type eventUpdateFormModalChildT = {
   component: 'EventUpdateForm';
-  props: {};
 };
 
 type decisionModalChildT = {
@@ -20,7 +20,14 @@ type decisionModalChildT = {
   id: number;
 };
 
-type modalChildT = eventUpdateFormModalChildT | decisionModalChildT;
+type addDecisionModalChildT = {
+  component: 'AddDecisionForm';
+};
+
+type modalChildT =
+  | eventUpdateFormModalChildT
+  | addDecisionModalChildT
+  | decisionModalChildT;
 
 const EventPage: React.FC = () => {
   const { token, id: currentUserId } = useAuthorizedUser();
@@ -34,6 +41,7 @@ const EventPage: React.FC = () => {
     joinEvent,
     leaveEvent,
     updateEvent,
+    addDecision,
     updateDecision,
     openTimeDiscussion,
     openPlaceDiscussion,
@@ -41,7 +49,12 @@ const EventPage: React.FC = () => {
   } = useChannelCallbacks(channel);
 
   const showEditModal = useCallback(() => {
-    setModalChild(Some({ component: 'EventUpdateForm', props: {} }));
+    setModalChild(Some({ component: 'EventUpdateForm' }));
+    setShouldShowModal(true);
+  }, [setModalChild, setShouldShowModal]);
+
+  const showAddDecisionModal = useCallback(() => {
+    setModalChild(Some({ component: 'AddDecisionForm' }));
     setShouldShowModal(true);
   }, [setModalChild, setShouldShowModal]);
 
@@ -80,6 +93,7 @@ const EventPage: React.FC = () => {
               <Decisions
                 decisions={decisions}
                 onDecisionClick={showDecisionModal}
+                onAddDecisionClick={showAddDecisionModal}
               />
               <Modal shouldShowModal={shouldShowModal} hideModal={hideModal}>
                 {modalChild.fold(
@@ -102,6 +116,13 @@ const EventPage: React.FC = () => {
                             data={decisions[id]}
                             onDecisionResolve={resolveDecision}
                             onDecisionUpdate={updateDecision}
+                          />
+                        );
+                      case 'AddDecisionForm':
+                        return (
+                          <AddDecisionForm
+                            onSuccess={hideModal}
+                            onSubmit={addDecision}
                           />
                         );
                     }

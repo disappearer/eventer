@@ -4,6 +4,7 @@ import { Channel } from 'phoenix';
 import { updateEventT } from './Decision';
 import { updateDecisionT } from './DecisionUpdateForm';
 import { resolveDecisionT } from './DecisionResolveForm';
+import { addDecisionT } from './AddDecisionForm';
 
 type useChannelCallbacksT = (
   channel: Option<Channel>,
@@ -11,6 +12,7 @@ type useChannelCallbacksT = (
   joinEvent: () => void;
   leaveEvent: () => void;
   updateEvent: updateEventT;
+  addDecision: addDecisionT;
   updateDecision: updateDecisionT;
   openTimeDiscussion: () => void;
   openPlaceDiscussion: () => void;
@@ -32,9 +34,16 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     [channel],
   );
 
+  const addDecision = useCallback<addDecisionT>(
+    decision => {
+      channel.get().push('add_decision', { decision });
+    },
+    [channel],
+  );
+
   const updateDecision = useCallback<updateDecisionT>(
-    data => {
-      channel.get().push('update_decision', { decision: data });
+    decision => {
+      channel.get().push('update_decision', { decision });
     },
     [channel],
   );
@@ -58,6 +67,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     joinEvent,
     leaveEvent,
     updateEvent,
+    addDecision,
     updateDecision,
     openTimeDiscussion,
     openPlaceDiscussion,
