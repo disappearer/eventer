@@ -1,5 +1,5 @@
 defmodule Eventer.Persistence.Events do
-  alias Eventer.{User, Event, Participation, Repo}
+  alias Eventer.{User, Event, Decision, Participation, Repo}
 
   alias Eventer.Persistence.{Users, Decisions}
 
@@ -76,7 +76,7 @@ defmodule Eventer.Persistence.Events do
         %Participation{}
         |> Participation.changeset(%{
           user_id: user_id,
-          event_id: event_id,
+          event_id: event_id
         })
         |> Repo.insert()
 
@@ -93,6 +93,60 @@ defmodule Eventer.Persistence.Events do
       update: [set: [has_left: true]]
     )
     |> Repo.update_all([])
+  end
+
+  def open_discussion(event_id, objective, user_id) do
+    key = String.to_atom(objective)
+    attrs = %{key => nil}
+
+    existing_decision_query =
+      from(d in Decision, where: d.objective == ^objective)
+
+    event =
+      Repo.get(Event, event_id)
+      |> Repo.preload(decisions: existing_decision_query)
+
+    Repo.transaction(fn ->
+      case update_event(event, attrs) do
+        {:error, changeset} ->
+          Repo.rollback(changeset)
+
+        _ ->
+          :ok
+      end
+
+      case event.decisions do
+        [] ->
+          title = if objective === "time", do: "When", else: "Where"
+
+          description =
+            if objective === "time",
+              do: "Time of the event",
+              else: "Place of the event"
+
+          decisions_attrs = %{
+            title: title,
+            description: description,
+            objective: objective,
+            event_id: event_id,
+            creator_id: user_id
+          }
+
+          case Decisions.insert_decision(decisions_attrs) do
+            {:error, changeset} -> Repo.rollback(changeset)
+            {:ok, decision} -> {:new_decision, decision}
+          end
+
+        [existing_decision] ->
+          case Decisions.discard_resolution(existing_decision) do
+            {:error, changeset} -> Repo.rollback(changeset)
+            {:ok, decision} -> {:updated_decision, decision}
+          end
+
+        _ ->
+          Repo.rollback(:unknown_error)
+      end
+    end)
   end
 
   def to_map(%Event{} = event) do

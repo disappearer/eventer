@@ -78,4 +78,18 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:error, %{}}, socket}
     end
   end
+
+  def handle_in("open_discussion", %{"objective" => objective}, socket) do
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+
+    case Events.open_discussion(socket.assigns.event_id, objective, user.id) do
+      {:ok, {:new_decision, new_decision}} ->
+        broadcast(socket, "discussion_opened", %{new_decision: new_decision})
+        {:reply, {:ok, %{}}, socket}
+
+      {:ok, {:updated_decision, updated_decision}} ->
+        broadcast(socket, "discussion_opened", %{updated_decision: updated_decision})
+        {:reply, {:ok, %{}}, socket}
+    end
+  end
 end
