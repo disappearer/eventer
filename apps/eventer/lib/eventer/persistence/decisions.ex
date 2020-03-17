@@ -98,6 +98,7 @@ defmodule Eventer.Persistence.Decisions do
       pending: decision.pending,
       resolution: decision.resolution,
       creator_id: decision.creator_id,
+      event_id: decision.event_id,
       poll: decision.poll
     }
   end

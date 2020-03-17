@@ -84,11 +84,19 @@ defmodule EventerWeb.EventChannel do
 
     case Events.open_discussion(socket.assigns.event_id, objective, user.id) do
       {:ok, {:new_decision, new_decision}} ->
-        broadcast(socket, "discussion_opened", %{new_decision: new_decision})
+        broadcast(socket, "discussion_opened", %{
+          status: "new",
+          decision: Decisions.to_map(new_decision)
+        })
+
         {:reply, {:ok, %{}}, socket}
 
       {:ok, {:updated_decision, updated_decision}} ->
-        broadcast(socket, "discussion_opened", %{updated_decision: updated_decision})
+        broadcast(socket, "discussion_opened", %{
+          status: "updated",
+          decision: Decisions.to_map(updated_decision)
+        })
+
         {:reply, {:ok, %{}}, socket}
     end
   end

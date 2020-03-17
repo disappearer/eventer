@@ -1,24 +1,25 @@
-import { Socket, Channel } from 'phoenix';
-import React, { useEffect, useState, useCallback } from 'react';
+import { None, Option, Some } from 'funfix';
+import { Channel, Socket } from 'phoenix';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuthorizedUser } from '../features/authentication/useAuthorizedUser';
-import { Option, None, Some } from 'funfix';
-import {
-  stateEventT,
-  mapResponseEventToStateEvent,
-  addUserToParticipants,
-  moveToExParticipants,
-  updateStateEvent,
-  resolveStateDecision,
-  updateStateDecision,
-} from '../features/eventPage/util';
 import Modal from '../components/Modal';
-import EventUpdateForm, {
-  updateEventT,
-} from '../features/eventPage/EventUpdateForm';
+import { useAuthorizedUser } from '../features/authentication/useAuthorizedUser';
 import Decision from '../features/eventPage/Decision';
 import { resolveDecisionT } from '../features/eventPage/DecisionResolveForm';
 import { updateDecisionT } from '../features/eventPage/DecisionUpdateForm';
+import EventUpdateForm, {
+  updateEventT,
+} from '../features/eventPage/EventUpdateForm';
+import {
+  addUserToParticipants,
+  mapResponseEventToStateEvent,
+  moveToExParticipants,
+  openStateDiscussion,
+  resolveStateDecision,
+  stateEventT,
+  updateStateDecision,
+  updateStateEvent,
+} from '../features/eventPage/util';
 
 type eventUpdateFormModalChildT = {
   component: 'EventUpdateForm';
@@ -88,6 +89,13 @@ const EventPage: React.FC = () => {
       });
     });
 
+    channel.on('discussion_opened', data => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(openStateDiscussion(e, data));
+      });
+    });
+
     setChannel(Some(channel));
 
     return () => {
@@ -116,6 +124,14 @@ const EventPage: React.FC = () => {
     },
     [channel],
   );
+
+  const openTimeDiscussion = useCallback(() => {
+    channel.get().push('open_discussion', { objective: 'time' });
+  }, [channel]);
+
+  const openPlaceDiscussion = useCallback(() => {
+    channel.get().push('open_discussion', { objective: 'place' });
+  }, [channel]);
 
   const resolveDecision = useCallback<resolveDecisionT>(
     (id, resolution) => {
@@ -167,8 +183,14 @@ const EventPage: React.FC = () => {
                 <div className="box">
                   <h3>Time</h3>
                   <p>{time || 'TBD'}</p>
+                  {time && (
+                    <button onClick={openTimeDiscussion}>Discuss</button>
+                  )}
                   <h3>Place</h3>
                   <p>{place || 'TBD'}</p>
+                  {place && (
+                    <button onClick={openPlaceDiscussion}>Discuss</button>
+                  )}
                 </div>
                 <div className="box">
                   <h3>Participants</h3>
