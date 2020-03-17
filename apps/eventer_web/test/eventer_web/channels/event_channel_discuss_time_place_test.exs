@@ -46,7 +46,11 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
 
       push(socket, "open_discussion", %{objective: "time"})
 
-      assert_broadcast("discussion_opened", %{new_decision: new_decision})
+      assert_broadcast("discussion_opened", %{
+        status: "new",
+        decision: new_decision
+      })
+
       assert new_decision.event_id === event.id
       assert new_decision.objective === "time"
       assert new_decision.pending === true
@@ -69,7 +73,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
 
       time = TestUtil.tomorrow() |> DateTime.to_iso8601()
       Decisions.resolve_decision(decision, time)
-      decision = Repo.get(Decision, decision.id)
+      decision = Repo.get(Decision, decision.id) |> Decisions.to_map()
 
       event_id_hash = IdHasher.encode(event.id)
 
@@ -83,7 +87,8 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
       push(socket, "open_discussion", %{objective: "time"})
 
       assert_broadcast("discussion_opened", %{
-        updated_decision: updated_decision
+        status: "updated",
+        decision: updated_decision
       })
 
       {changes, _, _} = diff(decision, updated_decision)
@@ -135,7 +140,11 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
 
       push(socket, "open_discussion", %{objective: "place"})
 
-      assert_broadcast("discussion_opened", %{new_decision: new_decision})
+      assert_broadcast("discussion_opened", %{
+        status: "new",
+        decision: new_decision
+      })
+
       assert new_decision.event_id === event.id
       assert new_decision.objective === "place"
       assert new_decision.pending === true
@@ -158,7 +167,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
 
       place = "Some place"
       Decisions.resolve_decision(decision, place)
-      decision = Repo.get(Decision, decision.id)
+      decision = Repo.get(Decision, decision.id) |> Decisions.to_map()
 
       event_id_hash = IdHasher.encode(event.id)
 
@@ -172,7 +181,8 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
       push(socket, "open_discussion", %{objective: "place"})
 
       assert_broadcast("discussion_opened", %{
-        updated_decision: updated_decision
+        status: "updated",
+        decision: updated_decision
       })
 
       {changes, _, _} = diff(decision, updated_decision)

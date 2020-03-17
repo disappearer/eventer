@@ -30,10 +30,11 @@ export type decisionT = {
   creator_id: number;
   resolution: string | null;
 };
+type responseDecisionT = decisionT & { id: number };
 type stateDecisionsT = {
   [key: number]: decisionT;
 };
-type responseDecisionsT = (decisionT & { id: number })[];
+type responseDecisionsT = responseDecisionT[];
 
 type userT = {
   displayName: string;
@@ -137,7 +138,6 @@ export const updateStateEvent: updateStateEventT = (currentEvent, data) => {
   };
 };
 
-
 type updateStateDecisionT = (
   e: stateEventT,
   data: { id: number; title: string; description: string },
@@ -183,5 +183,28 @@ export const resolveStateDecision: resolveStateDecisionT = (
       ...decisions,
       [id]: { ...resolvedDecision, resolution, pending: false },
     },
+  };
+};
+
+type openStateDiscussionT = (
+  e: stateEventT,
+  data:
+    | { status: 'new'; decision: responseDecisionT }
+    | { status: 'updated'; decision: responseDecisionT },
+) => stateEventT;
+export const openStateDiscussion: openStateDiscussionT = (
+  currentEvent,
+  data,
+) => {
+  const { decisions } = currentEvent;
+  const {
+    decision: { id, ...decisionData },
+  } = data;
+
+  return {
+    ...currentEvent,
+    time: decisionData.objective === 'time' ? null : currentEvent.time,
+    place: decisionData.objective === 'place' ? null : currentEvent.place,
+    decisions: { ...decisions, [id]: decisionData },
   };
 };
