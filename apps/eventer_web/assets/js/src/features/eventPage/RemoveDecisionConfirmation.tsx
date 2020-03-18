@@ -1,12 +1,5 @@
 import React from 'react';
-
-export type updateEventT = (data: {
-  title: string;
-  description: string;
-}) => void;
-
-export type removeDecisionT = (id: number) => void;
-
+import { removeDecisionT } from './types';
 
 type removeDecisionConfirmationPropsT = {
   id: number;

@@ -35,9 +35,11 @@ const Decisions: React.FC<decisionsPropsT> = ({
             </div>
             <div className="decision-section">
               <p>Objective: {objective}</p>
-              <button onClick={() => onRemoveDecisionClick(parseInt(id, 10))}>
-                Remove
-              </button>
+              {objective === 'general' && (
+                <button onClick={() => onRemoveDecisionClick(parseInt(id, 10))}>
+                  Remove
+                </button>
+              )}
             </div>
           </div>
         );

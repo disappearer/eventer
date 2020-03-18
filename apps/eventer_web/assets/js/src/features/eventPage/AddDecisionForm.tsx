@@ -1,5 +1,6 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
+import { addDecisionT } from './types';
 
 type valuesT = {
   title: string;
@@ -10,8 +11,6 @@ const initialValues: valuesT = {
   title: '',
   description: ''
 }
-
-export type addDecisionT = (data: {title: string; description: string}) => void;
 
 type addDecisionFromPropsT = {
   onSubmit: addDecisionT;

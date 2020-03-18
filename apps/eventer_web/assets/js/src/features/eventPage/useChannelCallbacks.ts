@@ -1,11 +1,14 @@
-import { useCallback } from 'react';
 import { Option } from 'funfix';
 import { Channel } from 'phoenix';
-import { updateEventT } from './Decision';
-import { updateDecisionT } from './DecisionUpdateForm';
-import { resolveDecisionT } from './DecisionResolveForm';
-import { addDecisionT } from './AddDecisionForm';
-import { removeDecisionT } from './RemoveDecisionConfirmation';
+import { useCallback } from 'react';
+import {
+  addDecisionT,
+  discardResolutionT,
+  removeDecisionT,
+  resolveDecisionT,
+  updateDecisionT,
+  updateEventT,
+} from './types';
 
 type useChannelCallbacksT = (
   channel: Option<Channel>,
@@ -18,6 +21,7 @@ type useChannelCallbacksT = (
   openTimeDiscussion: () => void;
   openPlaceDiscussion: () => void;
   resolveDecision: resolveDecisionT;
+  discardResolution: discardResolutionT;
   removeDecision: removeDecisionT;
 };
 const useChannelCallbacks: useChannelCallbacksT = channel => {
@@ -65,6 +69,13 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     [channel],
   );
 
+  const discardResolution = useCallback<discardResolutionT>(
+    id => {
+      channel.get().push('discard_resolution', { decision_id: id });
+    },
+    [channel],
+  );
+
   const removeDecision = useCallback<removeDecisionT>(
     id => {
       channel.get().push('remove_decision', { decision_id: id });
@@ -81,6 +92,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     openTimeDiscussion,
     openPlaceDiscussion,
     resolveDecision,
+    discardResolution,
     removeDecision,
   };
 };

@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import {
   addStateDecision,
   addUserToParticipants,
+  discardStateResolution,
   mapResponseEventToStateEvent,
   moveToExParticipants,
   openStateDiscussion,
@@ -77,6 +78,13 @@ const useChannel: useChannelT = (token, setEvent) => {
       setEvent(event => {
         const e = event.get();
         return Some(resolveStateDecision(e, decision));
+      });
+    });
+
+    channel.on('resolution_discarded', ({ decision_id }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(discardStateResolution(e, decision_id));
       });
     });
 

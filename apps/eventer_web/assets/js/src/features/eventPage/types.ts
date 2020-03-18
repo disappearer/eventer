@@ -20,7 +20,7 @@ export type eventDataT = {
   time: string | null;
 };
 
-export type specificObjectiveT =  'time' | 'place';
+export type specificObjectiveT = 'time' | 'place';
 export type objectiveT = specificObjectiveT | 'general';
 
 export type decisionT = {
@@ -48,3 +48,27 @@ export type stateUsersT = {
   [key: number]: userT;
 };
 export type responseUsersT = responseUserT[];
+
+export type updateEventT = (data: {
+  title: string;
+  description: string;
+}) => void;
+
+export type addDecisionT = (data: {
+  title: string;
+  description: string;
+}) => void;
+
+export type removeDecisionT = (id: number) => void;
+
+export type updateDecisionT = (data: {
+  id: number;
+  title: string;
+  description: string;
+}) => void;
+
+export type resolutionT = Date | string;
+
+export type resolveDecisionT = (id: number, resolution: resolutionT) => void;
+
+export type discardResolutionT = (id: number) => void;

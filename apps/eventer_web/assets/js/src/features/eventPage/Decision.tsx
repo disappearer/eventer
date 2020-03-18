@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
-import ResolveForm, { resolveDecisionT } from './DecisionResolveForm';
-import DecisionUpdateForm, { updateDecisionT } from './DecisionUpdateForm';
-import { decisionT } from './types';
-
-export type updateEventT = (data: {
-  title: string;
-  description: string;
-}) => void;
+import ResolveForm from './DecisionResolveForm';
+import DecisionUpdateForm from './DecisionUpdateForm';
+import {
+  decisionT,
+  discardResolutionT,
+  resolveDecisionT,
+  updateDecisionT,
+} from './types';
 
 type decisionPropsT = {
   id: number;
   data: decisionT;
   onDecisionResolve: resolveDecisionT;
   onDecisionUpdate: updateDecisionT;
+  onResolutionDiscard: discardResolutionT;
 };
 
-type decisionActionT = 'view' | 'edit' | 'resolve';
+type decisionActionT = 'view' | 'edit' | 'resolve' | 'discard_resolution';
 
 const Decision: React.FC<decisionPropsT> = ({
   id,
   data,
   onDecisionResolve,
   onDecisionUpdate,
+  onResolutionDiscard,
 }) => {
   const [decisionAction, setDecisionAction] = useState<decisionActionT>('view');
 
@@ -33,15 +35,24 @@ const Decision: React.FC<decisionPropsT> = ({
     setDecisionAction('resolve');
   };
 
-  const showDecisionData = () => {
+  const resetDecisionModal = () => {
     setDecisionAction('view');
+  };
+
+  const showDiscardConfirmation = () => {
+    setDecisionAction('discard_resolution');
+  };
+
+  const discardResolution = () => {
+    onResolutionDiscard(id);
+    resetDecisionModal();
   };
 
   const { title, description, pending, objective, resolution } = data;
   return (
     <div>
       <div className="row">
-        {(decisionAction === 'view' || decisionAction === 'resolve') && (
+        {['view', 'resolve', 'discard_resolution'].includes(decisionAction) && (
           <div className="box">
             <h2>{title}</h2>
             <p>{description}</p>
@@ -52,7 +63,7 @@ const Decision: React.FC<decisionPropsT> = ({
             id={id}
             initialValues={{ title, description }}
             onSubmit={onDecisionUpdate}
-            onSuccess={showDecisionData}
+            onSuccess={resetDecisionModal}
           />
         )}
         <div className="box">
@@ -60,6 +71,12 @@ const Decision: React.FC<decisionPropsT> = ({
           <p>{pending ? 'pending' : 'resolved'}</p>
           <h3>Objective</h3>
           <p>{objective}</p>
+          {resolution && (
+            <>
+              <h3>Resolution</h3>
+              <p>{resolution}</p>
+            </>
+          )}
         </div>
       </div>
       {decisionAction === 'view' && (
@@ -68,19 +85,28 @@ const Decision: React.FC<decisionPropsT> = ({
           {pending ? (
             <button onClick={showResolveForm}>Resolve</button>
           ) : (
-            `Resolution: ${resolution}`
+            objective === 'general' && (
+              <button onClick={showDiscardConfirmation}>
+                Discard resolution
+              </button>
+            )
           )}
         </>
       )}
       {decisionAction === 'resolve' && (
-        <>
-          <ResolveForm
-            id={id}
-            objective={objective}
-            onSubmit={onDecisionResolve}
-            onSuccess={showDecisionData}
-          />
-        </>
+        <ResolveForm
+          id={id}
+          objective={objective}
+          onSubmit={onDecisionResolve}
+          onSuccess={resetDecisionModal}
+        />
+      )}
+      {decisionAction === 'discard_resolution' && (
+        <div>
+          Are you sure you want to discard resolution "{resolution}"?
+          <button onClick={discardResolution}>Yes</button>
+          <button onClick={resetDecisionModal}>Cancel</button>
+        </div>
       )}
     </div>
   );
