@@ -23,6 +23,16 @@ export type eventDataT = {
 export type specificObjectiveT = 'time' | 'place';
 export type objectiveT = specificObjectiveT | 'general';
 
+export type pollT = {
+  question: string;
+  fixed: boolean;
+  options: {
+    id: string;
+    text: string;
+  }[];
+  votes: { [key: number]: string };
+};
+
 export type decisionT = {
   title: string;
   description: string;
@@ -30,6 +40,7 @@ export type decisionT = {
   pending: boolean;
   creator_id: number;
   resolution: string | null;
+  poll: pollT | null;
 };
 export type responseDecisionT = decisionT & { id: number };
 export type stateDecisionsT = {

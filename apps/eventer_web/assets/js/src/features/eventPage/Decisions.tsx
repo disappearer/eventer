@@ -24,11 +24,8 @@ const Decisions: React.FC<decisionsPropsT> = ({
         return (
           <div key={id} className="decision row">
             <div className="decision-section">
-              <h3
-                className="decision-title"
-                onClick={() => onDecisionClick(parseInt(id, 10))}
-              >
-                {title}
+              <h3 className="decision-title">
+                <a onClick={() => onDecisionClick(parseInt(id, 10))}>{title}</a>
                 {pending && ' (pending)'}
               </h3>
               <p>{description}</p>
