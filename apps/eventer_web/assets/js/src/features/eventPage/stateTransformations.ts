@@ -176,6 +176,27 @@ export const removeStateDecision: removeStateDecisionT = (
   };
 };
 
+type discardStateResolutionT = (
+  e: stateEventT,
+  decisionId: number,
+) => stateEventT;
+export const discardStateResolution: discardStateResolutionT = (
+  currentEvent,
+  decisionId,
+) => {
+  const { decisions } = currentEvent;
+
+  const { [decisionId]: decision } = decisions;
+
+  return {
+    ...currentEvent,
+    decisions: {
+      ...decisions,
+      [decisionId]: { ...decision, pending: true, resolution: null },
+    },
+  };
+};
+
 type openStateDiscussionT = (
   e: stateEventT,
   data:

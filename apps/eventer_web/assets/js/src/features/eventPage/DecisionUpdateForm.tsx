@@ -1,16 +1,11 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
+import { updateDecisionT } from './types';
 
 type valuesT = {
   title: string;
   description: string;
 };
-
-export type updateDecisionT = (data: {
-  id: number;
-  title: string;
-  description: string;
-}) => void;
 
 type decisionUpdateFromPropT = {
   initialValues: {
@@ -56,6 +51,9 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropT> = ({
               value={values.description}
             />
             <button type="submit">Submit</button>
+            <button type="button" onClick={onSuccess}>
+              Cancel
+            </button>
           </Form>
         );
       }}

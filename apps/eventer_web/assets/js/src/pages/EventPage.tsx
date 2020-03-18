@@ -61,6 +61,7 @@ const EventPage: React.FC = () => {
     openTimeDiscussion,
     openPlaceDiscussion,
     resolveDecision,
+    discardResolution,
     removeDecision,
   } = useChannelCallbacks(channel);
 
@@ -150,6 +151,7 @@ const EventPage: React.FC = () => {
                             data={decisions[child.id]}
                             onDecisionResolve={resolveDecision}
                             onDecisionUpdate={updateDecision}
+                            onResolutionDiscard={discardResolution}
                           />
                         );
                       case 'AddDecisionForm':

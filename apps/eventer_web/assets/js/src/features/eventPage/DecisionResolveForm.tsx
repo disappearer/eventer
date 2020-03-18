@@ -2,15 +2,11 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { objectiveT } from './types';
-
-type resolutionT = Date | string;
+import { objectiveT, resolutionT, resolveDecisionT } from './types';
 
 type valuesT = {
   resolution: resolutionT;
 };
-
-export type resolveDecisionT = (id: number, resolution: resolutionT) => void;
 
 type resolveFormPropsT = {
   id: number;
@@ -57,6 +53,7 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
             )}
 
             <button type="submit">Submit</button>
+            <button type="button" onClick={onSuccess}>Cancel</button>
           </Form>
         );
       }}
