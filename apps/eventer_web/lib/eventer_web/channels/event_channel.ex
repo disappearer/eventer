@@ -84,6 +84,17 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
+  def handle_in("remove_decision", %{"decision_id" => decision_id}, socket) do
+    case Decisions.get_decision(decision_id) |> Decisions.delete_decision() do
+      {:ok, _} ->
+        broadcast(socket, "decision_removed", %{decision_id: decision_id})
+        {:reply, {:ok, %{}}, socket}
+
+      {:error, _} ->
+        {:reply, {:error, %{}}, socket}
+    end
+  end
+
   def handle_in("resolve_decision", %{"decision" => decision}, socket) do
     %{"id" => id, "resolution" => resolution} = decision
 
