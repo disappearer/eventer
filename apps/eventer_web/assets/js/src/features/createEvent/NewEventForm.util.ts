@@ -1,9 +1,10 @@
 import { eventDataT } from '../../util/event_service';
+import { objectiveT, specificObjectiveT } from '../eventPage/types';
 
 type decisionT = {
   title: string;
   description: string;
-  objective: 'time' | 'place' | 'general';
+  objective: objectiveT;
 };
 
 export type valuesT = {
@@ -27,7 +28,7 @@ export const mapValuesToEventData: mapValuesToEventDataT = values => {
 };
 
 type addDecisionIfUndecidedT = (
-  objective: 'time' | 'place',
+  objective: specificObjectiveT,
   values: valuesT,
   setFieldValue: (
     field: string,

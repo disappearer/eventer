@@ -1,18 +1,19 @@
-import { Option, Some, None } from 'funfix';
+import { None, Option, Some } from 'funfix';
+import { Channel, Socket } from 'phoenix';
 import { useEffect, useState } from 'react';
-import { Socket, Channel } from 'phoenix';
-import {
-  mapResponseEventToStateEvent,
-  addUserToParticipants,
-  moveToExParticipants,
-  updateStateEvent,
-  updateStateDecision,
-  resolveStateDecision,
-  openStateDiscussion,
-  stateEventT,
-  addStateDecision,
-} from './util';
 import { useParams } from 'react-router-dom';
+import {
+  addStateDecision,
+  addUserToParticipants,
+  mapResponseEventToStateEvent,
+  moveToExParticipants,
+  openStateDiscussion,
+  removeStateDecision,
+  resolveStateDecision,
+  updateStateDecision,
+  updateStateEvent,
+} from './stateTransformations';
+import { stateEventT } from './types';
 
 type useChannelT = (
   token: string,
@@ -76,6 +77,13 @@ const useChannel: useChannelT = (token, setEvent) => {
       setEvent(event => {
         const e = event.get();
         return Some(resolveStateDecision(e, decision));
+      });
+    });
+
+    channel.on('decision_removed', ({ decision_id }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(removeStateDecision(e, decision_id));
       });
     });
 

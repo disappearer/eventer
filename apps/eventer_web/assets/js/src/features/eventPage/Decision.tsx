@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ResolveForm, { resolveDecisionT } from './DecisionResolveForm';
 import DecisionUpdateForm, { updateDecisionT } from './DecisionUpdateForm';
-import { decisionT } from './util';
+import { decisionT } from './types';
 
 export type updateEventT = (data: {
   title: string;

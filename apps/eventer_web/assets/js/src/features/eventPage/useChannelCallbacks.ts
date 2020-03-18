@@ -5,6 +5,7 @@ import { updateEventT } from './Decision';
 import { updateDecisionT } from './DecisionUpdateForm';
 import { resolveDecisionT } from './DecisionResolveForm';
 import { addDecisionT } from './AddDecisionForm';
+import { removeDecisionT } from './RemoveDecisionConfirmation';
 
 type useChannelCallbacksT = (
   channel: Option<Channel>,
@@ -17,6 +18,7 @@ type useChannelCallbacksT = (
   openTimeDiscussion: () => void;
   openPlaceDiscussion: () => void;
   resolveDecision: resolveDecisionT;
+  removeDecision: removeDecisionT;
 };
 const useChannelCallbacks: useChannelCallbacksT = channel => {
   const joinEvent = useCallback(() => {
@@ -63,6 +65,13 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     [channel],
   );
 
+  const removeDecision = useCallback<removeDecisionT>(
+    id => {
+      channel.get().push('remove_decision', { decision_id: id });
+    },
+    [channel],
+  );
+
   return {
     joinEvent,
     leaveEvent,
@@ -72,6 +81,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     openTimeDiscussion,
     openPlaceDiscussion,
     resolveDecision,
+    removeDecision,
   };
 };
 

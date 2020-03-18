@@ -1,15 +1,18 @@
 import { None, Option, Some } from 'funfix';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import Modal from '../components/Modal';
 import { useAuthorizedUser } from '../features/authentication/useAuthorizedUser';
+import AddDecisionForm from '../features/eventPage/AddDecisionForm';
 import BasicEventData from '../features/eventPage/BasicEventData';
 import Decision from '../features/eventPage/Decision';
 import Decisions from '../features/eventPage/Decisions';
 import EventUpdateForm from '../features/eventPage/EventUpdateForm';
+import OpenDiscussionConfirmation from '../features/eventPage/OpenDiscussionConfirmation';
+import RemoveDecisionConfirmation from '../features/eventPage/RemoveDecisionConfirmation';
+import { specificObjectiveT, stateEventT } from '../features/eventPage/types';
 import useChannel from '../features/eventPage/useChannel';
 import useChannelCallbacks from '../features/eventPage/useChannelCallbacks';
-import { stateEventT } from '../features/eventPage/util';
-import AddDecisionForm from '../features/eventPage/AddDecisionForm';
+import { hasExistingDecision } from '../features/eventPage/util';
 
 type eventUpdateFormModalChildT = {
   component: 'EventUpdateForm';
@@ -24,10 +27,22 @@ type addDecisionModalChildT = {
   component: 'AddDecisionForm';
 };
 
+type removeDecisionModalChildT = {
+  component: 'RemoveDecisionConfirmation';
+  id: number;
+};
+
+type openDiscussionModalChildT = {
+  component: 'OpenDiscussionConfirmation';
+  objective: specificObjectiveT;
+};
+
 type modalChildT =
   | eventUpdateFormModalChildT
   | addDecisionModalChildT
-  | decisionModalChildT;
+  | decisionModalChildT
+  | removeDecisionModalChildT
+  | openDiscussionModalChildT;
 
 const EventPage: React.FC = () => {
   const { token, id: currentUserId } = useAuthorizedUser();
@@ -46,6 +61,7 @@ const EventPage: React.FC = () => {
     openTimeDiscussion,
     openPlaceDiscussion,
     resolveDecision,
+    removeDecision,
   } = useChannelCallbacks(channel);
 
   const showEditModal = useCallback(() => {
@@ -58,9 +74,27 @@ const EventPage: React.FC = () => {
     setShouldShowModal(true);
   }, [setModalChild, setShouldShowModal]);
 
+  const showRemoveDecisionModal = useCallback(
+    (id: number) => {
+      setModalChild(Some({ component: 'RemoveDecisionConfirmation', id }));
+      setShouldShowModal(true);
+    },
+    [setModalChild, setShouldShowModal],
+  );
+
   const showDecisionModal = useCallback(
     (id: number) => {
       setModalChild(Some({ component: 'Decision', id }));
+      setShouldShowModal(true);
+    },
+    [setModalChild, setShouldShowModal],
+  );
+
+  const showOpenDiscussionModal = useCallback(
+    (objective: specificObjectiveT) => {
+      setModalChild(
+        Some({ component: 'OpenDiscussionConfirmation', objective }),
+      );
       setShouldShowModal(true);
     },
     [setModalChild, setShouldShowModal],
@@ -85,8 +119,8 @@ const EventPage: React.FC = () => {
                 event={event}
                 currentUserId={currentUserId}
                 onEditEventClick={showEditModal}
-                onDiscussTimeClick={openTimeDiscussion}
-                onDiscussPlaceClick={openPlaceDiscussion}
+                onDiscussTimeClick={() => showOpenDiscussionModal('time')}
+                onDiscussPlaceClick={() => showOpenDiscussionModal('place')}
                 joinEvent={joinEvent}
                 leaveEvent={leaveEvent}
               />
@@ -94,6 +128,7 @@ const EventPage: React.FC = () => {
                 decisions={decisions}
                 onDecisionClick={showDecisionModal}
                 onAddDecisionClick={showAddDecisionModal}
+                onRemoveDecisionClick={showRemoveDecisionModal}
               />
               <Modal shouldShowModal={shouldShowModal} hideModal={hideModal}>
                 {modalChild.fold(
@@ -109,11 +144,10 @@ const EventPage: React.FC = () => {
                           />
                         );
                       case 'Decision':
-                        const { id } = child;
                         return (
                           <Decision
-                            id={id}
-                            data={decisions[id]}
+                            id={child.id}
+                            data={decisions[child.id]}
                             onDecisionResolve={resolveDecision}
                             onDecisionUpdate={updateDecision}
                           />
@@ -123,6 +157,32 @@ const EventPage: React.FC = () => {
                           <AddDecisionForm
                             onSuccess={hideModal}
                             onSubmit={addDecision}
+                          />
+                        );
+                      case 'RemoveDecisionConfirmation':
+                        return (
+                          <RemoveDecisionConfirmation
+                            id={child.id}
+                            title={decisions[child.id].title}
+                            onConfirm={removeDecision}
+                            closeModal={hideModal}
+                          />
+                        );
+                      case 'OpenDiscussionConfirmation':
+                        const decisionExists = hasExistingDecision(
+                          decisions,
+                          child.objective,
+                        );
+                        return (
+                          <OpenDiscussionConfirmation
+                            objective={child.objective}
+                            hasCorrespondingDecision={decisionExists}
+                            onConfirm={
+                              child.objective === 'time'
+                                ? openTimeDiscussion
+                                : openPlaceDiscussion
+                            }
+                            closeModal={hideModal}
                           />
                         );
                     }
