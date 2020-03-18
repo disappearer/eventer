@@ -11,6 +11,7 @@ import {
   openStateDiscussion,
   stateEventT,
   addStateDecision,
+  removeStateDecision,
 } from './util';
 import { useParams } from 'react-router-dom';
 
@@ -76,6 +77,13 @@ const useChannel: useChannelT = (token, setEvent) => {
       setEvent(event => {
         const e = event.get();
         return Some(resolveStateDecision(e, decision));
+      });
+    });
+
+    channel.on('decision_removed', ({ decision_id }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(removeStateDecision(e, decision_id));
       });
     });
 

@@ -142,10 +142,7 @@ type addStateDecisionT = (
   e: stateEventT,
   decision: responseDecisionT,
 ) => stateEventT;
-export const addStateDecision: addStateDecisionT = (
-  currentEvent,
-  data,
-) => {
+export const addStateDecision: addStateDecisionT = (currentEvent, data) => {
   const { id, ...decisionData } = data;
   const { decisions } = currentEvent;
   return {
@@ -202,6 +199,21 @@ export const resolveStateDecision: resolveStateDecisionT = (
       ...decisions,
       [id]: { ...resolvedDecision, resolution, pending: false },
     },
+  };
+};
+
+type removeStateDecisionT = (e: stateEventT, decisionId: number) => stateEventT;
+export const removeStateDecision: removeStateDecisionT = (
+  currentEvent,
+  decisionId,
+) => {
+  const { decisions } = currentEvent;
+
+  const { [decisionId]: _, ...remainingDecisions } = decisions;
+
+  return {
+    ...currentEvent,
+    decisions: remainingDecisions,
   };
 };
 

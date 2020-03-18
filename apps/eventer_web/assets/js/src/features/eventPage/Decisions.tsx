@@ -5,11 +5,13 @@ type decisionsPropsT = {
   decisions: stateDecisionsT;
   onDecisionClick: (n: number) => void;
   onAddDecisionClick: () => void;
+  onRemoveDecisionClick: (id: number) => void;
 };
 const Decisions: React.FC<decisionsPropsT> = ({
   decisions,
   onDecisionClick,
   onAddDecisionClick,
+  onRemoveDecisionClick,
 }) => {
   return (
     <div>
@@ -33,6 +35,9 @@ const Decisions: React.FC<decisionsPropsT> = ({
             </div>
             <div className="decision-section">
               <p>Objective: {objective}</p>
+              <button onClick={() => onRemoveDecisionClick(parseInt(id, 10))}>
+                Remove
+              </button>
             </div>
           </div>
         );
