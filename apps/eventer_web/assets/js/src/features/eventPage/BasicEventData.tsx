@@ -1,5 +1,5 @@
 import React from 'react';
-import { stateEventT } from './util';
+import { stateEventT } from './stateTransformations';
 
 type basicEventDataPropsT = {
   event: stateEventT;

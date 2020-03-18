@@ -1,5 +1,5 @@
 import React from 'react';
-import { stateDecisionsT } from './util';
+import { stateDecisionsT } from './stateTransformations';
 
 type decisionsPropsT = {
   decisions: stateDecisionsT;

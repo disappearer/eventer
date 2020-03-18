@@ -12,7 +12,7 @@ import {
   stateEventT,
   addStateDecision,
   removeStateDecision,
-} from './util';
+} from './stateTransformations';
 import { useParams } from 'react-router-dom';
 
 type useChannelT = (
