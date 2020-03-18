@@ -3,6 +3,7 @@ defmodule EventerWeb.EventChannel do
 
   alias EventerWeb.IdHasher
   alias Eventer.Persistence.{Events, Users, Decisions}
+  alias Eventer.Decision
 
   def join("event:" <> event_id_hash, _message, socket) do
     event =
@@ -110,6 +111,27 @@ defmodule EventerWeb.EventChannel do
       {:error, changeset} ->
         IO.inspect(changeset, label: "changeset")
 
+        {:reply, {:error, %{}}, socket}
+    end
+  end
+
+  def handle_in("discard_resolution", %{"decision_id" => id}, socket) do
+    with %{objective: "general"} = decision <- Decisions.get_decision(id),
+         {:ok, _} <- Decisions.discard_resolution(decision) do
+      broadcast(socket, "resolution_discarded", %{decision_id: id})
+
+      {:reply, {:ok, %{}}, socket}
+    else
+      {:error, changeset} ->
+        IO.inspect(changeset, label: "changeset")
+
+        {:reply, {:error, %{}}, socket}
+
+      %Decision{} ->
+        {:reply, {:error, %{error: "Cannot discard non-general decision"}},
+         socket}
+
+      _ ->
         {:reply, {:error, %{}}, socket}
     end
   end
