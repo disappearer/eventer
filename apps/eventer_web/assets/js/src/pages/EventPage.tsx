@@ -9,7 +9,7 @@ import Decisions from '../features/eventPage/Decisions';
 import EventUpdateForm from '../features/eventPage/EventUpdateForm';
 import OpenDiscussionConfirmation from '../features/eventPage/OpenDiscussionConfirmation';
 import RemoveDecisionConfirmation from '../features/eventPage/RemoveDecisionConfirmation';
-import { stateEventT } from '../features/eventPage/stateTransformations';
+import { specificObjectiveT, stateEventT } from '../features/eventPage/types';
 import useChannel from '../features/eventPage/useChannel';
 import useChannelCallbacks from '../features/eventPage/useChannelCallbacks';
 import { hasExistingDecision } from '../features/eventPage/util';
@@ -34,7 +34,7 @@ type removeDecisionModalChildT = {
 
 type openDiscussionModalChildT = {
   component: 'OpenDiscussionConfirmation';
-  objective: 'time' | 'place';
+  objective: specificObjectiveT;
 };
 
 type modalChildT =
@@ -91,7 +91,7 @@ const EventPage: React.FC = () => {
   );
 
   const showOpenDiscussionModal = useCallback(
-    (objective: 'time' | 'place') => {
+    (objective: specificObjectiveT) => {
       setModalChild(
         Some({ component: 'OpenDiscussionConfirmation', objective }),
       );

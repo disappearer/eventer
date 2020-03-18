@@ -2,7 +2,7 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { objectiveT } from './stateTransformations';
+import { objectiveT } from './types';
 
 type resolutionT = Date | string;
 

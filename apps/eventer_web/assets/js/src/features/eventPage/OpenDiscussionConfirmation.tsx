@@ -1,4 +1,5 @@
 import React from 'react';
+import { specificObjectiveT } from './types';
 
 export type updateEventT = (data: {
   title: string;
@@ -6,7 +7,7 @@ export type updateEventT = (data: {
 }) => void;
 
 type openDiscussionConfirmationPropsT = {
-  objective: 'time' | 'place';
+  objective: specificObjectiveT;
   hasCorrespondingDecision: boolean;
   onConfirm: () => void;
   closeModal: () => void;

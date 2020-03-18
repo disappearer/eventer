@@ -1,52 +1,11 @@
-export type stateEventT = eventDataT & {
-  decisions: stateDecisionsT;
-  participants: stateUsersT;
-  exParticipants: stateUsersT;
-  creatorId: number;
-};
-
-export type responseEventT = eventDataT & {
-  decisions: responseDecisionsT;
-  participants: responseUsersT;
-  exParticipants: responseUsersT;
-  creator: responseUserT;
-};
-
-type eventDataT = {
-  id: number;
-  title: string;
-  description: string;
-  place: string | null;
-  time: string | null;
-};
-
-export type objectiveT = 'place' | 'time' | 'general';
-
-export type decisionT = {
-  title: string;
-  description: string;
-  objective: objectiveT;
-  pending: boolean;
-  creator_id: number;
-  resolution: string | null;
-};
-type responseDecisionT = decisionT & { id: number };
-export type stateDecisionsT = {
-  [key: number]: decisionT;
-};
-type responseDecisionsT = responseDecisionT[];
-
-type userT = {
-  displayName: string;
-  email: string;
-};
-type responseUserT = userT & {
-  id: number;
-};
-type stateUsersT = {
-  [key: number]: userT;
-};
-type responseUsersT = responseUserT[];
+import {
+  responseDecisionT,
+  responseEventT,
+  responseUserT,
+  stateDecisionsT,
+  stateEventT,
+  stateUsersT,
+} from './types';
 
 type mapResponseEventToStateEventT = (r: responseEventT) => stateEventT;
 export const mapResponseEventToStateEvent: mapResponseEventToStateEventT = responseEvent => {

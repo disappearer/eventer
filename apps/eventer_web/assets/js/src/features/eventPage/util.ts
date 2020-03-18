@@ -1,8 +1,8 @@
-import { stateDecisionsT } from './stateTransformations';
+import { specificObjectiveT, stateDecisionsT } from './types';
 
 type hasExistingDecisionT = (
   decisions: stateDecisionsT,
-  o: 'time' | 'place',
+  objective: specificObjectiveT,
 ) => boolean;
 export const hasExistingDecision: hasExistingDecisionT = (
   decisions,
