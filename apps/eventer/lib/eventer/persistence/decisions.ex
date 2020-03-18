@@ -99,7 +99,7 @@ defmodule Eventer.Persistence.Decisions do
       resolution: decision.resolution,
       creator_id: decision.creator_id,
       event_id: decision.event_id,
-      poll: decision.poll
+      poll: Polls.to_map(decision.poll)
     }
   end
 end

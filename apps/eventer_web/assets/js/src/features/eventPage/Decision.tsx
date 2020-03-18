@@ -7,6 +7,8 @@ import {
   resolveDecisionT,
   updateDecisionT,
 } from './types';
+import { useAuthorizedUser } from '../authentication/useAuthorizedUser';
+import Poll from './Poll';
 
 type decisionPropsT = {
   id: number;
@@ -25,6 +27,7 @@ const Decision: React.FC<decisionPropsT> = ({
   onDecisionUpdate,
   onResolutionDiscard,
 }) => {
+  const { id: currentUserId } = useAuthorizedUser();
   const [decisionAction, setDecisionAction] = useState<decisionActionT>('view');
 
   const showEditForm = () => {
@@ -48,7 +51,7 @@ const Decision: React.FC<decisionPropsT> = ({
     resetDecisionModal();
   };
 
-  const { title, description, pending, objective, resolution } = data;
+  const { title, description, pending, objective, resolution, poll } = data;
   return (
     <div>
       <div className="row">
@@ -76,6 +79,14 @@ const Decision: React.FC<decisionPropsT> = ({
               <h3>Resolution</h3>
               <p>{resolution}</p>
             </>
+          )}
+        </div>
+        <div className="box">
+          <h3>Poll</h3>
+          {poll ? (
+            <Poll poll={poll} hasVoted={false} />
+          ) : (
+            <button>Add poll</button>
           )}
         </div>
       </div>

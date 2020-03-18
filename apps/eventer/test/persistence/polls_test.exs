@@ -121,6 +121,22 @@ defmodule Persistence.PollsTest do
              end)
     end
 
+    test "add option fails if same one exists", %{decision: decision} do
+      poll = %{
+        question: "Question?",
+        options: [
+          %{text: "Option 1"},
+          %{text: "Option 2"}
+        ]
+      }
+
+      {:ok, decision_with_poll} = Decisions.update_poll(decision, poll)
+
+      {:error, changeset} = Decisions.add_option(decision_with_poll, "Option 1")
+      {message, _} = Keyword.get(changeset.changes.poll.errors, :options)
+      assert message === "Cannot have duplicate options"
+    end
+
     test "vote new option", %{decision: decision, user: user} do
       poll = %{
         question: "Question?",
