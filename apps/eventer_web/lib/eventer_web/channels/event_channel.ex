@@ -157,4 +157,19 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:ok, %{}}, socket}
     end
   end
+
+  def handle_in(
+        "add_poll",
+        %{"decision_id" => decision_id, "poll" => poll},
+        socket
+      ) do
+    case Decisions.get_decision(decision_id) |> Decisions.update_poll(poll) do
+      {:ok, decision} ->
+        broadcast(socket, "poll_added", %{decision_id: decision.id, poll: decision.poll})
+        {:reply, {:ok, %{}}, socket}
+
+      {:error, changeset} ->
+        {:reply, {:error, %{errors: changeset.errors}}, socket}
+    end
+  end
 end

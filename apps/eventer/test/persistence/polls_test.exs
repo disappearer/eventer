@@ -34,44 +34,11 @@ defmodule Persistence.PollsTest do
       %{decision: decision, user: user}
     end
 
-    test "add success", %{decision: decision} do
-      poll = %{
-        question: "Question?",
-        options: [
-          %{text: "Option 1"},
-          %{text: "Option 2"}
-        ]
-      }
-
-      {:ok, _} = Decisions.update_poll(decision, poll)
-      %{poll: db_poll} = Repo.get(Decision, decision.id)
-      assert db_poll.question === poll.question
-      [option1, option2] = poll.options
-      [db_option1, db_option2] = db_poll.options
-      assert option1.text === db_option1.text
-      assert option2.text === db_option2.text
-      # assert poll.votes === %{}
-    end
-
-    test "can't add poll with duplicate options", %{decision: decision} do
-      poll = %{
-        question: "Question?",
-        options: [
-          %{text: "Option 1"},
-          %{text: "Option 1"}
-        ]
-      }
-
-      {:error, changeset} = Decisions.update_poll(decision, poll)
-      {message, _} = Keyword.get(changeset.changes.poll.errors, :options)
-      assert message === "Cannot have duplicate options"
-    end
-
     test "must have a question", %{decision: decision} do
       poll = %{}
 
       {:error, changeset} = Decisions.update_poll(decision, poll)
-      {message, _} = Keyword.get(changeset.changes.poll.errors, :question)
+      {message, _} = Keyword.get(changeset.errors, :question)
       assert message === "Question must be provided"
     end
 
@@ -133,7 +100,7 @@ defmodule Persistence.PollsTest do
       {:ok, decision_with_poll} = Decisions.update_poll(decision, poll)
 
       {:error, changeset} = Decisions.add_option(decision_with_poll, "Option 1")
-      {message, _} = Keyword.get(changeset.changes.poll.errors, :options)
+      {message, _} = Keyword.get(changeset.errors, :options)
       assert message === "Cannot have duplicate options"
     end
 
