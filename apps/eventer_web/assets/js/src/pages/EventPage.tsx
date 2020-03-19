@@ -63,6 +63,7 @@ const EventPage: React.FC = () => {
     resolveDecision,
     discardResolution,
     removeDecision,
+    addPoll,
   } = useChannelCallbacks(channel);
 
   const showEditModal = useCallback(() => {
@@ -152,6 +153,7 @@ const EventPage: React.FC = () => {
                             onDecisionResolve={resolveDecision}
                             onDecisionUpdate={updateDecision}
                             onResolutionDiscard={discardResolution}
+                            onAddPoll={addPoll}
                           />
                         );
                       case 'AddDecisionForm':

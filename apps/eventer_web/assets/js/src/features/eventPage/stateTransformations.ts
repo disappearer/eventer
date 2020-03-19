@@ -5,6 +5,7 @@ import {
   stateDecisionsT,
   stateEventT,
   stateUsersT,
+  pollT,
 } from './types';
 
 type mapResponseEventToStateEventT = (r: responseEventT) => stateEventT;
@@ -217,5 +218,27 @@ export const openStateDiscussion: openStateDiscussionT = (
     time: decisionData.objective === 'time' ? null : currentEvent.time,
     place: decisionData.objective === 'place' ? null : currentEvent.place,
     decisions: { ...decisions, [id]: decisionData },
+  };
+};
+
+type addStatePollT = (
+  e: stateEventT,
+  decisionId: number,
+  poll: pollT,
+) => stateEventT;
+export const addStatePoll: addStatePollT = (
+  currentEvent,
+  decisionId,
+  poll
+) => {
+  const { decisions } = currentEvent;
+  const { [decisionId]: decision } = decisions;
+
+  return {
+    ...currentEvent,
+    decisions: {
+      ...decisions,
+      [decisionId]: { ...decision, poll },
+    },
   };
 };

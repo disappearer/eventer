@@ -42,6 +42,9 @@ defmodule Persistence.PollsTest do
       assert message === "Question must be provided"
     end
 
+    @tag :skip
+    test "must have more than one option if fixed"
+
     test "vote", %{decision: decision, user: user} do
       poll = %{
         question: "Question?",
