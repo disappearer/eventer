@@ -55,7 +55,11 @@ defmodule Eventer.Persistence.Decisions do
   end
 
   def update_poll(decision, poll) do
-    update_decision(decision, %{poll: poll})
+    case update_decision(decision, %{poll: poll}) do
+      {:ok, _ } = result -> result
+      {:error, changeset} ->
+        {:error, changeset.changes.poll}
+    end
   end
 
   def vote(decision, user_id, option_id) do
