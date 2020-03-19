@@ -7,7 +7,7 @@ type valuesT = {
   description: string;
 };
 
-type decisionUpdateFromPropT = {
+type decisionUpdateFromPropsT = {
   initialValues: {
     title: string;
     description: string;
@@ -17,7 +17,7 @@ type decisionUpdateFromPropT = {
   onSuccess: () => void;
 };
 
-const DecisionUpdateForm: React.FC<decisionUpdateFromPropT> = ({
+const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
   initialValues,
   id,
   onSuccess,

@@ -13,6 +13,7 @@ import {
   resolveStateDecision,
   updateStateDecision,
   updateStateEvent,
+  addStatePoll,
 } from './stateTransformations';
 import { stateEventT } from './types';
 
@@ -99,6 +100,13 @@ const useChannel: useChannelT = (token, setEvent) => {
       setEvent(event => {
         const e = event.get();
         return Some(openStateDiscussion(e, data));
+      });
+    });
+
+    channel.on('poll_added', ({ decision_id, poll }) => {
+      setEvent(event => {
+        const e = event.get();
+        return Some(addStatePoll(e, decision_id, poll));
       });
     });
 

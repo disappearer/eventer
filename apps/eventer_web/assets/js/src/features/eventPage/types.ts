@@ -1,3 +1,5 @@
+import { pollValuesT } from "./PollForm";
+
 export type stateEventT = eventDataT & {
   decisions: stateDecisionsT;
   participants: stateUsersT;
@@ -83,3 +85,5 @@ export type resolutionT = Date | string;
 export type resolveDecisionT = (id: number, resolution: resolutionT) => void;
 
 export type discardResolutionT = (id: number) => void;
+
+export type addPollT = (decisionId: number, poll: pollValuesT) => void;

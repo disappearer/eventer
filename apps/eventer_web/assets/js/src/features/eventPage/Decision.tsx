@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
+import Poll from './Poll';
+import PollForm from './PollForm';
 import {
+  addPollT,
   decisionT,
   discardResolutionT,
   resolveDecisionT,
   updateDecisionT,
 } from './types';
-import { useAuthorizedUser } from '../authentication/useAuthorizedUser';
-import Poll from './Poll';
 
 type decisionPropsT = {
   id: number;
@@ -16,9 +17,15 @@ type decisionPropsT = {
   onDecisionResolve: resolveDecisionT;
   onDecisionUpdate: updateDecisionT;
   onResolutionDiscard: discardResolutionT;
+  onAddPoll: addPollT;
 };
 
-type decisionActionT = 'view' | 'edit' | 'resolve' | 'discard_resolution';
+type decisionActionT =
+  | 'view'
+  | 'edit'
+  | 'resolve'
+  | 'discard_resolution'
+  | 'add_poll';
 
 const Decision: React.FC<decisionPropsT> = ({
   id,
@@ -26,8 +33,8 @@ const Decision: React.FC<decisionPropsT> = ({
   onDecisionResolve,
   onDecisionUpdate,
   onResolutionDiscard,
+  onAddPoll,
 }) => {
-  const { id: currentUserId } = useAuthorizedUser();
   const [decisionAction, setDecisionAction] = useState<decisionActionT>('view');
 
   const showEditForm = () => {
@@ -51,11 +58,17 @@ const Decision: React.FC<decisionPropsT> = ({
     resetDecisionModal();
   };
 
+  const showAddPollForm = () => {
+    setDecisionAction('add_poll');
+  };
+
   const { title, description, pending, objective, resolution, poll } = data;
   return (
     <div>
       <div className="row">
-        {['view', 'resolve', 'discard_resolution'].includes(decisionAction) && (
+        {['view', 'resolve', 'discard_resolution', 'add_poll'].includes(
+          decisionAction,
+        ) && (
           <div className="box">
             <h2>{title}</h2>
             <p>{description}</p>
@@ -82,11 +95,27 @@ const Decision: React.FC<decisionPropsT> = ({
           )}
         </div>
         <div className="box">
-          <h3>Poll</h3>
-          {poll ? (
-            <Poll poll={poll} hasVoted={false} />
+          {decisionAction === 'add_poll' ? (
+            <>
+              <h3>Add poll</h3>
+              <PollForm
+                decisionId={id}
+                onSubmit={onAddPoll}
+                onSuccess={resetDecisionModal}
+              />
+            </>
           ) : (
-            <button>Add poll</button>
+            <>
+              {' '}
+              <h3>Poll</h3>
+              {poll ? (
+                <Poll poll={poll} hasVoted={false} />
+              ) : (
+                decisionAction === 'view' && (
+                  <button onClick={showAddPollForm}>Add poll</button>
+                )
+              )}
+            </>
           )}
         </div>
       </div>
