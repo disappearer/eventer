@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatTime } from '../../util/time';
 import { stateEventT } from './types';
 
 type basicEventDataPropsT = {
@@ -30,7 +31,7 @@ const BasicEventData: React.FC<basicEventDataPropsT> = ({
       </div>
       <div className="box">
         <h3>Time</h3>
-        <p>{time || 'TBD'}</p>
+        <p>{time ? formatTime(time) : 'TBD'}</p>
         {time && <button onClick={onDiscussTimeClick}>Discuss</button>}
         <h3>Place</h3>
         <p>{place || 'TBD'}</p>

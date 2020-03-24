@@ -7,7 +7,7 @@ const theme: DefaultTheme = {
     main: 'cyan',
     secondary: 'magenta',
     primaryLine: '#008eae',
-    secondaryLine: '#ddd',
+    grey: '#555',
     link: '#008eae',
     linkVisited: '#00647b',
     pale: '#6fa1ac',

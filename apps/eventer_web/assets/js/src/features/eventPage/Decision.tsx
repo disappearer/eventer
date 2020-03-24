@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
+import { formatTime } from '../../util/time';
 import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
 import Poll from './Poll';
 import PollForm from './PollForm';
-import {
-  addPollT,
-  decisionT,
-  discardResolutionT,
-  resolveDecisionT,
-  updateDecisionT,
-} from './types';
+import { addPollT, decisionT, discardResolutionT, resolveDecisionT, updateDecisionT } from './types';
 
 type decisionPropsT = {
   id: number;
@@ -90,7 +85,9 @@ const Decision: React.FC<decisionPropsT> = ({
           {resolution && (
             <>
               <h3>Resolution</h3>
-              <p>{resolution}</p>
+              <p>
+                {objective === 'time' ? formatTime(resolution) : resolution}
+              </p>
             </>
           )}
         </div>
