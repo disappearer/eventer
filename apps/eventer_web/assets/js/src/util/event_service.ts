@@ -1,4 +1,4 @@
-import { post, get } from './api';
+import { get, getReturnT, post } from './api';
 
 export type eventDataT = {
   title: string;
@@ -36,7 +36,7 @@ type getEventsResponseT = {
   events: eventT[];
 };
 
-type getEventsT = () => Promise<getEventsResponseT>;
+type getEventsT = () => Promise<getReturnT<getEventsResponseT>>;
 export const getEvents: getEventsT = async () => {
   const events = await get<getEventsResponseT>('/api/events');
   return events;
