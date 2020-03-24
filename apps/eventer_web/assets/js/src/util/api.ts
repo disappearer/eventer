@@ -1,7 +1,16 @@
 import { getCookieToken } from './cookie_helper';
 
-export async function get<returnT>(path: string): Promise<returnT> {
+export type getReturnT<dataT> = {
+  ok: boolean;
+  status: number;
+  data: dataT;
+};
+
+export async function get<returnDataT>(
+  path: string,
+): Promise<getReturnT<returnDataT>> {
   const token = getCookieToken();
+
   const response = await fetch(path, {
     method: 'GET',
     headers: {
@@ -9,8 +18,9 @@ export async function get<returnT>(path: string): Promise<returnT> {
       Authorization: `Bearer ${token}`,
     },
   });
+  const { ok, status } = response;
   const data = await response.json();
-  return data;
+  return { ok, status, data };
 }
 
 export async function post<returnT, bodyT>(

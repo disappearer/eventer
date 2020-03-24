@@ -1,8 +1,9 @@
 import { userDataT } from '../features/authentication/userReducer';
-import { get } from './api';
+import { get, getReturnT } from './api';
 
-type fetchUserT = () => Promise<userDataT>;
-export const fetchUser: fetchUserT = async () => {
-  const { user } = await get<{ user: userDataT }>('/api/me');
-  return user;
+type fetchUserResponseT = { user: userDataT };
+
+type fetchUserT = () => Promise<getReturnT<fetchUserResponseT>>;
+export const fetchUser: fetchUserT = () => {
+  return get<fetchUserResponseT>('/api/me');
 };

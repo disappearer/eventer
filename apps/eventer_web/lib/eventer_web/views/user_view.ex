@@ -10,4 +10,8 @@ defmodule EventerWeb.UserView do
       }
     }
   end
+
+  def render("error.json", %{message: message}) do
+    %{message: message}
+  end
 end
