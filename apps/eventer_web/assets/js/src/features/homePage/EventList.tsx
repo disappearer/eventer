@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Link from '../../components/Link';
 import { eventT, getEvents } from '../../util/event_service';
-import { Description, Title, Top, MainWrapper } from './common.styled';
+import { formatTime } from '../../util/time';
+import { Description, MainWrapper, Title, Top } from './common.styled';
 
 const Events = styled.div``;
 
@@ -21,6 +22,14 @@ const TimePlace = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-row-gap: 5px;
+`;
+
+const Label = styled.span`
+  margin-right: 10px;
+  font-size: 1.2rem;
+  letter-spacing: 0.05rem;
+  font-variant: small-caps;
+  color: ${props => props.theme.colors.grey};
 `;
 
 const TimePlaceItem = styled.div``;
@@ -43,8 +52,14 @@ const EventList: React.FC = () => {
               <Link to={`/events/${event.id_hash}`}>{event.title}</Link>
             </EventTitle>
             <TimePlace>
-              <TimePlaceItem>Time: {event.time || 'TBD'}</TimePlaceItem>
-              <TimePlaceItem>Place: {event.place || 'TBD'}</TimePlaceItem>
+              <TimePlaceItem>
+                <Label>time:</Label>
+                {event.time ? formatTime(event.time) : 'TBD'}
+              </TimePlaceItem>
+              <TimePlaceItem>
+                <Label>place:</Label>
+                {event.place || 'TBD'}
+              </TimePlaceItem>
             </TimePlace>
           </Event>
         ))}

@@ -8,7 +8,7 @@ import { userT } from './features/authentication/userReducer';
 const Navbar = styled.nav`
   display: grid;
   padding: 10px;
-  grid-gap: 10px;
+  grid-row-gap: 20px;
   grid-template-columns: repeat(2, minmax(auto, 350px));
   justify-content: center;
   align-items: center;

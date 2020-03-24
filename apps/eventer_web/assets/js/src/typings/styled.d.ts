@@ -10,7 +10,7 @@ declare module 'styled-components' {
       main: string;
       secondary: string;
       primaryLine: string;
-      secondaryLine: string;
+      grey: string;
       link: string;
       linkVisited: string;
       pale: string;
