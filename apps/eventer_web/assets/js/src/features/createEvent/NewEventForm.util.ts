@@ -51,7 +51,7 @@ export const addDecisionIfUndecided: addDecisionIfUndecidedT = (
     if (index === -1) {
       setFieldValue('decisions', [
         {
-          title: objective === 'time' ? 'When' : 'Where',
+          title: '',
           description: '',
           objective: objective,
         },

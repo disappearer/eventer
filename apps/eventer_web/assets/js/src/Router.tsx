@@ -11,10 +11,19 @@ const AppWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   height: 100%;
+
+  @media (max-width: 620px) {
+    grid-template-columns: auto;
+  }
 `;
 
 const Content = styled.div`
   grid-column: 2/3;
+  padding: 10px 30px;
+
+  @media (max-width: 620px) {
+    grid-column: 1/2;
+  }
 `;
 
 const Router: React.FC = () => {

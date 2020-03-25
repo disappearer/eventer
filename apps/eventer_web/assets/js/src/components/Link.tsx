@@ -15,15 +15,11 @@ const StyledLink = styled(RouterLink)`
 const StyledAnchor = styled.a`
   text-decoration: none;
 
-  color: ${props => props.theme.colors.link};
-
-  &:visited {
-    color: ${props => props.theme.colors.linkVisited};
-  }
+  color: ${props => props.theme.colors.linkVisited};
 `;
 
 const Button = (component: any) => styled(component)`
-  border: 1px solid ${props => props.theme.colors.link};
+  border: 1px solid ${props => props.theme.colors.linkVisited};
   border-radius: 5px;
   padding: 7px;
 

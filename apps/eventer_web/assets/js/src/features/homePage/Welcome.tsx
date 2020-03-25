@@ -1,10 +1,7 @@
 import React from 'react';
-import {
-  MainWrapper,
-  Top as CommonTop,
-  Title as CommonTitle,
-} from './common.styled';
 import styled from 'styled-components';
+import CommonTop from '../../components/Top';
+import CommonTitle from '../../components/Title';
 
 const Top = styled(CommonTop)`
   align-content: center;
@@ -40,7 +37,7 @@ const DoIt = styled(Paragraph)`
 
 const Welcome: React.FC = () => {
   return (
-    <MainWrapper>
+    <>
       <Top>
         <Title>Eventer</Title>
         <SubTitle>Organize events with your friends and enemies</SubTitle>
@@ -58,7 +55,7 @@ const Welcome: React.FC = () => {
         </Paragraph>
         <DoIt>Log in and start the fun!</DoIt>
       </Description>
-    </MainWrapper>
+    </>
   );
 };
 
