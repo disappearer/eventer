@@ -1,15 +1,35 @@
-import { FieldArray, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import React from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import Button from '../../components/Button';
+import CheckboxField from '../../components/CheckboxField';
+import TextField from '../../components/TextField';
+import TimeField from '../../components/TimeField';
 import { createEvent } from '../../util/event_service';
+import DecisionsForm from './DecisionsForm';
 import {
   addDecisionIfUndecided,
   mapValuesToEventData,
-  shouldShowDecision,
   valuesT,
 } from './NewEventForm.util';
-import { useHistory } from 'react-router-dom';
+
+const FormGrid = styled.div`
+  display: grid;
+  grid-gap: 29px;
+`;
+
+const FormGroup = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-gap: 13px;
+  justify-items: center;
+  align-items: center;
+`;
+
+const SubmitButton = styled(Button)`
+  justify-self: center;
+`;
 
 const initialValues = {
   title: '',
@@ -20,7 +40,6 @@ const initialValues = {
   placeUndecided: false,
   decisions: [],
 };
-
 
 const NewEventForm: React.FC = () => {
   const history = useHistory();
@@ -44,105 +63,56 @@ const NewEventForm: React.FC = () => {
         addDecisionIfUndecided('place', values, setFieldValue);
         return (
           <Form>
-            <label htmlFor="title">Title</label>
-            <input
-              id="title"
-              name="title"
-              type="text"
-              onChange={handleChange}
-              value={values.title}
-            />
-            <label htmlFor="description">Description</label>
-            <input
-              id="description"
-              name="description"
-              type="text"
-              onChange={handleChange}
-              value={values.description}
-            />
-            <div className="input-group">
-              <label htmlFor="time">Time</label>
-              <DatePicker
-                name="time"
-                showTimeSelect
-                timeIntervals={15}
-                selected={values.timeUndecided ? null : values.time}
-                onChange={time => setFieldValue('time', time)}
-                dateFormat="MMMM d, yyyy h:mm aa"
-                disabled={values.timeUndecided}
-              />
-              <input
-                id="timeUndecided"
-                name="timeUndecided"
-                type="checkbox"
-                onChange={handleChange}
-              />
-              <label htmlFor="timeUndecided">Time undecided</label>
-            </div>
-            <div className="input-group">
-              <label htmlFor="place">Place</label>
-              <input
-                id="place"
-                name="place"
-                type="text"
-                onChange={handleChange}
-                value={values.placeUndecided ? '' : values.place}
-                disabled={values.placeUndecided}
-              />
-              <input
-                id="placeUndecided"
-                name="placeUndecided"
-                type="checkbox"
-                onChange={handleChange}
-              />
-              <label htmlFor="placeUndecided">Place undecided</label>
-            </div>
-            <h2>Decisions</h2>
-            <FieldArray
-              name="decisions"
-              render={arrayHelpers => (
+            <FormGrid>
+              <FormGroup>
+                <TextField
+                  name="title"
+                  label="Title"
+                  onChange={handleChange}
+                  value={values.title}
+                />
+                <TextField
+                  name="description"
+                  label="Description"
+                  onChange={handleChange}
+                  value={values.description}
+                />
+              </FormGroup>
+              <FormGroup>
                 <div>
-                  {values.decisions.map(
-                    (decision, index) =>
-                      shouldShowDecision(decision, values) && (
-                        <div key={index}>
-                          <label htmlFor={`decisions[${index}].title`}>
-                            Title
-                          </label>
-                          <input
-                            name={`decisions[${index}].title`}
-                            onChange={handleChange}
-                            value={decision.title}
-                          />
-                          <label htmlFor={`decisions[${index}].description`}>
-                            Description
-                          </label>
-                          <input
-                            name={`decisions[${index}].description`}
-                            onChange={handleChange}
-                            value={decision.description}
-                          />
-                          <label htmlFor="objective">Objective</label>
-                          <span>{decision.objective}</span>
-                        </div>
-                      ),
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      arrayHelpers.push({
-                        title: '',
-                        description: '',
-                        objective: 'general',
-                      });
-                    }}
-                  >
-                    Add decision
-                  </button>
+                  <TimeField
+                    selected={values.timeUndecided ? null : values.time}
+                    onChange={time => setFieldValue('time', time)}
+                    disabled={values.timeUndecided}
+                  />
+                  <CheckboxField
+                    name="timeUndecided"
+                    label="Time undecided"
+                    onChange={handleChange}
+                  />
                 </div>
-              )}
-            />
-            <button type="submit">Submit</button>
+                <div>
+                  <TextField
+                    name="place"
+                    label="Place"
+                    onChange={handleChange}
+                    value={values.place}
+                    disabled={values.placeUndecided}
+                  />
+                  <CheckboxField
+                    name="placeUndecided"
+                    label="Place undecided"
+                    onChange={handleChange}
+                  />
+                </div>
+              </FormGroup>
+
+              <DecisionsForm values={values} onChange={handleChange} />
+
+              <SubmitButton primary type="submit">
+                Create event
+              </SubmitButton>
+            </FormGrid>
           </Form>
         );
       }}

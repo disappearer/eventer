@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Description from '../../components/Description';
 import Link from '../../components/Link';
+import Title from '../../components/Title';
+import Top from '../../components/Top';
 import { eventT, getEvents } from '../../util/event_service';
 import { formatTime } from '../../util/time';
-import { Description, MainWrapper, Title, Top } from './common.styled';
 
 const Events = styled.div``;
 
@@ -38,7 +40,7 @@ const EventList: React.FC = () => {
   const { events } = useEvents();
 
   return (
-    <MainWrapper>
+    <>
       <Top>
         <Title>Your events</Title>
         <Description>
@@ -64,7 +66,7 @@ const EventList: React.FC = () => {
           </Event>
         ))}
       </Events>
-    </MainWrapper>
+    </>
   );
 };
 
