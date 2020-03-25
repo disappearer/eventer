@@ -13,42 +13,11 @@ import { specificObjectiveT, stateEventT } from '../features/eventPage/types';
 import useChannel from '../features/eventPage/useChannel';
 import useChannelCallbacks from '../features/eventPage/useChannelCallbacks';
 import { hasExistingDecision } from '../features/eventPage/util';
-
-type eventUpdateFormModalChildT = {
-  component: 'EventUpdateForm';
-};
-
-type decisionModalChildT = {
-  component: 'Decision';
-  id: number;
-};
-
-type addDecisionModalChildT = {
-  component: 'AddDecisionForm';
-};
-
-type removeDecisionModalChildT = {
-  component: 'RemoveDecisionConfirmation';
-  id: number;
-};
-
-type openDiscussionModalChildT = {
-  component: 'OpenDiscussionConfirmation';
-  objective: specificObjectiveT;
-};
-
-type modalChildT =
-  | eventUpdateFormModalChildT
-  | addDecisionModalChildT
-  | decisionModalChildT
-  | removeDecisionModalChildT
-  | openDiscussionModalChildT;
+import useModal from '../features/eventPage/useModal';
 
 const EventPage: React.FC = () => {
   const { token, id: currentUserId } = useAuthorizedUser();
   const [event, setEvent] = useState<Option<stateEventT>>(None);
-  const [shouldShowModal, setShouldShowModal] = useState(false);
-  const [modalChild, setModalChild] = useState<Option<modalChildT>>(None);
 
   const { channel } = useChannel(token, setEvent);
 
@@ -66,46 +35,16 @@ const EventPage: React.FC = () => {
     addPoll,
   } = useChannelCallbacks(channel);
 
-  const showEditModal = useCallback(() => {
-    setModalChild(Some({ component: 'EventUpdateForm' }));
-    setShouldShowModal(true);
-  }, [setModalChild, setShouldShowModal]);
-
-  const showAddDecisionModal = useCallback(() => {
-    setModalChild(Some({ component: 'AddDecisionForm' }));
-    setShouldShowModal(true);
-  }, [setModalChild, setShouldShowModal]);
-
-  const showRemoveDecisionModal = useCallback(
-    (id: number) => {
-      setModalChild(Some({ component: 'RemoveDecisionConfirmation', id }));
-      setShouldShowModal(true);
-    },
-    [setModalChild, setShouldShowModal],
-  );
-
-  const showDecisionModal = useCallback(
-    (id: number) => {
-      setModalChild(Some({ component: 'Decision', id }));
-      setShouldShowModal(true);
-    },
-    [setModalChild, setShouldShowModal],
-  );
-
-  const showOpenDiscussionModal = useCallback(
-    (objective: specificObjectiveT) => {
-      setModalChild(
-        Some({ component: 'OpenDiscussionConfirmation', objective }),
-      );
-      setShouldShowModal(true);
-    },
-    [setModalChild, setShouldShowModal],
-  );
-
-  const hideModal = useCallback(() => {
-    setModalChild(None);
-    setShouldShowModal(false);
-  }, [setModalChild, setShouldShowModal]);
+  const {
+    shouldShowModal,
+    modalChild,
+    showEditModal,
+    showAddDecisionModal,
+    showDecisionModal,
+    showOpenDiscussionModal,
+    showRemoveDecisionModal,
+    hideModal,
+  } = useModal();
 
   return (
     <section>
