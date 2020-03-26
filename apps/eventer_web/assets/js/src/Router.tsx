@@ -23,6 +23,7 @@ const Content = styled.div`
 
   @media (max-width: 620px) {
     grid-column: 1/2;
+    padding: 10px 20px;
   }
 `;
 

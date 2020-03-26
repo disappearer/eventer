@@ -16,7 +16,7 @@ const Decisions: React.FC<decisionsPropsT> = ({
   return (
     <div>
       <div className="row">
-        <h2>Decisions</h2>
+        <h3>Decisions</h3>
         <button onClick={onAddDecisionClick}>Add</button>
       </div>
       {Object.entries(decisions).map(([id, data]) => {
@@ -24,10 +24,10 @@ const Decisions: React.FC<decisionsPropsT> = ({
         return (
           <div key={id} className="decision row">
             <div className="decision-section">
-              <h3 className="decision-title">
+              <h4 className="decision-title">
                 <a onClick={() => onDecisionClick(parseInt(id, 10))}>{title}</a>
                 {pending && ' (pending)'}
-              </h3>
+              </h4>
               <p>{description}</p>
             </div>
             <div className="decision-section">

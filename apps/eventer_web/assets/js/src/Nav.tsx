@@ -61,7 +61,7 @@ const Nav: React.FC = () => {
         {user.data.fold(
           () => null,
           ({ displayName }) => (
-            <NavListItem id="display-name">You are {displayName}</NavListItem>
+            <NavListItem id="display-name">{displayName}</NavListItem>
           ),
         )}
         {user.data.fold(

@@ -8,7 +8,6 @@ import { shouldShowDecision, valuesT } from './NewEventForm.util';
 const DecisionsTitle = styled.h2`
   justify-self: center;
   margin: 0;
-  color: ${props => props.theme.colors.linkVisited};
 `;
 
 const DecisionFields = styled.div`

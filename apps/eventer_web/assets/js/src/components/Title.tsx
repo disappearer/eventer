@@ -7,8 +7,6 @@ const Title = styled.h1`
   grid-gap: 20px;
   align-items: center;
 
-  color: ${props => props.theme.colors.linkVisited};
-
   &:before,
   &:after {
     display: block;
