@@ -10,12 +10,18 @@ html {
   height: 100%;
 }
 body {
-  height: 100%;
+  height: 100vh;
   margin: 0;
   font-family: 'Helvetica', 'Arial', sans-serif;
   font-weight: 300;
-  line-height: 1.6;
+  line-height: 1.4;
   background: #fafaf7;
+}
+
+@media (max-width: 620px) {
+  body {
+    line-height: 1.1;
+  }
 }
 
 #root {
@@ -29,6 +35,7 @@ h4,
 h5,
 h6 {
   font-weight: 300;
+  color: #00647b;
 }
 
 /* 

@@ -8,9 +8,11 @@ import NewEventPage from './pages/NewEventPage';
 import styled from 'styled-components';
 
 const AppWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
   height: 100%;
+
+  margin: 0 auto;
+  max-width: 800px;
+  position: relative;
 
   @media (max-width: 620px) {
     grid-template-columns: auto;
@@ -19,11 +21,17 @@ const AppWrapper = styled.div`
 
 const Content = styled.div`
   grid-column: 2/3;
-  padding: 10px 30px;
+  padding: 0 30px;
 
   @media (max-width: 620px) {
     grid-column: 1/2;
+    padding: 10px 20px;
   }
+
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
 `;
 
 const Router: React.FC = () => {

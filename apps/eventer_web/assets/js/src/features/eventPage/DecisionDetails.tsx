@@ -4,16 +4,13 @@ import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
 import Poll from './Poll';
 import PollForm from './PollForm';
-import { addPollT, decisionT, discardResolutionT, resolveDecisionT, updateDecisionT } from './types';
-
-type decisionPropsT = {
-  id: number;
-  data: decisionT;
-  onDecisionResolve: resolveDecisionT;
-  onDecisionUpdate: updateDecisionT;
-  onResolutionDiscard: discardResolutionT;
-  onAddPoll: addPollT;
-};
+import {
+  addPollT,
+  decisionT,
+  discardResolutionT,
+  resolveDecisionT,
+  updateDecisionT,
+} from './types';
 
 type decisionActionT =
   | 'view'
@@ -22,7 +19,16 @@ type decisionActionT =
   | 'discard_resolution'
   | 'add_poll';
 
-const Decision: React.FC<decisionPropsT> = ({
+type decisionDetailsPropsT = {
+  id: number;
+  data: decisionT;
+  onDecisionResolve: resolveDecisionT;
+  onDecisionUpdate: updateDecisionT;
+  onResolutionDiscard: discardResolutionT;
+  onAddPoll: addPollT;
+};
+
+const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
   id,
   data,
   onDecisionResolve,
@@ -103,7 +109,6 @@ const Decision: React.FC<decisionPropsT> = ({
             </>
           ) : (
             <>
-              {' '}
               <h3>Poll</h3>
               {poll ? (
                 <Poll poll={poll} hasVoted={false} />
@@ -149,4 +154,4 @@ const Decision: React.FC<decisionPropsT> = ({
   );
 };
 
-export default Decision;
+export default DecisionDetails;

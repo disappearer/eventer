@@ -1,5 +1,68 @@
 import React from 'react';
+import styled from 'styled-components';
 import { stateDecisionsT } from './types';
+import Button from '../../components/Button';
+import { formatTime } from '../../util/time';
+
+const DecisionsWrapper = styled.div`
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+
+  @media (max-width: 490px) {
+    padding-right: 0;
+  }
+`;
+
+const DecisionListTitleLine = styled.div`
+  flex: none;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 20px;
+  justify-content: start;
+  justify-items: start;
+  align-items: center;
+  margin-bottom: 14px;
+`;
+
+const DecisionListTitle = styled.h3`
+  display: inline-block;
+  margin: 0;
+`;
+
+const DecisionTitleLine = styled.div`
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 10px;
+  justify-content: start;
+  justify-items: start;
+  align-items: center;
+`;
+
+const DecisionTitle = styled.h4`
+  margin: 0;
+  display: inline-block;
+`;
+
+const DecisionList = styled.div`
+  flex: 1;
+  overflow-y: auto;
+`;
+
+const Decision = styled.div`
+  margin-bottom: 19px;
+`;
+
+const Description = styled.div`
+  margin-top: 5px;
+`;
+
+const Objective = styled.div`
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: ${props => props.theme.colors.grey};
+`;
 
 type decisionsPropsT = {
   decisions: stateDecisionsT;
@@ -14,34 +77,44 @@ const Decisions: React.FC<decisionsPropsT> = ({
   onRemoveDecisionClick,
 }) => {
   return (
-    <div>
-      <div className="row">
-        <h2>Decisions</h2>
-        <button onClick={onAddDecisionClick}>Add</button>
-      </div>
-      {Object.entries(decisions).map(([id, data]) => {
-        const { title, description, pending, objective } = data;
-        return (
-          <div key={id} className="decision row">
-            <div className="decision-section">
-              <h3 className="decision-title">
-                <a onClick={() => onDecisionClick(parseInt(id, 10))}>{title}</a>
-                {pending && ' (pending)'}
-              </h3>
-              <p>{description}</p>
-            </div>
-            <div className="decision-section">
-              <p>Objective: {objective}</p>
-              {objective === 'general' && (
-                <button onClick={() => onRemoveDecisionClick(parseInt(id, 10))}>
-                  Remove
-                </button>
-              )}
-            </div>
-          </div>
-        );
-      })}
-    </div>
+    <DecisionsWrapper>
+      <DecisionListTitleLine>
+        <DecisionListTitle>Decisions</DecisionListTitle>
+        <Button onClick={onAddDecisionClick}>Add decision</Button>
+      </DecisionListTitleLine>
+      <DecisionList>
+        {Object.entries(decisions).map(([id, data]) => {
+          const { title, description, pending, objective, resolution } = data;
+          const formattedResolution =
+            resolution && objective === 'time'
+              ? formatTime(resolution)
+              : resolution;
+          return (
+            <Decision key={id}>
+              <DecisionTitleLine>
+                <DecisionTitle>
+                  <a onClick={() => onDecisionClick(parseInt(id, 10))}>
+                    {title}
+                  </a>
+                  {pending && ' (pending)'}
+                </DecisionTitle>
+                {objective === 'general' && (
+                  <Button
+                    onClick={() => onRemoveDecisionClick(parseInt(id, 10))}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </DecisionTitleLine>
+              <Description>
+                {pending ? description : formattedResolution}
+              </Description>
+              <Objective>Objective: {objective}</Objective>
+            </Decision>
+          );
+        })}
+      </DecisionList>
+    </DecisionsWrapper>
   );
 };
 
