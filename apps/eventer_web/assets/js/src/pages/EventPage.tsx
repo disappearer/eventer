@@ -92,6 +92,7 @@ const EventPage: React.FC = () => {
                         initialValues={{ title, description }}
                         onSuccess={hideModal}
                         onSubmit={updateEvent}
+                        formTitle={`Edit ${event.title}`}
                       />
                     );
                   case 'Decision':

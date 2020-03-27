@@ -1,12 +1,28 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
+import styled from 'styled-components';
+import Button from '../../components/Button';
+import TextField from '../../components/TextField';
+
+const FormTitle = styled.h3`
+  margin-top: 0;
+`;
+
+const FormGrid = styled.div`
+  display: grid;
+  justify-items: start;
+  grid-gap: 17px;
+`;
 
 type valuesT = {
   title: string;
   description: string;
 };
 
-export type updateEventT = (data: {title: string; description: string}) => void;
+export type updateEventT = (data: {
+  title: string;
+  description: string;
+}) => void;
 
 type eventUpdateFromPropsT = {
   initialValues: {
@@ -15,9 +31,15 @@ type eventUpdateFromPropsT = {
   };
   onSubmit: updateEventT;
   onSuccess: () => void;
+  formTitle: string;
 };
 
-const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({ initialValues, onSuccess, onSubmit }) => {
+const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
+  initialValues,
+  onSuccess,
+  onSubmit,
+  formTitle,
+}) => {
   return (
     <Formik<valuesT>
       initialValues={initialValues}
@@ -28,25 +50,27 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({ initialValues, onSuc
     >
       {({ values, handleChange }) => {
         return (
-          <Form>
-            <label htmlFor="title">Title</label>
-            <input
-              id="title"
-              name="title"
-              type="text"
-              onChange={handleChange}
-              value={values.title}
-            />
-            <label htmlFor="description">Description</label>
-            <input
-              id="description"
-              name="description"
-              type="text"
-              onChange={handleChange}
-              value={values.description}
-            />
-            <button type="submit">Submit</button>
-          </Form>
+          <div>
+            <FormTitle>{formTitle}</FormTitle>
+            <Form>
+              <FormGrid>
+                <TextField
+                  name="title"
+                  label="Title"
+                  onChange={handleChange}
+                  value={values.title}
+                />
+                <TextField
+                  name="description"
+                  label="Description"
+                  onChange={handleChange}
+                  value={values.description}
+                />
+
+                <Button type="submit">Submit</Button>
+              </FormGrid>
+            </Form>
+          </div>
         );
       }}
     </Formik>
