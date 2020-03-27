@@ -1,14 +1,14 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const BREAKPOINT_1 = '380';
 const BREAKPOINT_2 = '540';
 const BREAKPOINT_3 = '670';
 
 export const Grid = styled.div`
-  margin-top: 20px;
+  flex: none;
   display: grid;
   grid-template-columns: minmax(1fr, 200px) minmax(max-content, auto) auto;
-  grid-template-rows: minmax(auto, 60px) auto;
+  grid-template-rows: minmax(auto, 70px) auto;
   grid-template-areas:
     'info time participants'
     'info place participants';
@@ -130,26 +130,13 @@ export const Participants = styled.div`
 `;
 
 export const ParticipantsGrid = styled.div`
-  margin-top: 13px;
+  margin-top: 10px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(50px, 130px));
   grid-auto-flow: row dense;
   grid-gap: 10px;
-  // justify-content: space-around;
+  justify-items: start;
 
   font-size: 0.9rem;
   line-height: 1;
-`;
-
-export const BottomLine = styled.div`
-  margin-top: 20px;
-  height: 3px;
-  grid-column: 1/-1;
-  // justify-self: center;
-  background: linear-gradient(
-    to left,
-    transparent,
-    ${props => props.theme.colors.primaryLine},
-    transparent
-  );
 `;

@@ -15,10 +15,10 @@ import {
   Span,
   Time,
   TimeData,
-} from './BasicEventData.styles';
+} from './BasicEventInfo.styles';
 import { stateEventT } from './types';
 
-type basicEventDataPropsT = {
+type basicEventInfoPropsT = {
   event: stateEventT;
   currentUserId: number;
   onEditEventClick: () => void;
@@ -27,7 +27,7 @@ type basicEventDataPropsT = {
   joinEvent: () => void;
   leaveEvent: () => void;
 };
-const BasicEventData: React.FC<basicEventDataPropsT> = ({
+const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
   event,
   currentUserId,
   onEditEventClick,
@@ -70,18 +70,17 @@ const BasicEventData: React.FC<basicEventDataPropsT> = ({
               <div key={participantId}>{participantData.displayName}</div>
             ),
           )}
+          {creatorId !== currentUserId && (
+            <Button
+              onClick={participants[currentUserId] ? leaveEvent : joinEvent}
+            >
+              {participants[currentUserId] ? 'Leave' : 'Join'}
+            </Button>
+          )}
         </ParticipantsGrid>
-        {creatorId !== currentUserId && (
-          <Button
-            onClick={participants[currentUserId] ? leaveEvent : joinEvent}
-          >
-            {participants[currentUserId] ? 'Leave' : 'Join'}
-          </Button>
-        )}
       </Participants>
-      <BottomLine />
     </Grid>
   );
 };
 
-export default BasicEventData;
+export default BasicEventInfo;

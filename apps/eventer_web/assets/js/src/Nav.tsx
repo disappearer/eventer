@@ -6,6 +6,7 @@ import Link from './components/Link';
 import { userT } from './features/authentication/userReducer';
 
 const Navbar = styled.nav`
+  flex: none;
   display: grid;
   padding: 10px;
   grid-row-gap: 20px;
