@@ -1,18 +1,8 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
-import styled from 'styled-components';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-
-const FormTitle = styled.h3`
-  margin-top: 0;
-`;
-
-const FormGrid = styled.div`
-  display: grid;
-  justify-items: start;
-  grid-gap: 17px;
-`;
+import { FormGrid, FormTitle } from './Form.styles';
 
 type valuesT = {
   title: string;

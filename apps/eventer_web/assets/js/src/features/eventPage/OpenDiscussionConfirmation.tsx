@@ -39,8 +39,7 @@ const OpenDiscussionConfirmation: React.FC<openDiscussionConfirmationPropsT> = (
         This will{' '}
         {hasCorrespondingDecision
           ? `mark the existing ${objective} decision as pending and discard it's resolution.`
-          : `create a new ${objective} decision`}
-        .
+          : `create a new ${objective} decision.`}
       </p>
       <ButtonsGrid>
         <Button onClick={handleConfirmClick}>Yes</Button>
