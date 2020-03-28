@@ -1,5 +1,14 @@
 import React from 'react';
+import styled from 'styled-components';
+import Button from '../../components/Button';
 import { specificObjectiveT } from './types';
+
+const ButtonsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 70px);
+  justify-content: center;
+  grid-gap: 30px;
+`;
 
 export type updateEventT = (data: {
   title: string;
@@ -25,12 +34,18 @@ const OpenDiscussionConfirmation: React.FC<openDiscussionConfirmationPropsT> = (
   };
   return (
     <div>
-      Are you sure you want to open {objective} for discussion? This will{' '}
-      {hasCorrespondingDecision
-        ? `mark the existing ${objective} decision as pending and discard it's resolution.`
-        : `create a new ${objective} decision`}
-      <button onClick={handleConfirmClick}>Yes</button>
-      <button onClick={closeModal}>Cancel</button>
+      <p>Are you sure you want to open {objective} for discussion?</p>
+      <p>
+        This will{' '}
+        {hasCorrespondingDecision
+          ? `mark the existing ${objective} decision as pending and discard it's resolution.`
+          : `create a new ${objective} decision`}
+        .
+      </p>
+      <ButtonsGrid>
+        <Button onClick={handleConfirmClick}>Yes</Button>
+        <Button onClick={closeModal}>Cancel</Button>
+      </ButtonsGrid>
     </div>
   );
 };

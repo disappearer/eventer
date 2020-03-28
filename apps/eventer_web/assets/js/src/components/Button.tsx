@@ -13,6 +13,7 @@ const Button = styled.button<buttonPropsT>`
   font-weight: 300;
   line-height: ${props => props.primary ? '1.6' : '1'};
   color: ${props => props.theme.colors.linkVisited};
+  // min-width: 80px;
 
   &:hover {
     background-color: ${props => props.theme.colors.linkVisited};

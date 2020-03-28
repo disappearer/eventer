@@ -8,10 +8,11 @@ export const Grid = styled.div`
   flex: none;
   display: grid;
   grid-template-columns: minmax(1fr, 200px) minmax(max-content, auto) auto;
-  grid-template-rows: minmax(auto, 70px) auto;
+  // grid-template-rows: minmax(auto, 70px) auto;
   grid-template-areas:
     'info time participants'
-    'info place participants';
+    'info place participants'
+    'info . participants';
 
   justify-content: space-between;
 
@@ -43,11 +44,20 @@ export const Info = styled.div`
   grid-area: info;
 `;
 
+export const EventTitleLine = styled.div`
+  display: grid;
+  grid-template-columns: auto minmax(60px, auto);
+  grid-gap: 20px;
+  // justify-items: start;
+  justify-content: start;
+  align-items: center;
+
+  // margin-bottom: px;
+`;
+
 export const EventTitle = styled.h1`
   display: inline-block;
-
-  margin-right: 30px;
-  margin: 0 30px 0 0;
+  margin: 0;
 `;
 
 export const Description = styled.div``;
