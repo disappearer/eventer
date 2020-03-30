@@ -1,26 +1,43 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const FieldWrapper = styled.div`
-`;
+const FieldWrapper = styled.div``;
 
 const Label = styled.label`
   display: block;
   font-size: 0.9rem;
   margin-bottom: 5px;
-  color: ${props => props.theme.colors.grey}
+  color: ${props => props.theme.colors.grey};
 `;
 
-const Input = styled.input`
+type inputPropsT = {
+  inputSize: 'regular' | 'small';
+};
+
+const Input = styled.input<inputPropsT>`
   display: block;
   background: transparent;
   outline: none;
   border: none;
   border-bottom: 1px solid ${props => props.theme.colors.grey};
   font-size: 1rem;
+  font-weight: 300;
   color: #333;
   width: 273px;
-  font-weight: 300;
+  ${props =>
+    props.inputSize === 'regular'
+      ? `
+    width: 273px
+  `
+      : ''}
+
+  ${props =>
+    props.inputSize === 'small'
+      ? `
+    width: 173px;
+    font-size: 0.9rem;
+  `
+      : ''}
 
   &:focus {
     border-bottom: 1px solid black;
@@ -33,25 +50,31 @@ const Input = styled.input`
 
 type textFieldPropsT = {
   name: string;
-  label: string;
-  onChange: (e: React.ChangeEvent<any>) => void;
+  label?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
   placeholder?: string;
   disabled?: boolean;
+  noLabel?: boolean;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  inputSize?: 'regular' | 'small';
 };
 
 const TextField: React.FC<textFieldPropsT> = ({
   name,
-  label,
+  label = '',
   onChange,
   value,
   placeholder,
   disabled = false,
+  noLabel = false,
+  onFocus = () => {},
+  inputSize = 'regular',
 }) => {
-  console.log("value", value)
+  console.log('value', value);
   return (
     <FieldWrapper>
-      <Label htmlFor={name}>{label}</Label>
+      {!noLabel && <Label htmlFor={name}>{label}</Label>}
       <Input
         id={name}
         name={name}
@@ -60,6 +83,8 @@ const TextField: React.FC<textFieldPropsT> = ({
         onChange={onChange}
         value={disabled ? 'TBD' : value}
         disabled={disabled}
+        onFocus={onFocus}
+        inputSize={inputSize}
       />
     </FieldWrapper>
   );

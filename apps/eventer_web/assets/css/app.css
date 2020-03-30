@@ -161,4 +161,5 @@ h3.decision-title {
   margin: 0 10px; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
+  border-radius: 6px;
 }

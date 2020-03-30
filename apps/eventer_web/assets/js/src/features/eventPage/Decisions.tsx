@@ -43,6 +43,11 @@ const DecisionTitleLine = styled.div`
 const DecisionTitle = styled.h4`
   margin: 0;
   display: inline-block;
+  text-decoration: underline;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const DecisionList = styled.div`
@@ -92,10 +97,10 @@ const Decisions: React.FC<decisionsPropsT> = ({
           return (
             <Decision key={id}>
               <DecisionTitleLine>
-                <DecisionTitle>
-                  <a onClick={() => onDecisionClick(parseInt(id, 10))}>
-                    {title}
-                  </a>
+                <DecisionTitle
+                  onClick={() => onDecisionClick(parseInt(id, 10))}
+                >
+                  {title}
                   {pending && ' (pending)'}
                 </DecisionTitle>
                 {objective === 'general' && (

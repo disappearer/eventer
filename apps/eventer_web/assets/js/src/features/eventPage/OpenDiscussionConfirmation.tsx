@@ -1,14 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import Button from '../../components/Button';
+import { ButtonsGrid } from './Form.styles';
 import { specificObjectiveT } from './types';
-
-const ButtonsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 70px);
-  justify-content: center;
-  grid-gap: 30px;
-`;
 
 export type updateEventT = (data: {
   title: string;

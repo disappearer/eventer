@@ -9,3 +9,11 @@ display: grid;
 justify-items: start;
 grid-gap: 17px;
 `;
+
+
+export const ButtonsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 70px);
+  justify-content: center;
+  grid-gap: 30px;
+`;

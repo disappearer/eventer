@@ -56,7 +56,6 @@ export const EventTitleLine = styled.div`
 `;
 
 export const EventTitle = styled.h1`
-  display: inline-block;
   margin: 0;
 `;
 
