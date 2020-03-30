@@ -8,11 +8,11 @@ const FieldWrapper = styled.div`
 const Label = styled.label`
   margin-left: 5px;
   font-size: 0.9rem;
-  color: ${props => props.theme.colors.grey};
+  color: ${props => props.theme.colors.darkerGrey};
 `;
 
 const Input = styled.input`
-  outline-color: ${props => props.theme.colors.link};
+  outline-color: ${props => props.theme.colors.main};
 `;
 
 type checkboxFieldPropsT = {

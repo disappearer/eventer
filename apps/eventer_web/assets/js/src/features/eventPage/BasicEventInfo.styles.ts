@@ -64,7 +64,7 @@ export const Description = styled.div``;
 export const CreatedBy = styled.div`
   margin-top: 5px;
   font-size: 0.8rem;
-  color: ${props => props.theme.colors.grey};
+  color: ${props => props.theme.colors.darkerGrey};
 `;
 
 export const TimePlace = styled.div`

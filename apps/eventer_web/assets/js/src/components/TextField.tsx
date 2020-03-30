@@ -7,7 +7,7 @@ const Label = styled.label`
   display: block;
   font-size: 0.9rem;
   margin-bottom: 5px;
-  color: ${props => props.theme.colors.grey};
+  color: ${props => props.theme.colors.darkerGrey};
 `;
 
 type inputPropsT = {
@@ -19,10 +19,10 @@ const Input = styled.input<inputPropsT>`
   background: transparent;
   outline: none;
   border: none;
-  border-bottom: 1px solid ${props => props.theme.colors.grey};
+  border-bottom: 1px solid ${props => props.theme.colors.darkerGrey};
   font-size: 1rem;
   font-weight: 300;
-  color: #333;
+  color: ${props => props.theme.colors.mineShaft};
   width: 273px;
   ${props =>
     props.inputSize === 'regular'

@@ -66,7 +66,7 @@ const Description = styled.div`
 const Objective = styled.div`
   margin-top: 5px;
   font-size: 0.9rem;
-  color: ${props => props.theme.colors.grey};
+  color: ${props => props.theme.colors.darkerGrey};
 `;
 
 type decisionsPropsT = {

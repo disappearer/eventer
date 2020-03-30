@@ -23,7 +23,7 @@ const SubTitle = styled.h3`
 const Description = styled.div`
   margin-top: 53px;
   max-width: 700px;
-  color: #444;
+  color: ${props => props.theme.colors.tundora};
 `;
 
 const Paragraph = styled.p`

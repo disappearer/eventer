@@ -4,13 +4,14 @@ const theme: DefaultTheme = {
   borderRadius: '5px',
 
   colors: {
-    main: 'cyan',
-    secondary: 'magenta',
-    primaryLine: '#008eae',
-    grey: '#555',
-    link: '#008eae',
-    linkVisited: '#00647b',
+    main: '#008eae',
+    secondary: '#00647b',
+    bright: '#008eae6e',
     pale: '#6fa1ac',
+    mineShaft: '#333333',
+    tundora: '#444444',
+    darkerGrey: '#555',
+    lighterGrey: '#929292',
   },
 };
 

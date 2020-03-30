@@ -9,11 +9,12 @@ declare module 'styled-components' {
     colors: {
       main: string;
       secondary: string;
-      primaryLine: string;
-      grey: string;
-      link: string;
-      linkVisited: string;
+      bright: string;
       pale: string;
+      mineShaft: string;
+      tundora: string;
+      darkerGrey: string;
+      lighterGrey: string;
     };
   }
 }

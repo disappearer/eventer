@@ -7,7 +7,7 @@ const Label = styled.label`
   display: block;
   font-size: 0.9rem;
   margin-bottom: 5px;
-  color: ${props => props.theme.colors.grey}
+  color: ${props => props.theme.colors.darkerGrey}
 `;
 
 type timeFieldPropsT = {
