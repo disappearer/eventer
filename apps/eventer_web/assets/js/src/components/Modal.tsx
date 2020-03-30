@@ -14,7 +14,7 @@ const Modal: React.FC<modalPropsT> = ({ shouldShowModal, hideModal, children }) 
     <div
       id="myModal"
       className="modal"
-      style={{ display: shouldShowModal ? 'block' : 'none' }}
+      style={{ display: shouldShowModal ? 'grid' : 'none' }}
       ref={modalRef}
     >
       <div className="modal-content">

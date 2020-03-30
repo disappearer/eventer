@@ -32,7 +32,7 @@ export const HorizontalSeparator = styled.div`
   background: linear-gradient(
     to left,
     transparent,
-    #008eae6e,
+    ${props => props.theme.colors.bright},
     transparent
   );
 `;
@@ -44,13 +44,13 @@ export const VerticalSeparator = styled.div`
   background: linear-gradient(
     to bottom,
     transparent,
-    #008eae6e,
+    ${props => props.theme.colors.bright},
     transparent
   );
 
   // background: linear-gradient(
   //   to bottom,
-  //   #008eae6e,
+  //   ${props => props.theme.colors.bright},
   //   transparent
   // );
 

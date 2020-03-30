@@ -5,26 +5,26 @@ import styled from 'styled-components';
 const StyledLink = styled(RouterLink)`
   text-decoration: none;
 
-  color: ${props => props.theme.colors.link};
+  color: ${props => props.theme.colors.main};
 
   &:visited {
-    color: ${props => props.theme.colors.linkVisited};
+    color: ${props => props.theme.colors.main};
   }
 `;
 
 const StyledAnchor = styled.a`
   text-decoration: none;
 
-  color: ${props => props.theme.colors.linkVisited};
+  color: ${props => props.theme.colors.main};
 `;
 
 const Button = (component: any) => styled(component)`
-  border: 1px solid ${props => props.theme.colors.linkVisited};
+  border: 1px solid ${props => props.theme.colors.main};
   border-radius: 5px;
   padding: 7px;
 
   &:hover {
-    background-color: ${props => props.theme.colors.linkVisited};
+    background-color: ${props => props.theme.colors.main};
     color: white;
   }
 `;

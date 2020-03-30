@@ -8,27 +8,34 @@ const FieldWrapper = styled.div`
 const Label = styled.label`
   margin-left: 5px;
   font-size: 0.9rem;
-  color: ${props => props.theme.colors.grey}
+  color: ${props => props.theme.colors.darkerGrey};
 `;
 
 const Input = styled.input`
-  outline-color: ${props => props.theme.colors.link};
+  outline-color: ${props => props.theme.colors.main};
 `;
 
 type checkboxFieldPropsT = {
   name: string;
   label: string;
   onChange: (e: React.ChangeEvent<any>) => void;
+  checked?: boolean;
 };
 
 const CheckboxField: React.FC<checkboxFieldPropsT> = ({
   name,
   label,
   onChange,
+  checked = false,
 }) => {
   return (
     <FieldWrapper>
-      <Input name={name} type="checkbox" onChange={onChange} />
+      <Input
+        name={name}
+        type="checkbox"
+        onChange={onChange}
+        checked={checked}
+      />
       <Label htmlFor={name}>{label}</Label>
     </FieldWrapper>
   );

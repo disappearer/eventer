@@ -3,9 +3,9 @@ import Button from '../../components/Button';
 import Description from '../../components/Description';
 import { getDateString, getTimeString } from '../../util/time';
 import {
-  BottomLine,
   CreatedBy,
   EventTitle,
+  EventTitleLine,
   Grid,
   Info,
   Label,
@@ -40,8 +40,10 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
   return (
     <Grid>
       <Info>
-        <EventTitle>{title}</EventTitle>
-        <Button onClick={onEditEventClick}>Edit</Button>
+        <EventTitleLine>
+          <EventTitle>{title}</EventTitle>
+          <Button onClick={onEditEventClick}>Edit</Button>
+        </EventTitleLine>
         <Description>{description}</Description>
         <CreatedBy>Created by {participants[creatorId].displayName}</CreatedBy>
       </Info>

@@ -21,7 +21,7 @@ const Messages = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  color: ${props => props.theme.colors.grey};
+  color: ${props => props.theme.colors.darkerGrey};
   font-size: 0.9rem;
 `;
 

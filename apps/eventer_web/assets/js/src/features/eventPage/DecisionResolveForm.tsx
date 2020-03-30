@@ -1,7 +1,10 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Button from '../../components/Button';
+import TextField from '../../components/TextField';
+import TimeField from '../../components/TimeField';
+import { ButtonsGrid, FormGrid, FormTitle } from './Form.styles';
 import { objectiveT, resolutionT, resolveDecisionT } from './types';
 
 type valuesT = {
@@ -13,6 +16,7 @@ type resolveFormPropsT = {
   objective: objectiveT;
   onSubmit: resolveDecisionT;
   onSuccess: () => void;
+  formTitle: string;
 };
 
 const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
@@ -20,6 +24,7 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
   objective,
   onSubmit,
   onSuccess,
+  formTitle,
 }) => {
   return (
     <Formik<valuesT>
@@ -32,28 +37,27 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
       {({ values, handleChange, setFieldValue }) => {
         return (
           <Form>
-            <label htmlFor="resolution">Resolution</label>
-            {objective === 'time' ? (
-              <DatePicker
-                name="resolution"
-                showTimeSelect
-                timeIntervals={15}
-                selected={values.resolution as Date}
-                onChange={time => setFieldValue('resolution', time)}
-                dateFormat="MMMM d, yyyy h:mm aa"
-              />
-            ) : (
-              <input
-                id="resolution"
-                name="resolution"
-                type="text"
-                onChange={handleChange}
-                value={values.resolution as string}
-              />
-            )}
-
-            <button type="submit">Submit</button>
-            <button type="button" onClick={onSuccess}>Cancel</button>
+            <FormTitle>{formTitle}</FormTitle>
+            <FormGrid>
+              {objective === 'time' ? (
+                <TimeField
+                  selected={values.resolution as Date}
+                  onChange={time => setFieldValue('resolution', time)}
+                  disabled={false}
+                />
+              ) : (
+                <TextField
+                  label="Resolution"
+                  name="resolution"
+                  onChange={handleChange}
+                  value={values.resolution as string}
+                />
+              )}
+              <ButtonsGrid>
+                <Button type="submit">Submit</Button>
+                <Button onClick={onSuccess}>Cancel</Button>
+              </ButtonsGrid>
+            </FormGrid>
           </Form>
         );
       }}

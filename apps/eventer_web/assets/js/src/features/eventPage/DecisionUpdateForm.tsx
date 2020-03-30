@@ -1,5 +1,8 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
+import Button from '../../components/Button';
+import TextField from '../../components/TextField';
+import { ButtonsGrid, FormGrid, FormTitle } from './Form.styles';
 import { updateDecisionT } from './types';
 
 type valuesT = {
@@ -15,6 +18,7 @@ type decisionUpdateFromPropsT = {
   id: number;
   onSubmit: updateDecisionT;
   onSuccess: () => void;
+  formTitle: string;
 };
 
 const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
@@ -22,6 +26,7 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
   id,
   onSuccess,
   onSubmit,
+  formTitle,
 }) => {
   return (
     <Formik<valuesT>
@@ -34,26 +39,25 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
       {({ values, handleChange }) => {
         return (
           <Form>
-            <label htmlFor="title">Title</label>
-            <input
-              id="title"
-              name="title"
-              type="text"
-              onChange={handleChange}
-              value={values.title}
-            />
-            <label htmlFor="description">Description</label>
-            <input
-              id="description"
-              name="description"
-              type="text"
-              onChange={handleChange}
-              value={values.description}
-            />
-            <button type="submit">Submit</button>
-            <button type="button" onClick={onSuccess}>
-              Cancel
-            </button>
+            <FormTitle>{formTitle}</FormTitle>
+            <FormGrid>
+              <TextField
+                name="title"
+                label="Title"
+                onChange={handleChange}
+                value={values.title}
+              />
+              <TextField
+                name="description"
+                label="Description"
+                onChange={handleChange}
+                value={values.description}
+              />
+              <ButtonsGrid>
+                <Button type="submit">Submit</Button>
+                <Button onClick={onSuccess}>Cancel</Button>
+              </ButtonsGrid>
+            </FormGrid>
           </Form>
         );
       }}

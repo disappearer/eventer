@@ -11,6 +11,81 @@ import {
   resolveDecisionT,
   updateDecisionT,
 } from './types';
+import styled from 'styled-components';
+import Button from '../../components/Button';
+import DiscardResolutionConfirmation from './DiscardResolutionConfirmation';
+
+const Wrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(63px, 123px)) auto;
+  grid-template-areas:
+    'info info poll'
+    'objective status poll'
+    'resolution resolution poll';
+
+  grid-gap: 23px;
+  justify-items: start;
+  justify-content: start;
+
+  @media (max-width: 440px) {
+    grid-template-columns: repeat(2, minmax(63px, 123px));
+    grid-template-areas:
+      'info info'
+      'objective status'
+      'resolution resolution'
+      'poll poll'
+      'poll poll'
+      'poll poll';
+  }
+`;
+
+const TitleLine = styled.div`
+  display: grid;
+  grid-template-columns: auto minmax(60px, auto);
+  grid-gap: 20px;
+  justify-content: start;
+  align-items: center;
+
+  margin-bottom: 5px;
+`;
+
+const DecisionTitle = styled.h2`
+  margin: 0;
+`;
+
+const InfoArea = styled.div`
+  grid-area: info;
+`;
+
+const StatusArea = styled.div`
+  grid-area: status;
+`;
+
+const ObjectiveArea = styled.div`
+  grid-area: objective;
+`;
+
+const PollArea = styled.div`
+  grid-area: poll;
+  margin-left: 10px;
+
+  @media (max-width: 440px) {
+    margin: 0;
+  }
+`;
+
+const ResolutionArea = styled.div`
+  grid-area: resolution;
+`;
+
+const Label = styled.h4`
+  margin: 0;
+  margin-bottom: 5px;
+`;
+
+const ResolutionLabel = styled.h4`
+  margin: 0;
+`;
 
 type decisionActionT =
   | 'view'
@@ -65,78 +140,65 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
 
   const { title, description, pending, objective, resolution, poll } = data;
   return (
-    <div>
-      <div className="row">
-        {['view', 'resolve', 'discard_resolution', 'add_poll'].includes(
-          decisionAction,
-        ) && (
-          <div className="box">
-            <h2>{title}</h2>
-            <p>{description}</p>
-          </div>
-        )}
-        {decisionAction === 'edit' && (
-          <DecisionUpdateForm
-            id={id}
-            initialValues={{ title, description }}
-            onSubmit={onDecisionUpdate}
-            onSuccess={resetDecisionModal}
-          />
-        )}
-        <div className="box">
-          <h3>Status</h3>
-          <p>{pending ? 'pending' : 'resolved'}</p>
-          <h3>Objective</h3>
-          <p>{objective}</p>
-          {resolution && (
-            <>
-              <h3>Resolution</h3>
-              <p>
-                {objective === 'time' ? formatTime(resolution) : resolution}
-              </p>
-            </>
-          )}
-        </div>
-        <div className="box">
-          {decisionAction === 'add_poll' ? (
-            <>
-              <h3>Add poll</h3>
-              <PollForm
-                decisionId={id}
-                onSubmit={onAddPoll}
-                onSuccess={resetDecisionModal}
-              />
-            </>
-          ) : (
-            <>
-              <h3>Poll</h3>
-              {poll ? (
-                <Poll poll={poll} hasVoted={false} />
-              ) : (
-                decisionAction === 'view' && (
-                  <button onClick={showAddPollForm}>Add poll</button>
-                )
-              )}
-            </>
-          )}
-        </div>
-      </div>
+    <>
       {decisionAction === 'view' && (
-        <>
-          <button onClick={showEditForm}>Edit</button>
-          {pending ? (
-            <button onClick={showResolveForm}>Resolve</button>
-          ) : (
-            objective === 'general' && (
-              <button onClick={showDiscardConfirmation}>
-                Discard resolution
-              </button>
-            )
+        <Wrapper>
+          <InfoArea>
+            <TitleLine>
+              <DecisionTitle>{title}</DecisionTitle>
+              {decisionAction === 'view' && (
+                <Button onClick={showEditForm}>Edit</Button>
+              )}
+            </TitleLine>
+            <div>{description}</div>
+          </InfoArea>
+
+          <StatusArea>
+            <Label>Status</Label>
+            <div>{pending ? 'pending' : 'resolved'}</div>
+          </StatusArea>
+          <ObjectiveArea>
+            <Label>Objective</Label>
+            <div>{objective}</div>
+          </ObjectiveArea>
+          {resolution && (
+            <ResolutionArea>
+              <TitleLine>
+                <ResolutionLabel>Resolution</ResolutionLabel>
+                {objective === 'general' && (
+                  <Button onClick={showDiscardConfirmation}>
+                    Discard resolution
+                  </Button>
+                )}
+              </TitleLine>
+              <div>
+                {objective === 'time' ? formatTime(resolution) : resolution}
+              </div>
+            </ResolutionArea>
           )}
-        </>
+          <PollArea>
+            <Label>Poll</Label>
+            {poll ? (
+              <Poll poll={poll} hasVoted={false} />
+            ) : (
+              <Button onClick={showAddPollForm}>Add poll</Button>
+            )}
+          </PollArea>
+          {pending && <Button onClick={showResolveForm}>Resolve</Button>}
+        </Wrapper>
+      )}
+      {decisionAction === 'edit' && (
+        <DecisionUpdateForm
+          id={id}
+          initialValues={{ title, description }}
+          onSubmit={onDecisionUpdate}
+          onSuccess={resetDecisionModal}
+          formTitle={`Update ${title}`}
+        />
       )}
       {decisionAction === 'resolve' && (
         <ResolveForm
+          formTitle={`Resolve ${title}`}
           id={id}
           objective={objective}
           onSubmit={onDecisionResolve}
@@ -144,13 +206,21 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
         />
       )}
       {decisionAction === 'discard_resolution' && (
-        <div>
-          Are you sure you want to discard resolution "{resolution}"?
-          <button onClick={discardResolution}>Yes</button>
-          <button onClick={resetDecisionModal}>Cancel</button>
-        </div>
+        <DiscardResolutionConfirmation
+          id={id}
+          resolution={resolution}
+          onConfirm={discardResolution}
+          onSuccess={resetDecisionModal}
+        />
       )}
-    </div>
+      {decisionAction === 'add_poll' && (
+        <PollForm
+          decisionId={id}
+          onSubmit={onAddPoll}
+          onSuccess={resetDecisionModal}
+        />
+      )}
+    </>
   );
 };
 

@@ -1,5 +1,37 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
+import Button from '../../components/Button';
+import TextField from '../../components/TextField';
 import { pollT } from './types';
+
+const Question = styled.div`
+  margin-bottom: 7px;
+`;
+
+const Options = styled.div`
+  display: grid;
+  justify-items: start;
+`;
+
+type optionPropsT = {
+  selected?: boolean;
+};
+
+const Option = styled.div<optionPropsT>`
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 3px;
+  ${props =>
+    props.selected
+      ? `border: 1px solid ${props.theme.colors.pale};`
+      : 'border: 1px solid transparent;'}
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 type pollPropsT = {
   poll: pollT;
@@ -26,36 +58,31 @@ const Poll: React.FC<pollPropsT> = ({ poll, hasVoted }) => {
   const { question, fixed, options, votes } = poll;
   return (
     <div>
-      <span>{question}</span>
-      <div>
+      <Question>{question}</Question>
+      <Options>
         {options.map(({ id, text }) => (
-          <div
-            className={`poll-option${hasVoted ? '' : ' votable'} ${
-              selectedOption === id ? ' selected' : ''
-            }`}
+          <Option
+            selected={selectedOption === id}
             key={id}
             onClick={() => toggleSelectedOption(id)}
           >
             {text}
-          </div>
+          </Option>
         ))}
         {!hasVoted && !fixed && (
-          <div
-            id="custom-option"
-            className={`poll-option${
-              selectedOption === 'custom' ? ' selected' : ''
-            }`}
-          >
-            <input
+          <Option>
+            <TextField
+              inputSize="small"
+              name="custom-option"
               placeholder="Custom option"
               onFocus={() => toggleSelectedOption('custom')}
               onChange={handleCustomOptionChange}
               value={customOption}
-            ></input>
-          </div>
+            />
+          </Option>
         )}
-        {<button disabled={!canSubmitVote}>Submit vote</button>}
-      </div>
+        {<Button disabled={!canSubmitVote}>Submit vote</Button>}
+      </Options>
     </div>
   );
 };

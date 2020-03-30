@@ -15,7 +15,7 @@ const Title = styled.h1`
     border-radius: 3px;
     background: linear-gradient(
       to var(--direction, left),
-      ${props => props.theme.colors.primaryLine},
+      ${props => props.theme.colors.main},
       transparent
     );
   }
