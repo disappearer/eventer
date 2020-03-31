@@ -10,7 +10,9 @@ defmodule EventerWeb.EventControllerListTest do
     } do
       events =
         insert_list(3, :event, %{creator: user})
-        |> Enum.sort(fn e1, e2 -> e1.time > e2.time end)
+        |> Enum.sort(fn e1, e2 ->
+          DateTime.compare(e1.time, e2.time) === :gt
+        end)
 
       timeless_event = insert(:event, %{creator: user, time: nil})
       regular_event = insert(:event, %{creator: user})

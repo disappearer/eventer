@@ -165,11 +165,80 @@ defmodule EventerWeb.EventChannel do
       ) do
     case Decisions.get_decision(decision_id) |> Decisions.update_poll(poll) do
       {:ok, decision} ->
-        broadcast(socket, "poll_added", %{decision_id: decision.id, poll: decision.poll})
+        broadcast(socket, "poll_added", %{
+          decision_id: decision.id,
+          poll: decision.poll
+        })
+
         {:reply, {:ok, %{}}, socket}
 
       {:error, changeset} ->
         {:reply, {:error, %{errors: changeset.errors}}, socket}
     end
+  end
+
+  def handle_in(
+        "vote",
+        %{
+          "decision_id" => decision_id,
+          "custom_option" => custom_option,
+          "options" => options
+        },
+        socket
+      )
+      when is_list(options) do
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+    decision = Decisions.get_decision(decision_id)
+
+    with {:ok, _} <- check_multiple_vote(decision, options),
+         {:ok, decision} <- add_custom_option(decision, custom_option),
+         {options, new_option} <- append_custom_option(options, decision, custom_option),
+         {:ok, _} <- Decisions.vote(decision, user.id, options) do
+      broadcast(socket, "user_voted", %{
+        user_id: user.id,
+        decision_id: decision.id,
+        custom_option: new_option,
+        options: options,
+      })
+
+      {:reply, {:ok, %{}}, socket}
+    else
+      {:error, changeset} ->
+        {:reply, {:error, %{errors: changeset.errors}}, socket}
+    end
+  end
+
+  defp check_multiple_vote(decision, options) do
+    cond do
+      length(options) < 2 ->
+        {:ok, nil}
+
+      decision.poll.multiple_votes ->
+        {:ok, nil}
+
+      true ->
+        {:error,
+         %{errors: [vote: {"Voting for multiple options is disabled", []}]}}
+    end
+  end
+
+  defp add_custom_option(decision, custom_option) do
+    if custom_option do
+      if decision.poll.fixed do
+        {:error,
+         %{errors: [vote: {"Poll fixed - custom option not possible", []}]}}
+      else
+        Decisions.add_option(decision, custom_option["text"])
+      end
+    else
+      {:ok, decision}
+    end
+  end
+
+  defp append_custom_option(options, _decision, nil), do: {options, nil}
+
+  defp append_custom_option(options, decision, _custom_option) do
+    new_option = List.last(decision.poll.options)
+    {[new_option.id | options], new_option}
   end
 end

@@ -15,6 +15,7 @@ declare module 'styled-components' {
       tundora: string;
       darkerGrey: string;
       lighterGrey: string;
+      milanoRed: string;
     };
   }
 }
