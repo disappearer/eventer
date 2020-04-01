@@ -9,7 +9,13 @@ defmodule EventerWeb.EventChannelConnectTest do
       user = insert(:user)
 
       event = insert(:event, %{creator: user})
-      insert(:decision, %{event: event, creator: user})
+
+      poll =
+        build(:poll, %{
+          votes: %{3 => ["id0", "id1"], 4 => ["id1"]}
+        })
+
+      insert(:decision, %{event: event, creator: user, poll: poll})
 
       event = Events.get_event(event.id) |> Events.to_map()
       event_id_hash = IdHasher.encode(event.id)
@@ -19,6 +25,13 @@ defmodule EventerWeb.EventChannelConnectTest do
         |> subscribe_and_join(EventChannel, "event:#{event_id_hash}")
 
       assert reply === %{event: event}
+
+      %{event: %{decisions: [%{poll: poll}]}} = reply
+      IO.inspect poll, label: "poll"
+      assert poll.voted_by === [4, 3]
+      [option1 | [option2 | _]] = poll.options
+      assert option1.votes === [3]
+      assert option2.votes === [3, 4]
     end
 
     test "socket authorization fails with wrong token" do
