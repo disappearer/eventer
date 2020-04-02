@@ -26,7 +26,6 @@ defmodule Eventer.Poll do
     |> validate_required(:custom_answer_enabled,
       message: "Question type (fixed) must be provided"
     )
-    |> validate_length(:question, min: 3, max: 100)
     |> validate_options()
   end
 

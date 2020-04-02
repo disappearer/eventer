@@ -8,10 +8,22 @@ const Options = styled.div`
   grid-gap: 9px;
 `;
 
-const Option = styled.div``;
+const Option = styled.div`
+  display: grid;
+  grid-gap: 5px;
+  justify-items: start;
+`;
+
+const OptionText = styled.div`
+  font-size: 0.9rem;
+  padding: 5px 17px;
+  text-align: center;
+  border-radius: 27px;
+  border: 1px solid ${props => props.theme.colors.pale};
+  color: ${props => props.theme.colors.darkerGrey};
+`;
 
 const Voters = styled.div`
-  margin-top: 5px;
   font-size: 0.8rem;
   color: ${props => props.theme.colors.darkerGrey};
 `;
@@ -26,7 +38,7 @@ const PollResults: React.FC<pollResultsT> = ({ options }) => {
     <Options>
       {options.map(option => (
         <Option key={option.id}>
-          <div>{option.text}</div>
+          <OptionText>{option.text}</OptionText>
           <Voters>{getVoters(option, event)}</Voters>
         </Option>
       ))}

@@ -16,8 +16,8 @@ const PollOption = styled.div`
 
 export type pollValuesT = {
   question: string;
-  fixed: boolean;
-  multiple_votes: boolean;
+  custom_answer_enabled: boolean;
+  multiple_answers_enabled: boolean;
   options: {
     text: string;
     id: string | undefined;
@@ -33,8 +33,8 @@ type pollFormPropsT = {
 
 const defaultValues: pollValuesT = {
   question: '',
-  fixed: false,
-  multiple_votes: false,
+  custom_answer_enabled: true,
+  multiple_answers_enabled: false,
   options: [],
 };
 
@@ -65,16 +65,16 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
               />
               <div>
                 <CheckboxField
-                  name="fixed"
-                  label="Custom answers disabled"
+                  name="custom_answer_enabled"
+                  label="Custom answer votes enabled"
                   onChange={handleChange}
-                  checked={values.fixed}
+                  checked={values.custom_answer_enabled}
                 />
                 <CheckboxField
-                  name="multiple_votes"
+                  name="multiple_answers_enabled"
                   label="Multiple answer votes enabled"
                   onChange={handleChange}
-                  checked={values.multiple_votes}
+                  checked={values.multiple_answers_enabled}
                 />
               </div>
               <FieldArray

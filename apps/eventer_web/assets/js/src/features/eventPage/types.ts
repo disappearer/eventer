@@ -33,8 +33,8 @@ export type optionT = {
 
 export type pollT = {
   question: string;
-  fixed: boolean;
-  multiple_votes: boolean;
+  custom_answer_enabled: boolean;
+  multiple_answers_enabled: boolean;
   voted_by: number[];
   options: optionT[];
 }
