@@ -29,25 +29,28 @@ type optionPropsT = {
 
 const Option = styled.div<optionPropsT>`
   font-size: 0.9rem;
-  padding: 5px;
+  padding: 5px 17px;
   text-align: center;
-  border-radius: 3px;
+  border-radius: 27px;
   ${props =>
     props.selected
       ? `border: 1px solid ${props.theme.colors.pale};
           background: ${props.theme.colors.paler};`
-      : 'border: 1px solid transparent;'}
+      : `border: 1px solid ${props.theme.colors.lighterGrey};`}
 
   &:hover {
     cursor: pointer;
-    border: 1px solid ${props => props.theme.colors.lighterGrey};
+    box-shadow: 0 0 3px ${props => props.theme.colors.main};
   }
 `;
 
 const CustomOption = styled(Option)`
+  border: 1px solid transparent;
+  padding: 5px;
+
   &:hover {
     cursor: default;
-    border: 1px solid transparent;
+    box-shadow: none;
   }
 `;
 
@@ -74,11 +77,16 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
     setCustomOptionText(event.target.value);
   };
 
-  const { question, fixed, options, multiple_votes } = poll;
+  const {
+    question,
+    custom_answer_enabled,
+    options,
+    multiple_answers_enabled,
+  } = poll;
 
   const toggleSelectedOption = (id: string) => {
     setSelectedOptions(currentlySelectedOptions => {
-      if (multiple_votes) {
+      if (multiple_answers_enabled) {
         if (currentlySelectedOptions.includes(id)) {
           return currentlySelectedOptions.filter(optionId => optionId !== id);
         } else {
@@ -112,9 +120,13 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
           <Options>
             <Description>
               {options.length > 0 && 'Choose an answer'}
-              {options.length > 0 && !fixed && ' or provide your own'}
+              {options.length > 0 &&
+                custom_answer_enabled &&
+                ' or provide your own'}
               {options.length === 0 && 'Provide your answer'}.
-              {multiple_votes && ' You can choose more than one.'}
+              {multiple_answers_enabled &&
+                options.length > 0 &&
+                ' You can choose more than one.'}
             </Description>
             {options.map(({ id, text }) => (
               <Option
@@ -125,7 +137,7 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
                 {text}
               </Option>
             ))}
-            {!hasVoted && !fixed && (
+            {!hasVoted && custom_answer_enabled && (
               <CustomOption>
                 <TextField
                   inputSize="small"

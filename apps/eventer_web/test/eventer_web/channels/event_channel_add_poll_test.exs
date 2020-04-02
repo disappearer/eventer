@@ -25,7 +25,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "Should I?",
-        fixed: true,
+        custom_answer_enabled: false,
         options: [%{text: "stay"}, %{text: "go"}]
       }
 
@@ -40,7 +40,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
       %{poll: db_poll} = Repo.get(Decision, decision.id)
 
       assert db_poll.question === poll.question
-      assert db_poll.fixed === poll.fixed
+      assert db_poll.custom_answer_enabled === poll.custom_answer_enabled
 
       [opt1, opt2] = poll.options
       [db_opt1, db_opt2] = db_poll.options
@@ -70,8 +70,8 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "Should I?",
-        fixed: true,
-        multiple_votes: true,
+        custom_answer_enabled: false,
+        multiple_answers_enabled: true,
         options: [%{text: "stay"}, %{text: "go"}]
       }
 
@@ -86,8 +86,8 @@ defmodule EventerWeb.EventChannelAddPollTest do
       %{poll: db_poll} = Repo.get(Decision, decision.id)
 
       assert db_poll.question === poll.question
-      assert db_poll.fixed === poll.fixed
-      assert db_poll.multiple_votes === poll.multiple_votes
+      assert db_poll.custom_answer_enabled === poll.custom_answer_enabled
+      assert db_poll.multiple_answers_enabled === poll.multiple_answers_enabled
 
       [opt1, opt2] = poll.options
       [db_opt1, db_opt2] = db_poll.options
@@ -117,7 +117,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "Should I?",
-        fixed: true,
+        custom_answer_enabled: false,
         options: [%{text: "stay"}]
       }
 
@@ -132,7 +132,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
       %{poll: db_poll} = Repo.get(Decision, decision.id)
 
       assert db_poll.question === poll.question
-      assert db_poll.fixed === poll.fixed
+      assert db_poll.custom_answer_enabled === poll.custom_answer_enabled
 
       [opt] = poll.options
       [db_opt] = db_poll.options
@@ -161,7 +161,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "",
-        fixed: true,
+        custom_answer_enabled: false,
         options: [%{text: "stay"}, %{text: "go"}]
       }
 
@@ -175,7 +175,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       %{poll: db_poll} = Repo.get(Decision, decision.id)
       assert db_poll.question === nil
-      assert db_poll.fixed === poll.fixed
+      assert db_poll.custom_answer_enabled === poll.custom_answer_enabled
 
       [opt1, opt2] = poll.options
       [db_opt1, db_opt2] = db_poll.options
@@ -205,7 +205,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "Should I?",
-        fixed: true,
+        custom_answer_enabled: false,
         options: [%{text: "stay"}, %{text: "stay"}]
       }
 
@@ -240,7 +240,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "",
-        fixed: true,
+        custom_answer_enabled: false,
         options: [%{text: "option1"}]
       }
 
@@ -277,7 +277,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "Should I?",
-        fixed: true,
+        custom_answer_enabled: false,
         options: [%{text: "stay"}, %{text: "go"}]
       }
 
@@ -290,7 +290,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       assert decision_id === decision.id
       assert new_poll.question === poll.question
-      assert new_poll.fixed === poll.fixed
+      assert new_poll.custom_answer_enabled === poll.custom_answer_enabled
 
       [opt1, opt2] = poll.options
       [new_opt1, new_opt2] = new_poll.options

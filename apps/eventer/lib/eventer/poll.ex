@@ -5,8 +5,8 @@ defmodule Eventer.Poll do
   @primary_key false
   embedded_schema do
     field(:question, :string)
-    field(:fixed, :boolean, default: false)
-    field(:multiple_votes, :boolean, default: false)
+    field(:custom_answer_enabled, :boolean, default: true)
+    field(:multiple_answers_enabled, :boolean, default: false)
     field(:votes, :map, default: %{})
 
     embeds_many :options, Option, on_replace: :delete do
@@ -16,12 +16,16 @@ defmodule Eventer.Poll do
 
   def changeset(poll, params \\ %{}) do
     poll
-    |> cast(params, [:question, :fixed, :multiple_votes, :votes])
+    |> cast(params, [
+      :question,
+      :custom_answer_enabled,
+      :multiple_answers_enabled,
+      :votes
+    ])
     |> cast_embed(:options, with: &option_changeset/2)
-    |> validate_required(:fixed,
+    |> validate_required(:custom_answer_enabled,
       message: "Question type (fixed) must be provided"
     )
-    |> validate_length(:question, min: 3, max: 100)
     |> validate_options()
   end
 
