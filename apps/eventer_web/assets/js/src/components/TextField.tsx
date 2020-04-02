@@ -71,7 +71,6 @@ const TextField: React.FC<textFieldPropsT> = ({
   onFocus = () => {},
   inputSize = 'regular',
 }) => {
-  console.log('value', value);
   return (
     <FieldWrapper>
       {!noLabel && <Label htmlFor={name}>{label}</Label>}

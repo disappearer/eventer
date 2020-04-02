@@ -11,6 +11,7 @@ declare module 'styled-components' {
       secondary: string;
       bright: string;
       pale: string;
+      paler: string;
       mineShaft: string;
       tundora: string;
       darkerGrey: string;

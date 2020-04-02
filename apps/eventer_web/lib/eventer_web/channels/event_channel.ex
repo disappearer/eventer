@@ -167,12 +167,13 @@ defmodule EventerWeb.EventChannel do
       {:ok, decision} ->
         broadcast(socket, "poll_added", %{
           decision_id: decision.id,
-          poll: decision.poll
+          poll: Polls.to_map(decision.poll)
         })
 
         {:reply, {:ok, %{}}, socket}
 
       {:error, changeset} ->
+        IO.inspect(changeset, label: "changeset")
         {:reply, {:error, %{errors: changeset.errors}}, socket}
     end
   end
@@ -192,13 +193,14 @@ defmodule EventerWeb.EventChannel do
 
     with {:ok, _} <- check_multiple_vote(decision, options),
          {:ok, decision} <- add_custom_option(decision, custom_option),
-         {options, new_option} <- append_custom_option(options, decision, custom_option),
+         {options, new_option} <-
+           append_custom_option(options, decision, custom_option),
          {:ok, _} <- Decisions.vote(decision, user.id, options) do
       broadcast(socket, "user_voted", %{
         user_id: user.id,
         decision_id: decision.id,
-        custom_option: new_option,
-        options: options,
+        custom_option: Polls.option_to_map(new_option),
+        options: options
       })
 
       {:reply, {:ok, %{}}, socket}

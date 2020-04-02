@@ -9,6 +9,41 @@ defmodule EventerWeb.EventChannelConnectTest do
       user = insert(:user)
 
       event = insert(:event, %{creator: user})
+
+      options = build_list(3, :option)
+      [option1 | [option2 | _]] = options
+
+      poll =
+        build(:poll, %{
+          options: options,
+          votes: %{3 => [option1.id, option2.id], 4 => [option2.id]}
+        })
+
+      insert(:decision, %{event: event, creator: user, poll: poll})
+
+      event = Events.get_event(event.id) |> Events.to_map()
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, reply, _} =
+        socket(UserSocket, "user:#{user.id}", %{})
+        |> subscribe_and_join(EventChannel, "event:#{event_id_hash}")
+
+      assert reply === %{event: event}
+
+      %{event: %{decisions: [%{poll: poll}]}} = reply
+      assert poll.voted_by === [4, 3]
+      [option1 | [option2 | _]] = poll.options
+      assert option1.votes === [3]
+      assert option2.votes === [3, 4]
+
+      Jason.encode!(event)
+    end
+
+    test "Jason doesn't crash when no votes" do
+      user = insert(:user)
+
+      event = insert(:event, %{creator: user})
+
       insert(:decision, %{event: event, creator: user})
 
       event = Events.get_event(event.id) |> Events.to_map()
@@ -19,6 +54,8 @@ defmodule EventerWeb.EventChannelConnectTest do
         |> subscribe_and_join(EventChannel, "event:#{event_id_hash}")
 
       assert reply === %{event: event}
+
+      Jason.encode!(event)
     end
 
     test "socket authorization fails with wrong token" do

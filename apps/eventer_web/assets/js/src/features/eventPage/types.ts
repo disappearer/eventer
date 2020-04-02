@@ -1,4 +1,4 @@
-import { pollValuesT } from "./PollForm";
+import { pollValuesT } from './PollForm';
 
 export type stateEventT = eventDataT & {
   decisions: stateDecisionsT;
@@ -25,15 +25,19 @@ export type eventDataT = {
 export type specificObjectiveT = 'time' | 'place';
 export type objectiveT = specificObjectiveT | 'general';
 
+export type optionT = {
+  id: string;
+  text: string;
+  votes: number[];
+}
+
 export type pollT = {
   question: string;
   fixed: boolean;
-  options: {
-    id: string;
-    text: string;
-  }[];
-  votes: { [key: number]: string };
-};
+  multiple_votes: boolean;
+  voted_by: number[];
+  options: optionT[];
+}
 
 export type decisionT = {
   title: string;
@@ -87,3 +91,12 @@ export type resolveDecisionT = (id: number, resolution: resolutionT) => void;
 export type discardResolutionT = (id: number) => void;
 
 export type addPollT = (decisionId: number, poll: pollValuesT) => void;
+
+type customOptionT = {
+  text: string;
+};
+export type voteT = (
+  decisionId: number,
+  customOption: customOptionT | null,
+  optionsVotedFor: string[],
+) => void;
