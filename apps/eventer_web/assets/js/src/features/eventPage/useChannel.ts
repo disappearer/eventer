@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   addStateDecision,
+  addStatePoll,
   addUserToParticipants,
   discardStateResolution,
   mapResponseEventToStateEvent,
@@ -13,7 +14,7 @@ import {
   resolveStateDecision,
   updateStateDecision,
   updateStateEvent,
-  addStatePoll,
+  updateStateVote,
 } from './stateTransformations';
 import { stateEventT } from './types';
 
@@ -109,6 +110,18 @@ const useChannel: useChannelT = (token, setEvent) => {
         return Some(addStatePoll(e, decision_id, poll));
       });
     });
+
+    channel.on(
+      'user_voted',
+      ({ user_id, decision_id, custom_option, options }) => {
+        setEvent(event => {
+          const e = event.get();
+          return Some(
+            updateStateVote(e, user_id, decision_id, custom_option, options),
+          );
+        });
+      },
+    );
 
     setChannel(Some(channel));
 

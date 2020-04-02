@@ -1,10 +1,10 @@
 import {
-  responseDecisionT,
   responseEventT,
   responseUserT,
   stateDecisionsT,
   stateEventT,
   stateUsersT,
+  responseDecisionT,
   pollT,
 } from './types';
 
@@ -226,11 +226,7 @@ type addStatePollT = (
   decisionId: number,
   poll: pollT,
 ) => stateEventT;
-export const addStatePoll: addStatePollT = (
-  currentEvent,
-  decisionId,
-  poll
-) => {
+export const addStatePoll: addStatePollT = (currentEvent, decisionId, poll) => {
   const { decisions } = currentEvent;
   const { [decisionId]: decision } = decisions;
 
@@ -241,4 +237,55 @@ export const addStatePoll: addStatePollT = (
       [decisionId]: { ...decision, poll },
     },
   };
+};
+
+type customOptionT = {
+  id: string;
+  text: string;
+};
+type updateStateVoteT = (
+  e: stateEventT,
+  userId: number,
+  decisionId: number,
+  customOption: customOptionT | null,
+  optionsVotedFor: string[],
+) => stateEventT;
+export const updateStateVote: updateStateVoteT = (
+  currentEvent,
+  userId,
+  decisionId,
+  customOption,
+  optionsVotedFor,
+) => {
+  const { decisions } = currentEvent;
+  const { [decisionId]: decision } = decisions;
+  const { poll } = decision;
+  if (poll) {
+    const { options } = poll;
+    const updatedOptions = options.map(option =>
+      optionsVotedFor.includes(option.id)
+        ? { ...option, votes: [...option.votes, userId] }
+        : option,
+    );
+    const optionsWithCustomOption = customOption
+      ? [...updatedOptions, { ...customOption, votes: [userId] }]
+      : updatedOptions;
+
+    return {
+      ...currentEvent,
+      decisions: {
+        ...decisions,
+        [decisionId]: {
+          ...decision,
+          poll: {
+            ...poll,
+            voted_by: [...poll.voted_by, userId],
+            options: optionsWithCustomOption,
+          },
+        },
+      },
+    };
+  } else {
+    return currentEvent;
+  }
 };

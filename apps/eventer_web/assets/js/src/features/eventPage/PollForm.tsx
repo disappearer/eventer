@@ -17,6 +17,7 @@ const PollOption = styled.div`
 export type pollValuesT = {
   question: string;
   fixed: boolean;
+  multiple_votes: boolean;
   options: {
     text: string;
     id: string | undefined;
@@ -33,6 +34,7 @@ type pollFormPropsT = {
 const defaultValues: pollValuesT = {
   question: '',
   fixed: false,
+  multiple_votes: false,
   options: [],
 };
 
@@ -61,12 +63,20 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
                 onChange={handleChange}
                 value={values.question}
               />
-              <CheckboxField
-                name="fixed"
-                label="Fixed options"
-                onChange={handleChange}
-                checked={values.fixed}
-              />
+              <div>
+                <CheckboxField
+                  name="fixed"
+                  label="Custom answers disabled"
+                  onChange={handleChange}
+                  checked={values.fixed}
+                />
+                <CheckboxField
+                  name="multiple_votes"
+                  label="Multiple answer votes enabled"
+                  onChange={handleChange}
+                  checked={values.multiple_votes}
+                />
+              </div>
               <FieldArray
                 name="options"
                 render={arrayHelpers => (
@@ -74,7 +84,7 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
                     {values.options.map((option, index) => (
                       <PollOption key={index}>
                         <TextField
-                          label={`Option ${index + 1}`}
+                          label={`Answer ${index + 1}`}
                           name={`options[${index}].text`}
                           onChange={handleChange}
                           value={option.text}
@@ -95,7 +105,7 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
                         });
                       }}
                     >
-                      Add option
+                      Add answer
                     </Button>
                   </>
                 )}

@@ -7,7 +7,7 @@ type eventUpdateFormModalChildT = {
 };
 
 type decisionModalChildT = {
-  component: 'Decision';
+  component: 'DecisionDetails';
   id: number;
 };
 
@@ -67,7 +67,7 @@ const useModal: useModalT = () => {
 
   const showDecisionModal = useCallback(
     (id: number) => {
-      setModalChild(Some({ component: 'Decision', id }));
+      setModalChild(Some({ component: 'DecisionDetails', id }));
       setShouldShowModal(true);
     },
     [setModalChild, setShouldShowModal],

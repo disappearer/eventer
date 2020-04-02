@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import styled from 'styled-components';
+import Button from '../../components/Button';
 import { formatTime } from '../../util/time';
 import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
+import DiscardResolutionConfirmation from './DiscardResolutionConfirmation';
+import EventContext from './EventContext';
 import Poll from './Poll';
 import PollForm from './PollForm';
 import {
   addPollT,
-  decisionT,
   discardResolutionT,
   resolveDecisionT,
   updateDecisionT,
+  voteT,
 } from './types';
-import styled from 'styled-components';
-import Button from '../../components/Button';
-import DiscardResolutionConfirmation from './DiscardResolutionConfirmation';
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, minmax(63px, 123px)) auto;
+  grid-template-columns: repeat(2, minmax(63px, 103px)) auto;
   grid-template-areas:
     'info info poll'
     'objective status poll'
@@ -87,6 +88,11 @@ const ResolutionLabel = styled.h4`
   margin: 0;
 `;
 
+const RemovedDecision = styled.h4`
+  display: inline;
+  margin: 0;
+`;
+
 type decisionActionT =
   | 'view'
   | 'edit'
@@ -96,21 +102,41 @@ type decisionActionT =
 
 type decisionDetailsPropsT = {
   id: number;
-  data: decisionT;
   onDecisionResolve: resolveDecisionT;
   onDecisionUpdate: updateDecisionT;
   onResolutionDiscard: discardResolutionT;
   onAddPoll: addPollT;
+  onVote: voteT;
 };
 
 const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
   id,
-  data,
   onDecisionResolve,
   onDecisionUpdate,
   onResolutionDiscard,
   onAddPoll,
+  onVote,
 }) => {
+  const { event, previousEvent } = useContext(EventContext);
+
+  if (!event.decisions[id]) {
+    const { title } = previousEvent.decisions[id];
+    return (
+      <div>
+        Decision <RemovedDecision>{title}</RemovedDecision> has been removed.
+      </div>
+    );
+  }
+
+  const {
+    title,
+    description,
+    pending,
+    objective,
+    resolution,
+    poll,
+  } = event.decisions[id];
+
   const [decisionAction, setDecisionAction] = useState<decisionActionT>('view');
 
   const showEditForm = () => {
@@ -138,7 +164,6 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
     setDecisionAction('add_poll');
   };
 
-  const { title, description, pending, objective, resolution, poll } = data;
   return (
     <>
       {decisionAction === 'view' && (
@@ -179,7 +204,7 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
           <PollArea>
             <Label>Poll</Label>
             {poll ? (
-              <Poll poll={poll} hasVoted={false} />
+              <Poll poll={poll} onVote={onVote} decisionId={id} />
             ) : (
               <Button onClick={showAddPollForm}>Add poll</Button>
             )}

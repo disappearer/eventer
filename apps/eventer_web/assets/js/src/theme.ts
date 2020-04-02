@@ -8,6 +8,7 @@ const theme: DefaultTheme = {
     secondary: '#00647b',
     bright: '#008eae6e',
     pale: '#6fa1ac',
+    paler: '#cde6ec',
     mineShaft: '#333333',
     tundora: '#444444',
     darkerGrey: '#555',

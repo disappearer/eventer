@@ -9,8 +9,8 @@ import {
   updateDecisionT,
   updateEventT,
   addPollT,
+  voteT,
 } from './types';
-import { addDecisionIfUndecided } from '../createEvent/NewEventForm.util';
 
 type useChannelCallbacksT = (
   channel: Option<Channel>,
@@ -26,6 +26,7 @@ type useChannelCallbacksT = (
   discardResolution: discardResolutionT;
   removeDecision: removeDecisionT;
   addPoll: addPollT;
+  vote: voteT;
 };
 const useChannelCallbacks: useChannelCallbacksT = channel => {
   const joinEvent = useCallback(() => {
@@ -86,11 +87,25 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     [channel],
   );
 
-  const addPoll = useCallback<addPollT>((id, poll) => {
-    channel
-      .get()
-      .push('add_poll', { decision_id: id, poll });
-  }, [channel]);
+  const addPoll = useCallback<addPollT>(
+    (id, poll) => {
+      channel.get().push('add_poll', { decision_id: id, poll });
+    },
+    [channel],
+  );
+
+  const vote = useCallback<voteT>(
+    (id, customOption, optionsVotedFor) => {
+      channel
+        .get()
+        .push('vote', {
+          decision_id: id,
+          custom_option: customOption,
+          options: optionsVotedFor,
+        });
+    },
+    [channel],
+  );
 
   return {
     joinEvent,
@@ -104,6 +119,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     discardResolution,
     removeDecision,
     addPoll,
+    vote,
   };
 };
 
