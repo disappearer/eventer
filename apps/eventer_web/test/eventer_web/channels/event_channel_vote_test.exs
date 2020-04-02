@@ -5,27 +5,51 @@ defmodule EventerWeb.EventChannelVoteTest do
   alias Eventer.{Decision, Repo}
 
   describe "Vote" do
-    @tag authorized: 1
+    @tag authorized: 2
     test "'vote' success", %{
-      connections: [%{user: user, socket: socket}]
+      connections: [
+        %{user: user1, socket: socket1},
+        %{user: user2, socket: socket2}
+      ]
     } do
-      event = insert(:event, %{creator: user})
-      decision = insert(:decision, %{event: event, creator: user})
+      event = insert(:event, %{creator: user1})
+      decision = insert(:decision, %{event: event, creator: user1})
       decision = Repo.get(Decision, decision.id)
 
       event_id_hash = IdHasher.encode(event.id)
 
-      {:ok, _, socket} =
+      {:ok, _, socket1} =
         subscribe_and_join(
-          socket,
+          socket1,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      {:ok, _, socket2} =
+        subscribe_and_join(
+          socket2,
           EventChannel,
           "event:#{event_id_hash}"
         )
 
       [option1 | _] = decision.poll.options
 
+      # first user vote
       ref =
-        push(socket, "vote", %{
+        push(socket1, "vote", %{
+          decision_id: decision.id,
+          custom_option: nil,
+          options: [option1.id]
+        })
+
+      assert_reply(ref, :ok, %{})
+
+      %{poll: db_poll} = Repo.get(Decision, decision.id)
+      assert db_poll.votes === %{Integer.to_string(user1.id) => [option1.id]}
+
+      # second user vote
+      ref =
+        push(socket2, "vote", %{
           decision_id: decision.id,
           custom_option: nil,
           options: [option1.id]
@@ -35,7 +59,10 @@ defmodule EventerWeb.EventChannelVoteTest do
 
       %{poll: db_poll} = Repo.get(Decision, decision.id)
 
-      assert db_poll.votes === %{Integer.to_string(user.id) => [option1.id]}
+      assert db_poll.votes === %{
+               Integer.to_string(user1.id) => [option1.id],
+               Integer.to_string(user2.id) => [option1.id]
+             }
     end
 
     @tag authorized: 1

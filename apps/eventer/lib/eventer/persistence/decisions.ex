@@ -56,14 +56,19 @@ defmodule Eventer.Persistence.Decisions do
 
   def update_poll(decision, poll) do
     case update_decision(decision, %{poll: poll}) do
-      {:ok, _ } = result -> result
+      {:ok, _} = result ->
+        result
+
       {:error, changeset} ->
         {:error, changeset.changes.poll}
     end
   end
 
-  def vote(decision, user_id, option_id) do
-    update_poll(decision, %{votes: %{user_id => option_id}})
+  def vote(decision, user_id, option_ids) do
+    updated_votes =
+      Map.put(decision.poll.votes, Integer.to_string(user_id), option_ids)
+
+    update_poll(decision, %{votes: updated_votes})
   end
 
   def add_option(decision, option_text) do
