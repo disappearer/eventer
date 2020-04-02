@@ -173,7 +173,6 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:ok, %{}}, socket}
 
       {:error, changeset} ->
-        IO.inspect(changeset, label: "changeset")
         {:reply, {:error, %{errors: changeset.errors}}, socket}
     end
   end
@@ -215,7 +214,7 @@ defmodule EventerWeb.EventChannel do
       length(options) < 2 ->
         {:ok, nil}
 
-      decision.poll.multiple_votes ->
+      decision.poll.multiple_answers_enabled ->
         {:ok, nil}
 
       true ->
@@ -226,11 +225,11 @@ defmodule EventerWeb.EventChannel do
 
   defp add_custom_option(decision, custom_option) do
     if custom_option do
-      if decision.poll.fixed do
+      if decision.poll.custom_answer_enabled do
+        Decisions.add_option(decision, custom_option["text"])
+      else
         {:error,
          %{errors: [vote: {"Poll fixed - custom option not possible", []}]}}
-      else
-        Decisions.add_option(decision, custom_option["text"])
       end
     else
       {:ok, decision}

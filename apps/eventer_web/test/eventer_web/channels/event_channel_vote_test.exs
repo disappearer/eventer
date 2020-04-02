@@ -3,6 +3,7 @@ defmodule EventerWeb.EventChannelVoteTest do
 
   alias EventerWeb.{IdHasher, EventChannel}
   alias Eventer.{Decision, Repo}
+  alias Eventer.Persistence.Decisions
 
   describe "Vote" do
     @tag authorized: 2
@@ -165,7 +166,7 @@ defmodule EventerWeb.EventChannelVoteTest do
 
       assert_reply(ref, :ok, %{})
 
-      %{poll: db_poll} = Repo.get(Decision, decision.id)
+      %{poll: db_poll} = Repo.get(Decision, decision.id) |> Decisions.to_map()
 
       new_option =
         Enum.find(db_poll.options, fn option -> option.text === option_text end)
@@ -179,7 +180,8 @@ defmodule EventerWeb.EventChannelVoteTest do
 
       assert voter_id === user.id
 
-      assert custom_option === new_option
+      assert custom_option.id === new_option.id
+      assert custom_option.text === new_option.text
       assert options === [custom_option.id]
     end
 
@@ -188,7 +190,7 @@ defmodule EventerWeb.EventChannelVoteTest do
       connections: [%{user: user, socket: socket}]
     } do
       event = insert(:event, %{creator: user})
-      poll = build(:poll, %{multiple_votes: true})
+      poll = build(:poll, %{multiple_answers_enabled: true})
       decision = insert(:decision, %{event: event, creator: user, poll: poll})
       decision = Repo.get(Decision, decision.id)
 
@@ -234,7 +236,7 @@ defmodule EventerWeb.EventChannelVoteTest do
       connections: [%{user: user, socket: socket}]
     } do
       event = insert(:event, %{creator: user})
-      poll = build(:poll, %{multiple_votes: true})
+      poll = build(:poll, %{multiple_answers_enabled: true})
       decision = insert(:decision, %{event: event, creator: user, poll: poll})
       decision = Repo.get(Decision, decision.id)
 
@@ -275,7 +277,7 @@ defmodule EventerWeb.EventChannelVoteTest do
       connections: [%{user: user, socket: socket}]
     } do
       event = insert(:event, %{creator: user})
-      poll = build(:poll, %{multiple_votes: false})
+      poll = build(:poll, %{multiple_answers_enabled: false})
       decision = insert(:decision, %{event: event, creator: user, poll: poll})
       decision = Repo.get(Decision, decision.id)
 
@@ -386,7 +388,7 @@ defmodule EventerWeb.EventChannelVoteTest do
       connections: [%{user: user, socket: socket}]
     } do
       event = insert(:event, %{creator: user})
-      poll = build(:poll, %{fixed: true})
+      poll = build(:poll, %{custom_answer_enabled: false})
       decision = insert(:decision, %{event: event, creator: user, poll: poll})
       decision = Repo.get(Decision, decision.id)
 

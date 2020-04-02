@@ -7,8 +7,8 @@ defmodule Polls do
 
     %{
       question: poll.question,
-      fixed: poll.fixed,
-      multiple_votes: poll.multiple_votes,
+      custom_answer_enabled: poll.custom_answer_enabled,
+      multiple_answers_enabled: poll.multiple_answers_enabled,
       voted_by: voted_by,
       options: options
     }
@@ -27,6 +27,7 @@ defmodule Polls do
 
       {voted_by, prev_options} = acc
       voted_by_with_user = [user_id | voted_by]
+
       options_with_votes =
         Enum.map(prev_options, fn option ->
           option =
@@ -43,6 +44,8 @@ defmodule Polls do
       {voted_by_with_user, options_with_votes}
     end)
   end
+
+  def option_to_map(nil), do: nil
 
   def option_to_map(%Option{} = option) do
     %{
