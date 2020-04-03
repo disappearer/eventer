@@ -43,7 +43,6 @@ defmodule Eventer.Decision do
     ])
     |> cast_embed(:poll)
     |> validate_required(:title, message: "Title can't be blank")
-    |> validate_required(:description, message: "Description can't be blank")
     |> validate_required(:creator_id, message: "Event creator must be provided")
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)

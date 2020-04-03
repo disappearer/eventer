@@ -31,7 +31,85 @@ defmodule EventerWeb.EventControllerCreateTest do
     end
 
     @tag :authorized
-    @tag :wip
+    test "POST /api/events with decision - success", %{
+      conn: conn,
+      authorized_user: user
+    } do
+      event_data = %{
+        title: "test title",
+        description: "test description",
+        time: TestUtil.tomorrow(),
+        place: "there",
+        decisions: [
+          %{
+            title: "Decision Title",
+            description: "Decision description",
+            objective: "general"
+          }
+        ]
+      }
+
+      conn =
+        conn
+        |> post(Routes.event_path(conn, :create), %{event: event_data})
+
+      %{"event_id_hash" => event_id_hash} = json_response(conn, 200)
+
+      event_id = IdHasher.decode(event_id_hash)
+      db_event = Events.get_event(event_id) |> Events.to_map()
+
+      {[db_decision], db_event} = db_event |> Map.pop!(:decisions)
+      {[decision], event_data} = event_data |> Map.pop!(:decisions)
+
+      merged_event = Map.merge(db_event, event_data)
+      assert merged_event === db_event
+
+      merged_decision = Map.merge(db_decision, decision)
+      assert merged_decision === db_decision
+
+      assert db_event.creator.id === user.id
+    end
+
+    @tag :authorized
+    test "POST /api/events with decision (without description) - success", %{
+      conn: conn,
+      authorized_user: user
+    } do
+      event_data = %{
+        title: "test title",
+        description: "test description",
+        time: TestUtil.tomorrow(),
+        place: "there",
+        decisions: [
+          %{
+            title: "Decision Title",
+            objective: "general"
+          }
+        ]
+      }
+
+      conn =
+        conn
+        |> post(Routes.event_path(conn, :create), %{event: event_data})
+
+      %{"event_id_hash" => event_id_hash} = json_response(conn, 200)
+
+      event_id = IdHasher.decode(event_id_hash)
+      db_event = Events.get_event(event_id) |> Events.to_map()
+
+      {[db_decision], db_event} = db_event |> Map.pop!(:decisions)
+      {[decision], event_data} = event_data |> Map.pop!(:decisions)
+
+      merged_event = Map.merge(db_event, event_data)
+      assert merged_event === db_event
+
+      merged_decision = Map.merge(db_decision, decision)
+      assert merged_decision === db_decision
+
+      assert db_event.creator.id === user.id
+    end
+
+    @tag :authorized
     test "POST /api/events without time, but with time decision", %{
       conn: conn,
       authorized_user: user
@@ -152,8 +230,11 @@ defmodule EventerWeb.EventControllerCreateTest do
     end
 
     @tag :authorized
-    test "POST /api/events fails when missing description", %{conn: conn} do
-      event = %{
+    test "POST /api/events doesn't fail when missing description", %{
+      conn: conn,
+      authorized_user: user
+    } do
+      event_data = %{
         title: "test title",
         time: TestUtil.tomorrow(),
         place: "there"
@@ -161,11 +242,16 @@ defmodule EventerWeb.EventControllerCreateTest do
 
       conn =
         conn
-        |> post(Routes.event_path(conn, :create), %{event: event})
+        |> post(Routes.event_path(conn, :create), %{event: event_data})
 
-      assert json_response(conn, 422) === %{
-               "errors" => %{"description" => ["Description can't be blank"]}
-             }
+      %{"event_id_hash" => event_id_hash} = json_response(conn, 200)
+
+      event_id = IdHasher.decode(event_id_hash)
+      db_event = Events.get_event(event_id)
+      merged_event = Map.merge(db_event, event_data)
+
+      assert merged_event === db_event
+      assert db_event.creator_id === user.id
     end
 
     @tag :authorized

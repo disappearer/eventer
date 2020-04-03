@@ -75,7 +75,7 @@ const NewEventForm: React.FC = () => {
                 />
                 <TextField
                   name="description"
-                  label="Description"
+                  label="Description (optional)"
                   onChange={handleChange}
                   value={values.description}
                 />

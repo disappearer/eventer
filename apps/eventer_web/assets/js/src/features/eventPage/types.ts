@@ -17,7 +17,7 @@ export type responseEventT = eventDataT & {
 export type eventDataT = {
   id: number;
   title: string;
-  description: string;
+  description: string | null;
   place: string | null;
   time: string | null;
 };
@@ -41,7 +41,7 @@ export type pollT = {
 
 export type decisionT = {
   title: string;
-  description: string;
+  description: string | null;
   objective: objectiveT;
   pending: boolean;
   creator_id: number;

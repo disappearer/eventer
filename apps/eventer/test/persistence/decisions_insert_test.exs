@@ -78,18 +78,6 @@ defmodule Persistence.DecisionsInsertTest do
                {"Title can't be blank", [{:validation, :required}]}
     end
 
-    test "without description fails", %{event: event} do
-      {:error, changeset} =
-        Decisions.insert_decision(%{
-          event_id: event.id,
-          title: "test title",
-          objective: "general"
-        })
-
-      assert Keyword.get(changeset.errors, :description) ===
-               {"Description can't be blank", [{:validation, :required}]}
-    end
-
     test "objective can't be other than [time, place, general]", %{event: event} do
       {:error, changeset} =
         Decisions.insert_decision(%{

@@ -94,7 +94,10 @@ const EventPage: React.FC = () => {
                     case 'EventUpdateForm':
                       return (
                         <EventUpdateForm
-                          initialValues={{ title, description }}
+                          initialValues={{
+                            title,
+                            description: description || '',
+                          }}
                           onSuccess={hideModal}
                           onSubmit={updateEvent}
                           formTitle={`Edit ${event.title}`}

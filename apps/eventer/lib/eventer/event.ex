@@ -21,7 +21,6 @@ defmodule Eventer.Event do
     event
     |> cast(params, [:title, :description, :time, :place, :creator_id])
     |> validate_required(:title, message: "Title can't be blank")
-    |> validate_required(:description, message: "Description can't be blank")
     |> validate_required(:creator_id, message: "Creator has to be specified")
     |> assoc_constraint(:creator, message: "User does not exist")
     |> validate_length(:title, min: 3)

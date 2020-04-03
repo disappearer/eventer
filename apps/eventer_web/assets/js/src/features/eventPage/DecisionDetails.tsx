@@ -215,7 +215,7 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
       {decisionAction === 'edit' && (
         <DecisionUpdateForm
           id={id}
-          initialValues={{ title, description }}
+          initialValues={{ title, description: description || '' }}
           onSubmit={onDecisionUpdate}
           onSuccess={resetDecisionModal}
           formTitle={`Update ${title}`}

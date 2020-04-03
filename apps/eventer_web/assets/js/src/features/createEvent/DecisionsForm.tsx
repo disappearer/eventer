@@ -19,7 +19,7 @@ const DecisionFields = styled.div`
 
 const NewDecisionForm = styled.div`
   display: grid;
-  grid-row-gap: 11px;
+  grid-row-gap: 17px;
 `;
 
 const AddDecisionButton = styled(Button)`
@@ -66,7 +66,7 @@ const DecisionsForm: React.FC<decisionFormPropsT> = ({values, onChange}) => {
                     />
                     <TextField
                       name={`decisions[${index}].description`}
-                      label="Description"
+                      label="Description (optional)"
                       onChange={onChange}
                       value={decision.description}
                     />
