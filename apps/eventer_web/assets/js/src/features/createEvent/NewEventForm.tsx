@@ -9,7 +9,8 @@ import TimeField from '../../components/TimeField';
 import { createEvent } from '../../util/event_service';
 import DecisionsForm from './DecisionsForm';
 import {
-  addDecisionIfUndecided,
+  handleIndecision,
+  mapErrors,
   mapValuesToEventData,
   valuesT,
 } from './NewEventForm.util';
@@ -46,11 +47,12 @@ const NewEventForm: React.FC = () => {
   return (
     <Formik<valuesT>
       initialValues={initialValues}
-      onSubmit={async values => {
+      onSubmit={async (values, { setErrors }) => {
         const response = await createEvent(mapValuesToEventData(values));
         switch (response.ok) {
           case false:
-            console.log('NewEventForm -> response.errors', response.errors);
+            const errors = mapErrors(response.errors);
+            setErrors(errors);
             break;
           case true:
             history.push('/');
@@ -59,8 +61,8 @@ const NewEventForm: React.FC = () => {
       }}
     >
       {({ values, handleChange, setFieldValue }) => {
-        addDecisionIfUndecided('time', values, setFieldValue);
-        addDecisionIfUndecided('place', values, setFieldValue);
+        handleIndecision('time', values, setFieldValue);
+        handleIndecision('place', values, setFieldValue);
         return (
           <Form>
             <FormGrid>
@@ -88,6 +90,7 @@ const NewEventForm: React.FC = () => {
                   <CheckboxField
                     name="timeUndecided"
                     label="Time undecided"
+                    checked={values.timeUndecided}
                     onChange={handleChange}
                   />
                 </div>
@@ -102,6 +105,7 @@ const NewEventForm: React.FC = () => {
                   <CheckboxField
                     name="placeUndecided"
                     label="Place undecided"
+                    checked={values.placeUndecided}
                     onChange={handleChange}
                   />
                 </div>

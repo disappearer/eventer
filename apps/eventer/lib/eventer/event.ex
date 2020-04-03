@@ -39,7 +39,7 @@ defmodule Eventer.Event do
 
   defp is_in_future(:time, time) do
     case DateTime.compare(time, DateTime.utc_now()) do
-      :lt -> [time: "time of the event cannot be in the past"]
+      :lt -> [time: "Time of the event cannot be in the past"]
       _ -> []
     end
   end

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useField } from 'formik';
 
 const FieldWrapper = styled.div``;
 
@@ -48,6 +49,12 @@ const Input = styled.input<inputPropsT>`
   }
 `;
 
+const Error = styled.div`
+  margin-top: 3px;
+  font-size: 0.8rem;
+  color: ${props => props.theme.colors.milanoRed}
+`;
+
 type textFieldPropsT = {
   name: string;
   label?: string;
@@ -71,6 +78,7 @@ const TextField: React.FC<textFieldPropsT> = ({
   onFocus = () => {},
   inputSize = 'regular',
 }) => {
+  const [_field, meta, _helpers] = useField(name); 
   return (
     <FieldWrapper>
       {!noLabel && <Label htmlFor={name}>{label}</Label>}
@@ -85,6 +93,9 @@ const TextField: React.FC<textFieldPropsT> = ({
         onFocus={onFocus}
         inputSize={inputSize}
       />
+      {meta.touched && meta.error ? (
+        <Error>{meta.error}</Error>
+      ) : null}
     </FieldWrapper>
   );
 };

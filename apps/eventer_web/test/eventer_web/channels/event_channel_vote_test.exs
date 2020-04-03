@@ -181,7 +181,6 @@ defmodule EventerWeb.EventChannelVoteTest do
       assert voter_id === user.id
 
       assert custom_option.id === new_option.id
-      assert custom_option.text === new_option.text
       assert options === [custom_option.id]
     end
 
