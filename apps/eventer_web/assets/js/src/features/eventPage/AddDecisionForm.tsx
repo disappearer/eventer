@@ -12,21 +12,23 @@ type valuesT = {
 
 const initialValues: valuesT = {
   title: '',
-  description: ''
-}
+  description: '',
+};
 
 type addDecisionFromPropsT = {
   onSubmit: addDecisionT;
   onSuccess: () => void;
 };
 
-const AddDecisionForm: React.FC<addDecisionFromPropsT> = ({ onSuccess, onSubmit }) => {
+const AddDecisionForm: React.FC<addDecisionFromPropsT> = ({
+  onSuccess,
+  onSubmit,
+}) => {
   return (
     <Formik<valuesT>
       initialValues={initialValues}
-      onSubmit={async values => {
-        onSubmit(values);
-        onSuccess();
+      onSubmit={async (values, { setErrors }) => {
+        onSubmit(values, onSuccess, setErrors);
       }}
     >
       {({ values, handleChange }) => {
@@ -43,7 +45,7 @@ const AddDecisionForm: React.FC<addDecisionFromPropsT> = ({ onSuccess, onSubmit 
                 />
                 <TextField
                   name="description"
-                  label="Description"
+                  label="Description (optional)"
                   onChange={handleChange}
                   value={values.description}
                 />

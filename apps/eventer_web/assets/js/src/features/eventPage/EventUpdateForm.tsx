@@ -3,16 +3,12 @@ import React from 'react';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { FormGrid, FormTitle } from './Form.styles';
+import { updateEventT } from './types';
 
 type valuesT = {
   title: string;
   description: string;
 };
-
-export type updateEventT = (data: {
-  title: string;
-  description: string;
-}) => void;
 
 type eventUpdateFromPropsT = {
   initialValues: {
@@ -33,9 +29,8 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
   return (
     <Formik<valuesT>
       initialValues={initialValues}
-      onSubmit={async values => {
-        onSubmit(values);
-        onSuccess();
+      onSubmit={async (values, { setErrors }) => {
+        onSubmit(values, onSuccess, setErrors);
       }}
     >
       {({ values, handleChange }) => {
@@ -52,7 +47,7 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
                 />
                 <TextField
                   name="description"
-                  label="Description"
+                  label="Description (optional)"
                   onChange={handleChange}
                   value={values.description}
                 />

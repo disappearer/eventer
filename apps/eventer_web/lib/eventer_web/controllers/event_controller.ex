@@ -1,7 +1,7 @@
 defmodule EventerWeb.EventController do
   use EventerWeb, :controller
 
-  alias Eventer.Persistence.Events
+  alias Eventer.Persistence.{Events, Util}
   alias EventerWeb.IdHasher
 
   def create(conn, %{"event" => event}) do
@@ -14,12 +14,9 @@ defmodule EventerWeb.EventController do
         render(conn, "event.json", %{event_id_hash: event_id_hash})
 
       {:error, changeset} ->
-        errors =
-          Ecto.Changeset.traverse_errors(changeset, fn {msg, _} -> msg end)
-
         conn
         |> put_status(:unprocessable_entity)
-        |> render("error.json", %{errors: errors})
+        |> render("error.json", %{errors: Util.get_error_map(changeset)})
     end
   end
 

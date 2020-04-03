@@ -1,8 +1,4 @@
-import { createEventErrorsT, eventDataT } from '../../util/event_service';
-import mapResponseErrors, {
-  errorsT,
-  responseErrorsT,
-} from '../../util/mapResponseErrors';
+import { eventDataT } from '../../util/event_service';
 import { objectiveT, specificObjectiveT } from '../eventPage/types';
 
 type decisionT = {
@@ -78,26 +74,4 @@ export const shouldShowDecision: shouldShowDecisionT = (decision, values) => {
     (decision.objective === 'time' && values.timeUndecided) ||
     (decision.objective === 'place' && values.placeUndecided)
   );
-};
-
-type mapErrorsT = (
-  e: createEventErrorsT,
-) => {
-  title?: string;
-  description?: string;
-  time?: string;
-  place?: string;
-  decisions?: { title?: string; description?: string }[];
-  timeUndecided?: string;
-  placeUndecided?: string;
-};
-export const mapErrors: mapErrorsT = responseErrors => {
-  const { decisions, ...restErrors } = responseErrors;
-  const errors = mapResponseErrors(restErrors as responseErrorsT);
-  const decisionErrors =
-    decisions &&
-    decisions.map(decisionErrs =>
-      mapResponseErrors(decisionErrs as responseErrorsT),
-    );
-  return { ...errors, decisions: decisionErrors };
 };
