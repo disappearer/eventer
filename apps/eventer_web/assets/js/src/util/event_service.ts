@@ -12,7 +12,19 @@ type createEventBodyT = {
 };
 
 type createEventSuccessResponseT = { ok: true; event_id_hash: string };
-type createEventErrorResponseT = { ok: false; errors: any };
+export type createEventErrorsT = {
+  title?: string[];
+  description?: string[];
+  time?: string[];
+  place?: string[];
+  decisions?: { title?: string[]; description?: string[] }[];
+  timeUndecided?: string[];
+  placeUndecided?: string[];
+};
+type createEventErrorResponseT = {
+  ok: false;
+  errors: createEventErrorsT;
+};
 type createEventResponseT =
   | createEventSuccessResponseT
   | createEventErrorResponseT;

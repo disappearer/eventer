@@ -1,4 +1,8 @@
-import { eventDataT } from '../../util/event_service';
+import { createEventErrorsT, eventDataT } from '../../util/event_service';
+import mapResponseErrors, {
+  errorsT,
+  responseErrorsT,
+} from '../../util/mapResponseErrors';
 import { objectiveT, specificObjectiveT } from '../eventPage/types';
 
 type decisionT = {
@@ -20,6 +24,7 @@ export type valuesT = {
 type mapValuesToEventDataT = (v: valuesT) => eventDataT;
 export const mapValuesToEventData: mapValuesToEventDataT = values => {
   const { timeUndecided, placeUndecided, ...otherValues } = values;
+
   return {
     ...otherValues,
     time: timeUndecided ? null : otherValues.time,
@@ -36,18 +41,18 @@ type addDecisionIfUndecidedT = (
     shouldValidate?: boolean | undefined,
   ) => void,
 ) => void;
-export const addDecisionIfUndecided: addDecisionIfUndecidedT = (
+export const handleIndecision: addDecisionIfUndecidedT = (
   objective,
   values,
   setFieldValue,
 ) => {
   const isUndecidedObjective =
     objective === 'time' ? values.timeUndecided : values.placeUndecided;
+  const { decisions } = values;
+  const index = decisions.findIndex(
+    decision => decision.objective === objective,
+  );
   if (isUndecidedObjective) {
-    const { decisions } = values;
-    const index = decisions.findIndex(
-      decision => decision.objective === objective,
-    );
     if (index === -1) {
       setFieldValue('decisions', [
         {
@@ -57,6 +62,11 @@ export const addDecisionIfUndecided: addDecisionIfUndecidedT = (
         },
         ...decisions,
       ]);
+    }
+  } else {
+    if (index >= 0) {
+      const filteredDecisions = decisions.filter((_decision, i) => i !== index);
+      setFieldValue('decisions', filteredDecisions);
     }
   }
 };
@@ -68,4 +78,26 @@ export const shouldShowDecision: shouldShowDecisionT = (decision, values) => {
     (decision.objective === 'time' && values.timeUndecided) ||
     (decision.objective === 'place' && values.placeUndecided)
   );
+};
+
+type mapErrorsT = (
+  e: createEventErrorsT,
+) => {
+  title?: string;
+  description?: string;
+  time?: string;
+  place?: string;
+  decisions?: { title?: string; description?: string }[];
+  timeUndecided?: string;
+  placeUndecided?: string;
+};
+export const mapErrors: mapErrorsT = responseErrors => {
+  const { decisions, ...restErrors } = responseErrors;
+  const errors = mapResponseErrors(restErrors as responseErrorsT);
+  const decisionErrors =
+    decisions &&
+    decisions.map(decisionErrs =>
+      mapResponseErrors(decisionErrs as responseErrorsT),
+    );
+  return { ...errors, decisions: decisionErrors };
 };
