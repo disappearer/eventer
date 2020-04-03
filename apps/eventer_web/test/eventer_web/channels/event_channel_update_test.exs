@@ -51,7 +51,7 @@ defmodule EventerWeb.EventChannelUpdateTest do
         "event:#{event_id_hash}"
       )
 
-    event_data = %{"title" => "New Title", "description" => "New Description"}
+    event_data = %{"title" => "New Title"}
 
     push(socket, "update_event", %{
       event: event_data
@@ -59,5 +59,28 @@ defmodule EventerWeb.EventChannelUpdateTest do
 
     assert_broadcast("event_updated", payload)
     assert payload === %{event: event_data}
+  end
+
+  @tag authorized: 1
+  test "'update_event' fails if missing title", %{
+    connections: [%{user: user, socket: socket}]
+  } do
+    event = insert(:event, %{creator: user})
+    event_id_hash = IdHasher.encode(event.id)
+
+    {:ok, _, socket} =
+      subscribe_and_join(
+        socket,
+        EventChannel,
+        "event:#{event_id_hash}"
+      )
+
+    ref =
+      push(socket, "update_event", %{
+        event: %{"title" => "", "description" => "New Description"}
+      })
+
+    assert_reply(ref, :error, %{errors: errors})
+    assert errors === %{title: "Title can't be blank"}
   end
 end

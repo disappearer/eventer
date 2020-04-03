@@ -10,7 +10,6 @@ import { createEvent } from '../../util/event_service';
 import DecisionsForm from './DecisionsForm';
 import {
   handleIndecision,
-  mapErrors,
   mapValuesToEventData,
   valuesT,
 } from './NewEventForm.util';
@@ -51,8 +50,7 @@ const NewEventForm: React.FC = () => {
         const response = await createEvent(mapValuesToEventData(values));
         switch (response.ok) {
           case false:
-            const errors = mapErrors(response.errors);
-            setErrors(errors);
+            setErrors(response.errors);
             break;
           case true:
             history.push('/');

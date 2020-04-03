@@ -13,13 +13,13 @@ type createEventBodyT = {
 
 type createEventSuccessResponseT = { ok: true; event_id_hash: string };
 export type createEventErrorsT = {
-  title?: string[];
-  description?: string[];
-  time?: string[];
-  place?: string[];
-  decisions?: { title?: string[]; description?: string[] }[];
-  timeUndecided?: string[];
-  placeUndecided?: string[];
+  title?: string;
+  description?: string;
+  time?: string;
+  place?: string;
+  decisions?: { title?: string; description?: string }[];
+  timeUndecided?: string;
+  placeUndecided?: string;
 };
 type createEventErrorResponseT = {
   ok: false;

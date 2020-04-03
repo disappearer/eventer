@@ -29,7 +29,7 @@ export type optionT = {
   id: string;
   text: string;
   votes: number[];
-}
+};
 
 export type pollT = {
   question: string;
@@ -37,7 +37,7 @@ export type pollT = {
   multiple_answers_enabled: boolean;
   voted_by: number[];
   options: optionT[];
-}
+};
 
 export type decisionT = {
   title: string;
@@ -66,15 +66,23 @@ export type stateUsersT = {
 };
 export type responseUsersT = responseUserT[];
 
-export type updateEventT = (data: {
-  title: string;
-  description: string;
-}) => void;
+export type updateEventT = (
+  data: {
+    title: string;
+    description: string;
+  },
+  onSuccess: () => void,
+  onError: (e: { title?: string }) => void,
+) => void;
 
-export type addDecisionT = (data: {
-  title: string;
-  description: string;
-}) => void;
+export type addDecisionT = (
+  data: {
+    title: string;
+    description: string;
+  },
+  onSuccess: () => void,
+  onError: (e: { title?: string }) => void,
+) => void;
 
 export type removeDecisionT = (id: number) => void;
 

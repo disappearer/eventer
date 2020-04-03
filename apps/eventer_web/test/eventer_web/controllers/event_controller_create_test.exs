@@ -189,7 +189,7 @@ defmodule EventerWeb.EventControllerCreateTest do
         |> post(Routes.event_path(conn, :create), %{event: event})
 
       assert json_response(conn, 422) === %{
-               "errors" => %{"time" => ["No time or time decision specified"]}
+               "errors" => %{"time" => "No time or time decision specified"}
              }
     end
 
@@ -207,7 +207,7 @@ defmodule EventerWeb.EventControllerCreateTest do
 
       assert json_response(conn, 422) === %{
                "errors" => %{
-                 "place" => ["No place or place decision specified"]
+                 "place" => "No place or place decision specified"
                }
              }
     end
@@ -225,7 +225,7 @@ defmodule EventerWeb.EventControllerCreateTest do
         |> post(Routes.event_path(conn, :create), %{event: event})
 
       assert json_response(conn, 422) === %{
-               "errors" => %{"title" => ["Title can't be blank"]}
+               "errors" => %{"title" => "Title can't be blank"}
              }
     end
 
@@ -277,7 +277,7 @@ defmodule EventerWeb.EventControllerCreateTest do
       assert json_response(conn, 422) === %{
                "errors" => %{
                  "decisions" => [
-                   %{"objective" => ["Time is already defined for this event"]}
+                   %{"objective" => "Time is already defined for this event"}
                  ]
                }
              }
@@ -306,7 +306,7 @@ defmodule EventerWeb.EventControllerCreateTest do
       assert json_response(conn, 422) === %{
                "errors" => %{
                  "decisions" => [
-                   %{"objective" => ["Place is already defined for this event"]}
+                   %{"objective" => "Place is already defined for this event"}
                  ]
                }
              }

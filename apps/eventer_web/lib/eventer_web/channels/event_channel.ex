@@ -34,12 +34,16 @@ defmodule EventerWeb.EventChannel do
   end
 
   def handle_in("update_event", %{"event" => event_data}, socket) do
-    {:ok, _} =
-      Events.get_event(socket.assigns.event_id)
-      |> Events.update_event(event_data)
+    case Events.get_event(socket.assigns.event_id)
+         |> Events.update_event(event_data) do
+      {:ok, _} ->
+        broadcast(socket, "event_updated", %{event: event_data})
+        {:reply, {:ok, %{}}, socket}
 
-    broadcast(socket, "event_updated", %{event: event_data})
-    {:reply, {:ok, %{}}, socket}
+      {:error, changeset} ->
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
+    end
   end
 
   def handle_in("add_decision", %{"decision" => data}, socket) do
@@ -61,8 +65,8 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:ok, %{}}, socket}
 
       {:error, changeset} ->
-        IO.inspect(changeset, label: "changeset")
-        {:reply, {:error, %{}}, socket}
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
     end
   end
 

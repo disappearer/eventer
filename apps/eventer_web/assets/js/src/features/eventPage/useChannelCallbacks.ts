@@ -38,15 +38,23 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
   }, [channel]);
 
   const updateEvent = useCallback<updateEventT>(
-    data => {
-      channel.get().push('update_event', { event: data });
+    (data, onSuccess, onError) => {
+      channel
+        .get()
+        .push('update_event', { event: data })
+        .receive('ok', onSuccess)
+        .receive('error', response => onError(response.errors));
     },
     [channel],
   );
 
   const addDecision = useCallback<addDecisionT>(
-    decision => {
-      channel.get().push('add_decision', { decision });
+    (decision, onSuccess, onError) => {
+      channel
+        .get()
+        .push('add_decision', { decision })
+        .receive('ok', onSuccess)
+        .receive('error', response => onError(response.errors));
     },
     [channel],
   );
@@ -96,13 +104,11 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
 
   const vote = useCallback<voteT>(
     (id, customOption, optionsVotedFor) => {
-      channel
-        .get()
-        .push('vote', {
-          decision_id: id,
-          custom_option: customOption,
-          options: optionsVotedFor,
-        });
+      channel.get().push('vote', {
+        decision_id: id,
+        custom_option: customOption,
+        options: optionsVotedFor,
+      });
     },
     [channel],
   );

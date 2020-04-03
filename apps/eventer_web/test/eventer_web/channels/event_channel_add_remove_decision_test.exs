@@ -75,6 +75,33 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
       assert new_decision.title === decision_data.decision.title
       assert new_decision.description === decision_data.decision.description
     end
+
+    @tag authorized: 1
+    test "'add_decision' fails with empty title", %{
+      connections: [%{user: user, socket: socket}]
+    } do
+      event = insert(:event, %{creator: user})
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, socket} =
+        subscribe_and_join(
+          socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      decision_data = %{
+        decision: %{
+          title: "",
+          description: "Da Description"
+        }
+      }
+
+      ref = push(socket, "add_decision", decision_data)
+
+      assert_reply(ref, :error, %{errors: errors})
+    assert errors === %{title: "Title can't be blank"}
+    end
   end
 
   describe "Decision remove" do

@@ -32,6 +32,7 @@ defmodule Eventer.Event do
   def update_changeset(event, params \\ %{}) do
     event
     |> cast(params, [:title, :description, :cancelled, :time, :place])
+    |> validate_required(:title, message: "Title can't be blank")
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
   end
