@@ -58,9 +58,16 @@ defmodule Eventer.Decision do
   def update_changeset(decision, params \\ %{}) do
     decision
     |> cast(params, [:title, :description, :resolution, :pending])
+    |> validate_required(:title, message: "Title can't be blank")
     |> cast_embed(:poll)
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
+  end
+
+  def resolve_changeset(decision, params \\ %{}) do
+    decision
+    |> cast(params, [:resolution, :pending])
+    |> validate_required(:resolution, message: "Resolution can't be blank")
   end
 
   def delete_changeset(decision) do

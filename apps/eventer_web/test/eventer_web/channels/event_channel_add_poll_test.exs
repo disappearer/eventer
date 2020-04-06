@@ -190,7 +190,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
       connections: [%{user: user, socket: socket}]
     } do
       event = insert(:event, %{creator: user})
-      decision = insert(:decision, %{event: event, creator: user})
+      decision = insert(:decision, %{event: event, creator: user, poll: nil})
 
       decision = Repo.get(Decision, decision.id)
 
@@ -206,7 +206,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
       poll = %{
         question: "Should I?",
         custom_answer_enabled: false,
-        options: [%{text: "stay"}, %{text: "stay"}]
+        options: [%{text: "stay"}, %{text: "go"}, %{text: "stay"}]
       }
 
       ref =
@@ -216,8 +216,14 @@ defmodule EventerWeb.EventChannelAddPollTest do
         })
 
       assert_reply(ref, :error, %{errors: errors})
-      {message, _} = Keyword.get(errors, :options)
-      assert message === "Cannot have duplicate options"
+
+      assert errors === %{
+               options: [
+                 %{text: "Has a duplicate"},
+                 %{},
+                 %{text: "Has a duplicate"}
+               ]
+             }
     end
 
     @tag authorized: 1
@@ -251,10 +257,11 @@ defmodule EventerWeb.EventChannelAddPollTest do
         })
 
       assert_reply(ref, :error, %{errors: errors})
-      {message, _} = Keyword.get(errors, :question)
 
-      assert message ===
-               "Question must be provided if there are less than 2 options"
+      assert errors === %{
+               question:
+                 "Question must be provided if there are less than 2 options"
+             }
     end
 
     @tag authorized: 1

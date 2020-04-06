@@ -8,7 +8,6 @@ defmodule UserTest do
   alias Eventer.Persistence.Users
 
   describe "User" do
-    @tag :wip
     test "insert success" do
       count_query = from(u in User, select: count(u.id))
       before_count = Repo.one(count_query)

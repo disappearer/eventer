@@ -31,9 +31,8 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
   return (
     <Formik<valuesT>
       initialValues={initialValues}
-      onSubmit={async values => {
-        onSubmit({ ...values, id });
-        onSuccess();
+      onSubmit={async (values, { setErrors }) => {
+        onSubmit({ ...values, id }, onSuccess, setErrors);
       }}
     >
       {({ values, handleChange }) => {
@@ -49,7 +48,7 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
               />
               <TextField
                 name="description"
-                label="Description"
+                label="Description (optional)"
                 onChange={handleChange}
                 value={values.description}
               />

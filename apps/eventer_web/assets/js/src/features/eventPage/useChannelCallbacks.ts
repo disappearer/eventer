@@ -60,8 +60,14 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
   );
 
   const updateDecision = useCallback<updateDecisionT>(
-    decision => {
-      channel.get().push('update_decision', { decision });
+    (decision, onSuccess, onError) => {
+      channel
+        .get()
+        .push('update_decision', { decision })
+        .receive('ok', onSuccess)
+        .receive('error', response => {
+          onError(response.errors);
+        });
     },
     [channel],
   );
@@ -75,8 +81,14 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
   }, [channel]);
 
   const resolveDecision = useCallback<resolveDecisionT>(
-    (id, resolution) => {
-      channel.get().push('resolve_decision', { decision: { id, resolution } });
+    ({ decisionId, resolution }, onSuccess, onError) => {
+      channel
+        .get()
+        .push('resolve_decision', { decision: { id: decisionId, resolution } })
+        .receive('ok', onSuccess)
+        .receive('error', response => {
+          onError(response.errors);
+        });
     },
     [channel],
   );
@@ -103,12 +115,17 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
   );
 
   const vote = useCallback<voteT>(
-    (id, customOption, optionsVotedFor) => {
-      channel.get().push('vote', {
-        decision_id: id,
-        custom_option: customOption,
-        options: optionsVotedFor,
-      });
+    ({ decisionId, customOption, optionsVotedFor }, onError) => {
+      channel
+        .get()
+        .push('vote', {
+          decision_id: decisionId,
+          custom_option: customOption,
+          options: optionsVotedFor,
+        })
+        .receive('error', response => {
+          onError(response.errors);
+        });
     },
     [channel],
   );

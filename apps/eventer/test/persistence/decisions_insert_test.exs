@@ -117,7 +117,6 @@ defmodule Persistence.DecisionsInsertTest do
       assert message === "Event does not exist"
     end
 
-    @tag :wip
     test "title is unique per event", %{event: event, user: user} do
       {:ok, _item} =
         Decisions.insert_decision(%{

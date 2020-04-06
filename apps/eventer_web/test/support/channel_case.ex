@@ -36,7 +36,6 @@ defmodule EventerWeb.ChannelCase do
             :ok
 
           number_of_users ->
-
             connections =
               for n <- 1..number_of_users do
                 user = insert(:user)
@@ -64,9 +63,9 @@ defmodule EventerWeb.ChannelCase do
     :ok
   end
 
-  def diff(struct1, struct2) do
-    map1 = KitchenSink.Struct.to_map(struct1)
-    map2 = KitchenSink.Struct.to_map(struct2)
+  def diff(struct1, struct2, ignored_keys \\ []) do
+    map1 = struct1 |> KitchenSink.Struct.to_map() |> Map.drop(ignored_keys)
+    map2 = struct2 |> KitchenSink.Struct.to_map() |> Map.drop(ignored_keys)
 
     delta =
       KitchenSink.Map.diff(map1, map2)

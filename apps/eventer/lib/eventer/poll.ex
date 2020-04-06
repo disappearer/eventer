@@ -15,6 +15,8 @@ defmodule Eventer.Poll do
   end
 
   def changeset(poll, params \\ %{}) do
+    options = params["options"] || Map.get(params, :options, nil)
+
     poll
     |> cast(params, [
       :question,
@@ -22,26 +24,30 @@ defmodule Eventer.Poll do
       :multiple_answers_enabled,
       :votes
     ])
-    |> cast_embed(:options, with: &option_changeset/2)
+    |> cast_embed(:options, with: {__MODULE__, :option_changeset, [options]})
     |> validate_required(:custom_answer_enabled,
       message: "Question type (fixed) must be provided"
     )
     |> validate_options()
   end
 
-  defp option_changeset(option, params) do
+  def option_changeset(option, params, options) do
     option
     |> cast(params, [:text])
     |> validate_required(:text, message: "Option text must be provided")
+    |> validate_change(:text, fn :text, text ->
+      if has_duplicate(options, text) do
+        [text: "Has a duplicate"]
+      else
+        []
+      end
+    end)
   end
 
   defp validate_options(changeset) do
     options = get_field(changeset, :options)
 
     cond do
-      has_duplicate(options) ->
-        add_error(changeset, :options, "Cannot have duplicate options")
-
       less_than_two(options) ->
         validate_required(changeset, :question,
           message: "Question must be provided if there are less than 2 options"
@@ -52,10 +58,12 @@ defmodule Eventer.Poll do
     end
   end
 
-  defp has_duplicate(options) do
+  defp has_duplicate(options, text) do
     options
     |> Enum.frequencies_by(&Map.get(&1, :text))
-    |> Enum.any?(fn {_, frequency} -> frequency > 1 end)
+    |> (fn frequencies ->
+          Map.get(frequencies, text, 0) >= 2
+        end).()
   end
 
   defp less_than_two(options), do: length(options) < 2

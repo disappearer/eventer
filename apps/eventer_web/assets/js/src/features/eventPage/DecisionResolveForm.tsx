@@ -29,9 +29,8 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
   return (
     <Formik<valuesT>
       initialValues={{ resolution: objective === 'time' ? new Date() : '' }}
-      onSubmit={async ({ resolution }) => {
-        onSubmit(id, resolution);
-        onSuccess();
+      onSubmit={async ({ resolution }, { setErrors }) => {
+        onSubmit({ decisionId: id, resolution }, onSuccess, setErrors);
       }}
     >
       {({ values, handleChange, setFieldValue }) => {

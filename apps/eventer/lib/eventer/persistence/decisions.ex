@@ -31,7 +31,10 @@ defmodule Eventer.Persistence.Decisions do
       _ -> nil
     end
 
-    update_decision(decision, %{resolution: resolution, pending: false})
+    attrs = %{resolution: resolution, pending: false}
+    decision
+    |> Decision.resolve_changeset(attrs)
+    |> Repo.update()
   end
 
   defp update_event_time(decision, time_string) do

@@ -83,9 +83,8 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:ok, %{}}, socket}
 
       {:error, changeset} ->
-        IO.inspect(changeset, label: "changeset")
-
-        {:reply, {:error, %{}}, socket}
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
     end
   end
 
@@ -113,9 +112,8 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:ok, %{}}, socket}
 
       {:error, changeset} ->
-        IO.inspect(changeset, label: "changeset")
-
-        {:reply, {:error, %{}}, socket}
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
     end
   end
 
@@ -177,7 +175,8 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:ok, %{}}, socket}
 
       {:error, changeset} ->
-        {:reply, {:error, %{errors: changeset.errors}}, socket}
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
     end
   end
 
@@ -208,8 +207,12 @@ defmodule EventerWeb.EventChannel do
 
       {:reply, {:ok, %{}}, socket}
     else
-      {:error, changeset} ->
-        {:reply, {:error, %{errors: changeset.errors}}, socket}
+      {:error, %Ecto.Changeset{} = changeset} ->
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
+
+      {:error, errors} ->
+        {:reply, {:error, %{errors: errors}}, socket}
     end
   end
 
@@ -222,18 +225,22 @@ defmodule EventerWeb.EventChannel do
         {:ok, nil}
 
       true ->
-        {:error,
-         %{errors: [vote: {"Voting for multiple options is disabled", []}]}}
+        {:error, %{vote: "Voting for multiple options is disabled"}}
     end
   end
 
   defp add_custom_option(decision, custom_option) do
     if custom_option do
-      if decision.poll.custom_answer_enabled do
-        Decisions.add_option(decision, custom_option["text"])
+      with true <- decision.poll.custom_answer_enabled,
+           {:error, changeset} <-
+             Decisions.add_option(decision, custom_option["text"]),
+           %{options: options_errors} <-
+             Eventer.Persistence.Util.get_error_map(changeset),
+           %{text: "Has a duplicate"} <- List.last(options_errors) do
+        {:error, %{customOption: "Answer already exists"}}
       else
-        {:error,
-         %{errors: [vote: {"Poll fixed - custom option not possible", []}]}}
+        false -> {:error, %{vote: "Poll fixed - custom option not possible"}}
+        result -> result
       end
     else
       {:ok, decision}
