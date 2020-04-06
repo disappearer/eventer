@@ -6,8 +6,13 @@ import Title from '../../components/Title';
 import Top from '../../components/Top';
 import { eventT, getEvents } from '../../util/event_service';
 import { formatTime } from '../../util/time';
+import Loader from '../../components/Loader';
 
 const Events = styled.div``;
+
+const LoaderWrapper = styled.div`
+  padding-top: 100px;
+`;
 
 const Event = styled.div`
   padding: 15px 0px;
@@ -31,13 +36,13 @@ const Label = styled.span`
   font-size: 1.2rem;
   letter-spacing: 0.05rem;
   font-variant: small-caps;
-  color: ${props => props.theme.colors.darkerGrey};
+  color: ${(props) => props.theme.colors.darkerGrey};
 `;
 
 const TimePlaceItem = styled.div``;
 
 const EventList: React.FC = () => {
-  const { events } = useEvents();
+  const { events, loadingEvents } = useEvents();
 
   return (
     <>
@@ -48,23 +53,29 @@ const EventList: React.FC = () => {
         </Description>
       </Top>
       <Events>
-        {events.map(event => (
-          <Event key={event.id_hash}>
-            <EventTitle>
-              <Link to={`/events/${event.id_hash}`}>{event.title}</Link>
-            </EventTitle>
-            <TimePlace>
-              <TimePlaceItem>
-                <Label>time:</Label>
-                {event.time ? formatTime(event.time) : 'TBD'}
-              </TimePlaceItem>
-              <TimePlaceItem>
-                <Label>place:</Label>
-                {event.place || 'TBD'}
-              </TimePlaceItem>
-            </TimePlace>
-          </Event>
-        ))}
+        {loadingEvents ? (
+          <LoaderWrapper>
+            <Loader />
+          </LoaderWrapper>
+        ) : (
+          events.map((event) => (
+            <Event key={event.id_hash}>
+              <EventTitle>
+                <Link to={`/events/${event.id_hash}`}>{event.title}</Link>
+              </EventTitle>
+              <TimePlace>
+                <TimePlaceItem>
+                  <Label>time:</Label>
+                  {event.time ? formatTime(event.time) : 'TBD'}
+                </TimePlaceItem>
+                <TimePlaceItem>
+                  <Label>place:</Label>
+                  {event.place || 'TBD'}
+                </TimePlaceItem>
+              </TimePlace>
+            </Event>
+          ))
+        )}
       </Events>
     </>
   );
@@ -72,13 +83,15 @@ const EventList: React.FC = () => {
 
 export default EventList;
 
-type useEventsT = () => { events: eventT[] };
+type useEventsT = () => { events: eventT[]; loadingEvents: boolean };
 const useEvents: useEventsT = () => {
   const [events, setEvents] = useState<eventT[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
 
   useEffect(() => {
     const fetchAndSetEvents = async () => {
       const result = await getEvents();
+      setLoadingEvents(false);
       if (result.ok) {
         setEvents(result.data.events);
       }
@@ -87,5 +100,5 @@ const useEvents: useEventsT = () => {
     fetchAndSetEvents();
   }, []);
 
-  return { events };
+  return { events, loadingEvents };
 };

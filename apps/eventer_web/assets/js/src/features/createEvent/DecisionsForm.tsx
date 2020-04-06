@@ -72,7 +72,7 @@ const DecisionsForm: React.FC<decisionFormPropsT> = ({values, onChange}) => {
                     />
                     {decision.objective === 'general' && (
                       <div>
-                        <Button onClick={() => arrayHelpers.remove(index)}>
+                        <Button type="button" onClick={() => arrayHelpers.remove(index)}>
                           Remove decision
                         </Button>
                       </div>

@@ -46,8 +46,9 @@ const NewEventForm: React.FC = () => {
   return (
     <Formik<valuesT>
       initialValues={initialValues}
-      onSubmit={async (values, { setErrors }) => {
+      onSubmit={async (values, { setErrors, setSubmitting }) => {
         const response = await createEvent(mapValuesToEventData(values));
+        setSubmitting(false);
         switch (response.ok) {
           case false:
             setErrors(response.errors);
@@ -58,7 +59,7 @@ const NewEventForm: React.FC = () => {
         }
       }}
     >
-      {({ values, handleChange, setFieldValue }) => {
+      {({ values, handleChange, setFieldValue, isSubmitting }) => {
         handleIndecision('time', values, setFieldValue);
         handleIndecision('place', values, setFieldValue);
         return (
@@ -82,7 +83,7 @@ const NewEventForm: React.FC = () => {
                 <div>
                   <TimeField
                     selected={values.timeUndecided ? null : values.time}
-                    onChange={time => setFieldValue('time', time)}
+                    onChange={(time) => setFieldValue('time', time)}
                     disabled={values.timeUndecided}
                   />
                   <CheckboxField
@@ -111,7 +112,12 @@ const NewEventForm: React.FC = () => {
 
               <DecisionsForm values={values} onChange={handleChange} />
 
-              <SubmitButton primary type="submit">
+              <SubmitButton
+                primary
+                type="submit"
+                isSubmitting={isSubmitting}
+                disabled={isSubmitting}
+              >
                 Create event
               </SubmitButton>
             </FormGrid>
