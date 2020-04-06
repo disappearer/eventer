@@ -5,6 +5,7 @@ import TextField from '../../components/TextField';
 import { pollT, voteT } from './types';
 import { useAuthorizedUser } from '../authentication/useAuthorizedUser';
 import PollResults from './PollResults';
+import { Formik, Form } from 'formik';
 
 const Question = styled.div`
   margin-bottom: 7px;
@@ -45,6 +46,7 @@ const Option = styled.div<optionPropsT>`
 `;
 
 const CustomOption = styled(Option)`
+  text-align: left;
   border: 1px solid transparent;
   padding: 5px;
 
@@ -53,6 +55,10 @@ const CustomOption = styled(Option)`
     box-shadow: none;
   }
 `;
+
+type valuesT = {
+  customOption: string;
+};
 
 type pollPropsT = {
   decisionId: number;
@@ -104,56 +110,70 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
       ? customOptionText !== '' || selectedOptions.length > 1
       : true);
 
-  const submitVote = () => {
-    const customOption =
-      customOptionText === '' ? null : { text: customOptionText };
-    onVote(decisionId, customOption, selectedOptions);
-  };
-
   return (
     <div>
       <Question>{question}</Question>
       {hasVoted ? (
         <PollResults options={options} />
       ) : (
-        <>
-          <Options>
-            <Description>
-              {options.length > 0 && 'Choose an answer'}
-              {options.length > 0 &&
-                custom_answer_enabled &&
-                ' or provide your own'}
-              {options.length === 0 && 'Provide your answer'}.
-              {multiple_answers_enabled &&
-                options.length > 0 &&
-                ' You can choose more than one.'}
-            </Description>
-            {options.map(({ id, text }) => (
-              <Option
-                selected={selectedOptions.includes(id)}
-                key={id}
-                onClick={() => toggleSelectedOption(id)}
-              >
-                {text}
-              </Option>
-            ))}
-            {!hasVoted && custom_answer_enabled && (
-              <CustomOption>
-                <TextField
-                  inputSize="small"
-                  name="custom-option"
-                  placeholder="Custom option"
-                  onFocus={() => toggleSelectedOption('custom')}
-                  onChange={handleCustomOptionTextChange}
-                  value={customOptionText}
-                />
-              </CustomOption>
-            )}
-          </Options>
-          <Button disabled={!canSubmitVote} onClick={submitVote}>
-            Submit vote
-          </Button>
-        </>
+        <Formik<valuesT>
+          initialValues={{
+            customOption: '',
+          }}
+          onSubmit={async (_values, { setErrors }) => {
+            onVote(
+              {
+                decisionId,
+                customOption: { text: customOptionText },
+                optionsVotedFor: selectedOptions,
+              },
+              setErrors,
+            );
+          }}
+        >
+          {() => {
+            return (
+              <Form>
+                <Options>
+                  <Description>
+                    {options.length > 0 && 'Choose an answer'}
+                    {options.length > 0 &&
+                      custom_answer_enabled &&
+                      ' or provide your own'}
+                    {options.length === 0 && 'Provide your answer'}.
+                    {multiple_answers_enabled &&
+                      options.length > 0 &&
+                      ' You can choose more than one.'}
+                  </Description>
+                  {options.map(({ id, text }) => (
+                    <Option
+                      selected={selectedOptions.includes(id)}
+                      key={id}
+                      onClick={() => toggleSelectedOption(id)}
+                    >
+                      {text}
+                    </Option>
+                  ))}
+                  {!hasVoted && custom_answer_enabled && (
+                    <CustomOption>
+                      <TextField
+                        inputSize="small"
+                        name="customOption"
+                        placeholder="Custom option"
+                        onFocus={() => toggleSelectedOption('custom')}
+                        onChange={handleCustomOptionTextChange}
+                        value={customOptionText}
+                      />
+                    </CustomOption>
+                  )}
+                </Options>
+                <Button disabled={!canSubmitVote} type="submit">
+                  Submit vote
+                </Button>
+              </Form>
+            );
+          }}
+        </Formik>
       )}
     </div>
   );

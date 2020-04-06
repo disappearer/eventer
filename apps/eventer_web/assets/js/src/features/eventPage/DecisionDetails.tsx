@@ -27,6 +27,7 @@ const Wrapper = styled.div`
   grid-gap: 23px;
   justify-items: start;
   justify-content: start;
+  align-items: start;
 
   @media (max-width: 440px) {
     grid-template-columns: repeat(2, minmax(63px, 123px));
@@ -202,11 +203,18 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
             </ResolutionArea>
           )}
           <PollArea>
-            <Label>Poll</Label>
             {poll ? (
-              <Poll poll={poll} onVote={onVote} decisionId={id} />
+              <>
+                <Label>Poll</Label>
+                <Poll poll={poll} onVote={onVote} decisionId={id} />
+              </>
             ) : (
-              <Button onClick={showAddPollForm}>Add poll</Button>
+              pending && (
+                <>
+                  <Label>Poll</Label>
+                  <Button onClick={showAddPollForm}>Add poll</Button>
+                </>
+              )
             )}
           </PollArea>
           {pending && <Button onClick={showResolveForm}>Resolve</Button>}
@@ -218,12 +226,12 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
           initialValues={{ title, description: description || '' }}
           onSubmit={onDecisionUpdate}
           onSuccess={resetDecisionModal}
-          formTitle={`Update ${title}`}
+          formTitle={`Update "${title}"`}
         />
       )}
       {decisionAction === 'resolve' && (
         <ResolveForm
-          formTitle={`Resolve ${title}`}
+          formTitle={`Resolve "${title}"`}
           id={id}
           objective={objective}
           onSubmit={onDecisionResolve}

@@ -231,10 +231,16 @@ defmodule EventerWeb.EventChannel do
 
   defp add_custom_option(decision, custom_option) do
     if custom_option do
-      if decision.poll.custom_answer_enabled do
-        Decisions.add_option(decision, custom_option["text"])
+      with true <- decision.poll.custom_answer_enabled,
+           {:error, changeset} <-
+             Decisions.add_option(decision, custom_option["text"]),
+           %{options: options_errors} <-
+             Eventer.Persistence.Util.get_error_map(changeset),
+           %{text: "Has a duplicate"} <- List.last(options_errors) do
+        {:error, %{customOption: "Answer already exists"}}
       else
-        {:error, %{vote: "Poll fixed - custom option not possible"}}
+        false -> {:error, %{vote: "Poll fixed - custom option not possible"}}
+        result -> result
       end
     else
       {:ok, decision}

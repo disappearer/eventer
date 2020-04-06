@@ -378,8 +378,7 @@ defmodule EventerWeb.EventChannelVoteTest do
         })
 
       assert_reply(ref, :error, %{errors: errors})
-
-      assert errors === %{options: [%{}, %{}, %{}, %{text: "Has a duplicate"}]}
+      assert errors === %{customOption: "Answer already exists"}
     end
 
     @tag authorized: 1

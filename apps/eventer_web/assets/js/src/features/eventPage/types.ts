@@ -86,15 +86,26 @@ export type addDecisionT = (
 
 export type removeDecisionT = (id: number) => void;
 
-export type updateDecisionT = (data: {
-  id: number;
-  title: string;
-  description: string;
-}) => void;
+export type updateDecisionT = (
+  data: {
+    id: number;
+    title: string;
+    description: string;
+  },
+  onSuccess: () => void,
+  onError: (e: { title?: string }) => void,
+) => void;
 
 export type resolutionT = Date | string;
 
-export type resolveDecisionT = (id: number, resolution: resolutionT) => void;
+export type resolveDecisionT = (
+  data: {
+    decisionId: number;
+    resolution: resolutionT;
+  },
+  onSuccess: () => void,
+  onError: (e: { resolution?: string }) => void,
+) => void;
 
 export type discardResolutionT = (id: number) => void;
 
@@ -104,7 +115,10 @@ type customOptionT = {
   text: string;
 };
 export type voteT = (
-  decisionId: number,
-  customOption: customOptionT | null,
-  optionsVotedFor: string[],
+  data: {
+    decisionId: number;
+    customOption: customOptionT | null;
+    optionsVotedFor: string[];
+  },
+  onError: (e: { customOption?: string }) => void,
 ) => void;
