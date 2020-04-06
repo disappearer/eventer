@@ -100,7 +100,7 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
       ref = push(socket, "add_decision", decision_data)
 
       assert_reply(ref, :error, %{errors: errors})
-    assert errors === %{title: "Title can't be blank"}
+      assert errors === %{title: "Title can't be blank"}
     end
   end
 

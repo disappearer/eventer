@@ -38,7 +38,7 @@ defmodule EventerWeb.EventChannelUpdateDecisionTest do
       assert_reply(ref, :ok, %{})
 
       updated_decision = Repo.get(Decision, decision.id)
-      {changes, _, _} = diff(decision, updated_decision)
+      {changes, _, _} = diff(decision, updated_decision, [:updated_at])
 
       assert changes === [
                {[:description], decision.description, new_description},
@@ -77,6 +77,40 @@ defmodule EventerWeb.EventChannelUpdateDecisionTest do
       assert_broadcast("decision_updated", payload)
 
       assert payload === data
+    end
+
+    @tag authorized: 1
+    test "'update_decision' fails with empty title", %{
+      connections: [%{user: user, socket: socket}]
+    } do
+      event = insert(:event, %{creator: user})
+      decision = insert(:decision, %{event: event, creator: user})
+
+      decision = Repo.get(Decision, decision.id)
+
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, socket} =
+        subscribe_and_join(
+          socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      new_title = ""
+      new_description = "New Description"
+
+      ref =
+        push(socket, "update_decision", %{
+          decision: %{
+            id: decision.id,
+            title: new_title,
+            description: new_description
+          }
+        })
+
+      assert_reply(ref, :error, %{errors: errors})
+      assert errors === %{title: "Title can't be blank"}
     end
   end
 end

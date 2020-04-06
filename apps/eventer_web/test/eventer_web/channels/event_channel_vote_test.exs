@@ -298,9 +298,9 @@ defmodule EventerWeb.EventChannelVoteTest do
           options: [option1.id, option2.id]
         })
 
-      assert_reply(ref, :error, changeset)
-      {message, _} = Keyword.get(changeset.errors, :vote)
-      assert message === "Voting for multiple options is disabled"
+      assert_reply(ref, :error, %{errors: errors})
+
+      assert errors === %{vote: "Voting for multiple options is disabled"}
     end
 
     @tag authorized: 1
@@ -377,9 +377,9 @@ defmodule EventerWeb.EventChannelVoteTest do
           options: []
         })
 
-      assert_reply(ref, :error, changeset)
-      {message, _} = Keyword.get(changeset.errors, :options)
-      assert message === "Cannot have duplicate options"
+      assert_reply(ref, :error, %{errors: errors})
+
+      assert errors === %{options: [%{}, %{}, %{}, %{text: "Has a duplicate"}]}
     end
 
     @tag authorized: 1
@@ -409,9 +409,9 @@ defmodule EventerWeb.EventChannelVoteTest do
           options: []
         })
 
-      assert_reply(ref, :error, changeset)
-      {message, _} = Keyword.get(changeset.errors, :vote)
-      assert message === "Poll fixed - custom option not possible"
+      assert_reply(ref, :error, %{errors: errors})
+
+      assert errors === %{vote: "Poll fixed - custom option not possible"}
     end
   end
 end

@@ -143,7 +143,6 @@ defmodule EventerWeb.EventControllerCreateTest do
     end
 
     @tag :authorized
-    @tag :wip
     test "POST /api/events without place, but with place decision", %{
       conn: conn,
       authorized_user: user

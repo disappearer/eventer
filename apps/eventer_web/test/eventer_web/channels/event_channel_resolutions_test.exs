@@ -79,6 +79,38 @@ defmodule EventerWeb.EventChannelResolveTest do
     end
 
     @tag authorized: 1
+    test "'resolve_decision' fails if empty resolution", %{
+      connections: [%{user: user, socket: socket}]
+    } do
+      event = insert(:event, %{creator: user})
+      decision = insert(:decision, %{event: event, creator: user})
+
+      decision = Repo.get(Decision, decision.id)
+
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, socket} =
+        subscribe_and_join(
+          socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      resolution = ""
+
+      ref =
+        push(socket, "resolve_decision", %{
+          decision: %{
+            id: decision.id,
+            resolution: resolution
+          }
+        })
+
+      assert_reply(ref, :error, %{errors: errors})
+      assert errors === %{resolution: "Resolution can't be blank"}
+    end
+
+    @tag authorized: 1
     test "'resolve_decision' for time decision updates the event time", %{
       connections: [%{user: user, socket: socket}]
     } do
