@@ -31,11 +31,21 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
   return (
     <Formik<valuesT>
       initialValues={initialValues}
-      onSubmit={async (values, { setErrors }) => {
-        onSubmit({ ...values, id }, onSuccess, setErrors);
+      onSubmit={(values, { setErrors, setSubmitting }) => {
+        onSubmit(
+          {id, ...values},
+          () => {
+            setSubmitting(false);
+            onSuccess();
+          },
+          (errors) => {
+            setSubmitting(false);
+            setErrors(errors);
+          },
+        );
       }}
     >
-      {({ values, handleChange }) => {
+      {({ values, handleChange, isSubmitting }) => {
         return (
           <Form>
             <FormTitle>{formTitle}</FormTitle>
@@ -53,8 +63,12 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
                 value={values.description}
               />
               <ButtonsGrid>
-                <Button type="submit">Submit</Button>
-                <Button onClick={onSuccess}>Cancel</Button>
+                <Button type="submit" isSubmitting={isSubmitting}>
+                  Submit
+                </Button>
+                <Button onClick={onSuccess} disabled={isSubmitting}>
+                  Cancel
+                </Button>
               </ButtonsGrid>
             </FormGrid>
           </Form>

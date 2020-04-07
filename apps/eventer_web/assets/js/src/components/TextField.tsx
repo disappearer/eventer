@@ -51,8 +51,9 @@ const Input = styled.input<inputPropsT>`
 
 const Error = styled.div`
   margin-top: 3px;
+  width: 273px;
   font-size: 0.8rem;
-  color: ${props => props.theme.colors.milanoRed}
+  color: ${props => props.theme.colors.milanoRed};
 `;
 
 type textFieldPropsT = {

@@ -1,5 +1,6 @@
 import { None, Option } from 'funfix';
 import React, { useState } from 'react';
+import Loader from '../components/Loader';
 import Modal from '../components/Modal';
 import { useAuthorizedUser } from '../features/authentication/useAuthorizedUser';
 import AddDecisionForm from '../features/eventPage/AddDecisionForm';
@@ -12,6 +13,7 @@ import {
   DecisionsAndChat,
   EventPageWrapper,
   HorizontalSeparator,
+  LoaderWrapper,
   VerticalSeparator,
 } from '../features/eventPage/EventPage.styles';
 import EventUpdateForm from '../features/eventPage/EventUpdateForm';
@@ -37,8 +39,7 @@ const EventPage: React.FC = () => {
     updateEvent,
     addDecision,
     updateDecision,
-    openTimeDiscussion,
-    openPlaceDiscussion,
+    openDiscussion,
     resolveDecision,
     discardResolution,
     removeDecision,
@@ -58,8 +59,12 @@ const EventPage: React.FC = () => {
   } = useModal();
 
   return event.fold(
-    () => <div>Loading event data...</div>,
-    event => {
+    () => (
+      <LoaderWrapper>
+        <Loader />
+      </LoaderWrapper>
+    ),
+    (event) => {
       const { title, description, decisions } = event;
       return (
         <EventContext.Provider value={{ event, previousEvent }}>
@@ -89,7 +94,7 @@ const EventPage: React.FC = () => {
             <Modal shouldShowModal={shouldShowModal} hideModal={hideModal}>
               {modalChild.fold(
                 () => null,
-                child => {
+                (child) => {
                   switch (child.component) {
                     case 'EventUpdateForm':
                       return (
@@ -138,11 +143,7 @@ const EventPage: React.FC = () => {
                         <OpenDiscussionConfirmation
                           objective={child.objective}
                           hasCorrespondingDecision={decisionExists}
-                          onConfirm={
-                            child.objective === 'time'
-                              ? openTimeDiscussion
-                              : openPlaceDiscussion
-                          }
+                          onConfirm={openDiscussion}
                           closeModal={hideModal}
                         />
                       );

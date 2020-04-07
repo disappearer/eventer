@@ -20,7 +20,7 @@ const Options = styled.div`
 
 const Description = styled.div`
   font-size: 0.9rem;
-  color: ${props => props.theme.colors.darkerGrey};
+  color: ${(props) => props.theme.colors.darkerGrey};
   max-width: 273px;
 `;
 
@@ -33,7 +33,7 @@ const Option = styled.div<optionPropsT>`
   padding: 5px 17px;
   text-align: center;
   border-radius: 27px;
-  ${props =>
+  ${(props) =>
     props.selected
       ? `border: 1px solid ${props.theme.colors.pale};
           background: ${props.theme.colors.paler};`
@@ -41,7 +41,7 @@ const Option = styled.div<optionPropsT>`
 
   &:hover {
     cursor: pointer;
-    box-shadow: 0 0 3px ${props => props.theme.colors.main};
+    box-shadow: 0 0 3px ${(props) => props.theme.colors.main};
   }
 `;
 
@@ -91,10 +91,10 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
   } = poll;
 
   const toggleSelectedOption = (id: string) => {
-    setSelectedOptions(currentlySelectedOptions => {
+    setSelectedOptions((currentlySelectedOptions) => {
       if (multiple_answers_enabled) {
         if (currentlySelectedOptions.includes(id)) {
-          return currentlySelectedOptions.filter(optionId => optionId !== id);
+          return currentlySelectedOptions.filter((optionId) => optionId !== id);
         } else {
           return [...currentlySelectedOptions, id];
         }
@@ -120,18 +120,21 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
           initialValues={{
             customOption: '',
           }}
-          onSubmit={async (_values, { setErrors }) => {
+          onSubmit={(_values, { setErrors, setSubmitting }) => {
             onVote(
               {
                 decisionId,
                 customOption: { text: customOptionText },
                 optionsVotedFor: selectedOptions,
               },
-              setErrors,
+              (errors) => {
+                setSubmitting(false);
+                setErrors(errors);
+              },
             );
           }}
         >
-          {() => {
+          {({ isSubmitting }) => {
             return (
               <Form>
                 <Options>
@@ -167,7 +170,11 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
                     </CustomOption>
                   )}
                 </Options>
-                <Button disabled={!canSubmitVote} type="submit">
+                <Button
+                  type="submit"
+                  disabled={!canSubmitVote}
+                  isSubmitting={isSubmitting}
+                >
                   Submit vote
                 </Button>
               </Form>

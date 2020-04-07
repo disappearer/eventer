@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import Button from '../../components/Button';
 import { ButtonsGrid } from './Form.styles';
-import { specificObjectiveT } from './types';
+import { openDiscussionT, specificObjectiveT } from './types';
+
+const Error = styled.div`
+  margin-top: 3px;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  color: ${(props) => props.theme.colors.milanoRed};
+`;
 
 export type updateEventT = (data: {
   title: string;
@@ -11,7 +19,7 @@ export type updateEventT = (data: {
 type openDiscussionConfirmationPropsT = {
   objective: specificObjectiveT;
   hasCorrespondingDecision: boolean;
-  onConfirm: () => void;
+  onConfirm: openDiscussionT;
   closeModal: () => void;
 };
 
@@ -21,9 +29,16 @@ const OpenDiscussionConfirmation: React.FC<openDiscussionConfirmationPropsT> = (
   onConfirm,
   closeModal,
 }) => {
+  const [error, setError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleConfirmClick = () => {
-    onConfirm();
-    closeModal();
+    setIsSubmitting(true);
+    setError(false);
+    onConfirm(objective, closeModal, () => {
+      setIsSubmitting(false);
+      setError(true);
+    });
   };
   return (
     <div>
@@ -34,9 +49,14 @@ const OpenDiscussionConfirmation: React.FC<openDiscussionConfirmationPropsT> = (
           ? `mark the existing ${objective} decision as pending and discard it's resolution.`
           : `create a new ${objective} decision.`}
       </p>
+      {error && <Error>Request failed for some reason ¯\_(ツ)_/¯</Error>}
       <ButtonsGrid>
-        <Button onClick={handleConfirmClick}>Yes</Button>
-        <Button onClick={closeModal}>Cancel</Button>
+        <Button onClick={handleConfirmClick} isSubmitting={isSubmitting}>
+          Yes
+        </Button>
+        <Button onClick={closeModal} disabled={isSubmitting}>
+          Cancel
+        </Button>
       </ButtonsGrid>
     </div>
   );

@@ -14,7 +14,7 @@ const StyledButton = styled.button<styledButtonPropsT>`
   padding: ${(props) => (props.primary ? '7px' : '5px')};
   font-size: ${(props) => (props.primary ? '1rem' : '0.8rem')};
   font-weight: 300;
-  line-height: ${(props) => (props.primary ? '1.6' : '1')};
+  line-height: 1;
   color: ${(props) => props.theme.colors.main};
   // min-width: 80px;
 
@@ -42,12 +42,22 @@ type buttonPropsT = styledButtonPropsT &
   };
 const Button: React.FC<buttonPropsT> = ({
   isSubmitting = false,
+  disabled,
   children,
   ...props
 }) => {
+  const loaderHeight = props.primary ? '1rem' : '0.8rem';
   return (
-    <StyledButton {...props} isSubmitting={isSubmitting}>
-      {isSubmitting ? <Loader /> : children}
+    <StyledButton
+      {...props}
+      isSubmitting={isSubmitting}
+      disabled={disabled || isSubmitting}
+    >
+      {isSubmitting ? (
+        <Loader height={loaderHeight} circleSize="small" />
+      ) : (
+        children
+      )}
     </StyledButton>
   );
 };

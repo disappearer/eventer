@@ -2,7 +2,7 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-import { FormGrid, FormTitle } from './Form.styles';
+import { FormGrid, FormTitle, ButtonsGrid } from './Form.styles';
 import { updateEventT } from './types';
 
 type valuesT = {
@@ -29,11 +29,21 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
   return (
     <Formik<valuesT>
       initialValues={initialValues}
-      onSubmit={async (values, { setErrors }) => {
-        onSubmit(values, onSuccess, setErrors);
+      onSubmit={(values, { setErrors, setSubmitting }) => {
+        onSubmit(
+          values,
+          () => {
+            setSubmitting(false);
+            onSuccess();
+          },
+          (errors) => {
+            setSubmitting(false);
+            setErrors(errors);
+          },
+        );
       }}
     >
-      {({ values, handleChange }) => {
+      {({ values, handleChange, isSubmitting }) => {
         return (
           <div>
             <FormTitle>{formTitle}</FormTitle>
@@ -52,7 +62,14 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
                   value={values.description}
                 />
 
-                <Button type="submit">Submit</Button>
+                <ButtonsGrid>
+                  <Button type="submit" isSubmitting={isSubmitting}>
+                    Submit
+                  </Button>
+                  <Button onClick={onSuccess} disabled={isSubmitting}>
+                    Cancel
+                  </Button>
+                </ButtonsGrid>
               </FormGrid>
             </Form>
           </div>

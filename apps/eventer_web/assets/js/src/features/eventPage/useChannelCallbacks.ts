@@ -3,12 +3,13 @@ import { Channel } from 'phoenix';
 import { useCallback } from 'react';
 import {
   addDecisionT,
+  addPollT,
   discardResolutionT,
+  openDiscussionT,
   removeDecisionT,
   resolveDecisionT,
   updateDecisionT,
   updateEventT,
-  addPollT,
   voteT,
 } from './types';
 
@@ -20,15 +21,14 @@ type useChannelCallbacksT = (
   updateEvent: updateEventT;
   addDecision: addDecisionT;
   updateDecision: updateDecisionT;
-  openTimeDiscussion: () => void;
-  openPlaceDiscussion: () => void;
+  openDiscussion: openDiscussionT;
   resolveDecision: resolveDecisionT;
   discardResolution: discardResolutionT;
   removeDecision: removeDecisionT;
   addPoll: addPollT;
   vote: voteT;
 };
-const useChannelCallbacks: useChannelCallbacksT = channel => {
+const useChannelCallbacks: useChannelCallbacksT = (channel) => {
   const joinEvent = useCallback(() => {
     channel.get().push('join_event', {});
   }, [channel]);
@@ -43,7 +43,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
         .get()
         .push('update_event', { event: data })
         .receive('ok', onSuccess)
-        .receive('error', response => onError(response.errors));
+        .receive('error', (response) => onError(response.errors));
     },
     [channel],
   );
@@ -54,7 +54,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
         .get()
         .push('add_decision', { decision })
         .receive('ok', onSuccess)
-        .receive('error', response => onError(response.errors));
+        .receive('error', (response) => onError(response.errors));
     },
     [channel],
   );
@@ -65,20 +65,23 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
         .get()
         .push('update_decision', { decision })
         .receive('ok', onSuccess)
-        .receive('error', response => {
+        .receive('error', (response) => {
           onError(response.errors);
         });
     },
     [channel],
   );
 
-  const openTimeDiscussion = useCallback(() => {
-    channel.get().push('open_discussion', { objective: 'time' });
-  }, [channel]);
-
-  const openPlaceDiscussion = useCallback(() => {
-    channel.get().push('open_discussion', { objective: 'place' });
-  }, [channel]);
+  const openDiscussion = useCallback<openDiscussionT>(
+    (objective, onSuccess, onError) => {
+      channel
+        .get()
+        .push('open_discussion', { objective })
+        .receive('ok', onSuccess)
+        .receive('error', onError);
+    },
+    [channel],
+  );
 
   const resolveDecision = useCallback<resolveDecisionT>(
     ({ decisionId, resolution }, onSuccess, onError) => {
@@ -86,7 +89,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
         .get()
         .push('resolve_decision', { decision: { id: decisionId, resolution } })
         .receive('ok', onSuccess)
-        .receive('error', response => {
+        .receive('error', (response) => {
           onError(response.errors);
         });
     },
@@ -94,22 +97,32 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
   );
 
   const discardResolution = useCallback<discardResolutionT>(
-    id => {
+    (id) => {
       channel.get().push('discard_resolution', { decision_id: id });
     },
     [channel],
   );
 
   const removeDecision = useCallback<removeDecisionT>(
-    id => {
-      channel.get().push('remove_decision', { decision_id: id });
+    (id, onSuccess, onError) => {
+      channel
+        .get()
+        .push('remove_decision', { decision_id: id })
+        .receive('ok', onSuccess)
+        .receive('error', onError);
     },
     [channel],
   );
 
   const addPoll = useCallback<addPollT>(
-    (id, poll) => {
-      channel.get().push('add_poll', { decision_id: id, poll });
+    ({ decisionId, poll }, onSuccess, onError) => {
+      channel
+        .get()
+        .push('add_poll', { decision_id: decisionId, poll })
+        .receive('ok', onSuccess)
+        .receive('error', (response) => {
+          onError(response.errors);
+        });
     },
     [channel],
   );
@@ -123,7 +136,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
           custom_option: customOption,
           options: optionsVotedFor,
         })
-        .receive('error', response => {
+        .receive('error', (response) => {
           onError(response.errors);
         });
     },
@@ -136,8 +149,7 @@ const useChannelCallbacks: useChannelCallbacksT = channel => {
     updateEvent,
     addDecision,
     updateDecision,
-    openTimeDiscussion,
-    openPlaceDiscussion,
+    openDiscussion,
     resolveDecision,
     discardResolution,
     removeDecision,

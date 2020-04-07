@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
 import { addDecisionT } from './types';
-import { FormTitle, FormGrid } from './Form.styles';
+import { FormTitle, FormGrid, ButtonsGrid } from './Form.styles';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 
@@ -27,11 +27,21 @@ const AddDecisionForm: React.FC<addDecisionFromPropsT> = ({
   return (
     <Formik<valuesT>
       initialValues={initialValues}
-      onSubmit={async (values, { setErrors }) => {
-        onSubmit(values, onSuccess, setErrors);
+      onSubmit={(values, { setErrors, setSubmitting }) => {
+        onSubmit(
+          values,
+          () => {
+            setSubmitting(false);
+            onSuccess();
+          },
+          (errors) => {
+            setSubmitting(false);
+            setErrors(errors);
+          },
+        );
       }}
     >
-      {({ values, handleChange }) => {
+      {({ values, handleChange, isSubmitting }) => {
         return (
           <div>
             <FormTitle>Create a new decision</FormTitle>
@@ -50,7 +60,14 @@ const AddDecisionForm: React.FC<addDecisionFromPropsT> = ({
                   value={values.description}
                 />
 
-                <Button type="submit">Submit</Button>
+                <ButtonsGrid>
+                  <Button type="submit" isSubmitting={isSubmitting}>
+                    Submit
+                  </Button>
+                  <Button onClick={onSuccess} disabled={isSubmitting}>
+                    Cancel
+                  </Button>
+                </ButtonsGrid>
               </FormGrid>
             </Form>
           </div>

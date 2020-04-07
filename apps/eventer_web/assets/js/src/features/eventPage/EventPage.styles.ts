@@ -7,6 +7,10 @@ export const EventPageWrapper = styled.div`
   min-height: 0;
 `;
 
+export const LoaderWrapper = styled.div`
+padding-top: 100px;
+`;
+
 export const DecisionsAndChat = styled.div`
   flex: 1;
   display: flex;
