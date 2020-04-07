@@ -29,19 +29,30 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
   return (
     <Formik<valuesT>
       initialValues={{ resolution: objective === 'time' ? new Date() : '' }}
-      onSubmit={async ({ resolution }, { setErrors }) => {
-        onSubmit({ decisionId: id, resolution }, onSuccess, setErrors);
+      onSubmit={(values, { setErrors, setSubmitting }) => {
+        onSubmit(
+          { decisionId: id, ...values },
+          () => {
+            setSubmitting(false);
+            onSuccess();
+          },
+          (errors) => {
+            setSubmitting(false);
+            setErrors(errors);
+          },
+        );
       }}
     >
-      {({ values, handleChange, setFieldValue }) => {
+      {({ values, handleChange, setFieldValue, isSubmitting }) => {
         return (
           <Form>
             <FormTitle>{formTitle}</FormTitle>
             <FormGrid>
               {objective === 'time' ? (
                 <TimeField
+                  name="resolution"
                   selected={values.resolution as Date}
-                  onChange={time => setFieldValue('resolution', time)}
+                  onChange={(time) => setFieldValue('resolution', time)}
                   disabled={false}
                 />
               ) : (
@@ -53,8 +64,12 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
                 />
               )}
               <ButtonsGrid>
-                <Button type="submit">Submit</Button>
-                <Button onClick={onSuccess}>Cancel</Button>
+                <Button type="submit" isSubmitting={isSubmitting}>
+                  Submit
+                </Button>
+                <Button onClick={onSuccess} disabled={isSubmitting}>
+                  Cancel
+                </Button>
               </ButtonsGrid>
             </FormGrid>
           </Form>

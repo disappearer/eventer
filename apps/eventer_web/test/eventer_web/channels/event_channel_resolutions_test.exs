@@ -219,7 +219,7 @@ defmodule EventerWeb.EventChannelResolveTest do
       assert_reply(ref, :ok, %{})
 
       updated_decision = Repo.get(Decision, decision.id)
-      {changes, _, _} = diff(decision, updated_decision)
+      {changes, _, _} = diff(decision, updated_decision, [:updated_at])
 
       assert changes === [
                {[:pending], false, true},
@@ -293,6 +293,40 @@ defmodule EventerWeb.EventChannelResolveTest do
         })
 
       assert_reply(ref, :error, %{error: "Cannot discard non-general decision"})
+    end
+
+    @tag authorized: 1
+    test "'resolve_decision' for time decision fails if time in the past", %{
+      connections: [%{user: user, socket: socket}]
+    } do
+      event = insert(:event, %{creator: user, time: nil})
+
+      decision =
+        insert(:decision, %{event: event, creator: user, objective: "time"})
+
+      decision = Repo.get(Decision, decision.id)
+
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, socket} =
+        subscribe_and_join(
+          socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      resolution = TestUtil.days_in_past(1) |> DateTime.to_iso8601()
+
+      ref =
+        push(socket, "resolve_decision", %{
+          decision: %{
+            id: decision.id,
+            resolution: resolution
+          }
+        })
+
+      assert_reply(ref, :error, %{errors: errors})
+      assert errors === %{resolution: "Time of the event cannot be in the past"}
     end
   end
 end

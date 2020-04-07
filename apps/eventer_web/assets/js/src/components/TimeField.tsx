@@ -18,6 +18,7 @@ const Label = styled.label`
 `;
 
 type timeFieldPropsT = {
+  name?: string;
   onChange: (t: Date | null) => void;
   selected?: Date | null;
   disabled: boolean;
@@ -27,13 +28,14 @@ const TimeField: React.FC<timeFieldPropsT> = ({
   onChange,
   selected,
   disabled,
+  name = 'time'
 }) => {
-  const [_field, meta, _helpers] = useField("time");
+  const [_field, meta, _helpers] = useField(name);
   return (
     <div>
-      <Label htmlFor="time">Time</Label>
+      <Label htmlFor={name}>Time</Label>
       <DatePicker
-        name="time"
+        name={name}
         showTimeSelect
         timeIntervals={15}
         selected={selected}

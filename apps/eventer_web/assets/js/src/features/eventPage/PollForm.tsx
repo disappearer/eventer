@@ -47,12 +47,21 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
   return (
     <Formik<pollValuesT>
       initialValues={initialValues}
-      onSubmit={async values => {
-        onSubmit(decisionId, values);
-        onSuccess();
+      onSubmit={(values, { setErrors, setSubmitting }) => {
+        onSubmit(
+          { decisionId, poll: values },
+          () => {
+            setSubmitting(false);
+            onSuccess();
+          },
+          (errors) => {
+            setSubmitting(false);
+            setErrors(errors);
+          },
+        );
       }}
     >
-      {({ values, handleChange }) => {
+      {({ values, handleChange, isSubmitting }) => {
         return (
           <Form>
             <FormTitle>Add poll</FormTitle>
@@ -79,7 +88,7 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
               </div>
               <FieldArray
                 name="options"
-                render={arrayHelpers => (
+                render={(arrayHelpers) => (
                   <>
                     {values.options.map((option, index) => (
                       <PollOption key={index}>
@@ -111,8 +120,12 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
                 )}
               />
               <ButtonsGrid>
-                <Button type="submit">Submit</Button>
-                <Button onClick={onSuccess}>Cancel</Button>
+                <Button type="submit" isSubmitting={isSubmitting}>
+                  Submit
+                </Button>
+                <Button onClick={onSuccess} disabled={isSubmitting}>
+                  Cancel
+                </Button>
               </ButtonsGrid>
             </FormGrid>
           </Form>

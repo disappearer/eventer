@@ -112,7 +112,15 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:ok, %{}}, socket}
 
       {:error, changeset} ->
-        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        errors =
+          case Eventer.Persistence.Util.get_error_map(changeset) do
+            %{time: time_error_message} ->
+              %{resolution: time_error_message}
+
+            error_map ->
+              error_map
+          end
+
         {:reply, {:error, %{errors: errors}}, socket}
     end
   end

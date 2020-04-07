@@ -60,7 +60,7 @@ defmodule Eventer.Poll do
 
   defp has_duplicate(options, text) do
     options
-    |> Enum.frequencies_by(&Map.get(&1, :text))
+    |> Enum.frequencies_by(&(Map.get(&1, :text) || Map.get(&1, "text")))
     |> (fn frequencies ->
           Map.get(frequencies, text, 0) >= 2
         end).()

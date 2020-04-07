@@ -33,6 +33,7 @@ defmodule Eventer.Event do
     event
     |> cast(params, [:title, :description, :cancelled, :time, :place])
     |> validate_required(:title, message: "Title can't be blank")
+    |> validate_change(:time, &is_in_future/2)
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
   end

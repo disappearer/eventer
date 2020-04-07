@@ -25,25 +25,47 @@ defmodule Eventer.Persistence.Decisions do
   end
 
   def resolve_decision(decision, resolution) do
-    case decision.objective do
-      "time" -> update_event_time(decision, resolution)
-      "place" -> update_event_place(decision, resolution)
-      _ -> nil
-    end
+    Repo.transaction(fn ->
+      case update_event(decision, resolution) do
+        {:error, changeset} ->
+          Repo.rollback(changeset)
+          {:error, changeset}
 
-    attrs = %{resolution: resolution, pending: false}
-    decision
-    |> Decision.resolve_changeset(attrs)
-    |> Repo.update()
+        result ->
+          result
+      end
+
+      attrs = %{resolution: resolution, pending: false}
+
+      resolve_result =
+        decision
+        |> Decision.resolve_changeset(attrs)
+        |> Repo.update()
+
+      case resolve_result do
+        {:error, changeset} ->
+          Repo.rollback(changeset)
+          {:error, changeset}
+
+        result ->
+          result
+      end
+    end)
   end
 
-  defp update_event_time(decision, time_string) do
-    {:ok, time, _} = DateTime.from_iso8601(time_string)
+  defp update_event(decision, resolution) do
+    data =
+      if decision.objective === "time" do
+        {:ok, time, _} = DateTime.from_iso8601(resolution)
+        %{time: time}
+      else
+        %{place: resolution}
+      end
 
     decision
     |> Repo.preload(:event)
     |> Map.get(:event)
-    |> Events.update_event(%{time: time})
+    |> Events.update_event(data)
   end
 
   defp update_event_place(decision, place) do

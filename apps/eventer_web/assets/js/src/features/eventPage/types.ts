@@ -75,6 +75,12 @@ export type updateEventT = (
   onError: (e: { title?: string }) => void,
 ) => void;
 
+export type openDiscussionT = (
+  objective: 'time' | 'place',
+  onSuccess: () => void,
+  onError: () => void,
+) => void;
+
 export type addDecisionT = (
   data: {
     title: string;
@@ -84,7 +90,11 @@ export type addDecisionT = (
   onError: (e: { title?: string }) => void,
 ) => void;
 
-export type removeDecisionT = (id: number) => void;
+export type removeDecisionT = (
+  id: number,
+  onSuccess: () => void,
+  onError: () => void,
+) => void;
 
 export type updateDecisionT = (
   data: {
@@ -109,7 +119,11 @@ export type resolveDecisionT = (
 
 export type discardResolutionT = (id: number) => void;
 
-export type addPollT = (decisionId: number, poll: pollValuesT) => void;
+export type addPollT = (
+  data: { decisionId: number; poll: pollValuesT },
+  onSuccess: () => void,
+  onError: (e: { question: string; options: { text: string }[] }) => void,
+) => void;
 
 type customOptionT = {
   text: string;
