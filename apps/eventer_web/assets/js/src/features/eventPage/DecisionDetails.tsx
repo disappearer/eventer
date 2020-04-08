@@ -15,6 +15,7 @@ import {
   updateDecisionT,
   voteT,
 } from './types';
+import useParticipation from './useParticipation';
 
 const Wrapper = styled.div`
   display: grid;
@@ -119,24 +120,9 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
   onVote,
 }) => {
   const { event, previousEvent } = useContext(EventContext);
+  const isCurrentUserParticipating = useParticipation();
 
-  if (!event.decisions[id]) {
-    const { title } = previousEvent.decisions[id];
-    return (
-      <div>
-        Decision <RemovedDecision>{title}</RemovedDecision> has been removed.
-      </div>
-    );
-  }
-
-  const {
-    title,
-    description,
-    pending,
-    objective,
-    resolution,
-    poll,
-  } = event.decisions[id];
+  const decision = event.decisions[id] || previousEvent.decisions[id];
 
   const [decisionAction, setDecisionAction] = useState<decisionActionT>('view');
 
@@ -165,6 +151,17 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
     setDecisionAction('add_poll');
   };
 
+  if (!event.decisions[id]) {
+    return (
+      <div>
+        Decision <RemovedDecision>{decision.title}</RemovedDecision> has been
+        removed.
+      </div>
+    );
+  }
+
+  const { title, description, pending, objective, resolution, poll } = decision;
+
   return (
     <>
       {decisionAction === 'view' && (
@@ -172,7 +169,7 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
           <InfoArea>
             <TitleLine>
               <DecisionTitle>{title}</DecisionTitle>
-              {decisionAction === 'view' && (
+              {isCurrentUserParticipating && decisionAction === 'view' && (
                 <Button onClick={showEditForm}>Edit</Button>
               )}
             </TitleLine>
@@ -191,7 +188,7 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
             <ResolutionArea>
               <TitleLine>
                 <ResolutionLabel>Resolution</ResolutionLabel>
-                {objective === 'general' && (
+                {isCurrentUserParticipating && objective === 'general' && (
                   <Button onClick={showDiscardConfirmation}>
                     Discard resolution
                   </Button>
@@ -202,22 +199,26 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
               </div>
             </ResolutionArea>
           )}
-          <PollArea>
-            {poll ? (
-              <>
-                <Label>Poll</Label>
-                <Poll poll={poll} onVote={onVote} decisionId={id} />
-              </>
-            ) : (
-              pending && (
-                <>
-                  <Label>Poll</Label>
-                  <Button onClick={showAddPollForm}>Add poll</Button>
-                </>
-              )
-            )}
-          </PollArea>
-          {pending && <Button onClick={showResolveForm}>Resolve</Button>}
+          {isCurrentUserParticipating && (
+            <>
+              <PollArea>
+                {poll ? (
+                  <>
+                    <Label>Poll</Label>
+                    <Poll poll={poll} onVote={onVote} decisionId={id} />
+                  </>
+                ) : (
+                  pending && (
+                    <>
+                      <Label>Poll</Label>
+                      <Button onClick={showAddPollForm}>Add poll</Button>
+                    </>
+                  )
+                )}
+              </PollArea>
+              {pending && <Button onClick={showResolveForm}>Resolve</Button>}
+            </>
+          )}
         </Wrapper>
       )}
       {decisionAction === 'edit' && (

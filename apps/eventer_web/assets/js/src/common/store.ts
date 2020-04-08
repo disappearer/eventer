@@ -10,4 +10,4 @@ const rootReducer = combineReducers<reduxStateT>({
   user: userReducer,
 });
 
-export default createStore(rootReducer, applyMiddleware(logger));
+export default createStore(rootReducer);
