@@ -49,9 +49,23 @@ defmodule Eventer.Poll do
 
     cond do
       less_than_two(options) ->
-        validate_required(changeset, :question,
+        changeset
+        |> validate_required(:question,
           message: "Question must be provided if there are less than 2 options"
         )
+        |> validate_change(:custom_answer_enabled, fn :custom_answer_enabled,
+                                                      custom_answer_enabled ->
+          case custom_answer_enabled do
+            true ->
+              []
+
+            _ ->
+              [
+                custom_answer_enabled:
+                  "Custom answers must be enabled if there are less than 2 options"
+              ]
+          end
+        end)
 
       true ->
         changeset

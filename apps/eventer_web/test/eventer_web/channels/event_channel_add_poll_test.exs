@@ -98,7 +98,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
     end
 
     @tag authorized: 1
-    test "'add_poll' with one option success", %{
+    test "'add_poll' with one option and custom answer enabled success", %{
       connections: [%{user: user, socket: socket}]
     } do
       event = insert(:event, %{creator: user})
@@ -117,7 +117,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "Should I?",
-        custom_answer_enabled: false,
+        custom_answer_enabled: true,
         options: [%{text: "stay"}]
       }
 
@@ -246,7 +246,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
 
       poll = %{
         question: "",
-        custom_answer_enabled: false,
+        custom_answer_enabled: true,
         options: [%{text: "option1"}]
       }
 
@@ -261,6 +261,44 @@ defmodule EventerWeb.EventChannelAddPollTest do
       assert errors === %{
                question:
                  "Question must be provided if there are less than 2 options"
+             }
+    end
+
+    @tag authorized: 1
+    test "'add_poll' fails if fixed and has less than 2 options", %{
+      connections: [%{user: user, socket: socket}]
+    } do
+      event = insert(:event, %{creator: user})
+      decision = insert(:decision, %{event: event, creator: user})
+
+      decision = Repo.get(Decision, decision.id)
+
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, socket} =
+        subscribe_and_join(
+          socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      poll = %{
+        question: "What?",
+        custom_answer_enabled: false,
+        options: [%{text: "option1"}]
+      }
+
+      ref =
+        push(socket, "add_poll", %{
+          decision_id: decision.id,
+          poll: poll
+        })
+
+      assert_reply(ref, :error, %{errors: errors})
+
+      assert errors === %{
+               custom_answer_enabled:
+                 "Custom answers must be enabled if there are less than 2 options"
              }
     end
 
