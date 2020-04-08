@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { stateDecisionsT } from './types';
 import Button from '../../components/Button';
 import { formatTime } from '../../util/time';
+import { stateDecisionsT } from './types';
+import useParticipation from './useParticipation';
 
 const DecisionsWrapper = styled.div`
   flex: 2;
@@ -66,7 +67,7 @@ const Description = styled.div`
 const Objective = styled.div`
   margin-top: 5px;
   font-size: 0.9rem;
-  color: ${props => props.theme.colors.darkerGrey};
+  color: ${(props) => props.theme.colors.darkerGrey};
 `;
 
 type decisionsPropsT = {
@@ -81,11 +82,14 @@ const Decisions: React.FC<decisionsPropsT> = ({
   onAddDecisionClick,
   onRemoveDecisionClick,
 }) => {
+  const isCurrentUserParticipating = useParticipation();
   return (
     <DecisionsWrapper>
       <DecisionListTitleLine>
         <DecisionListTitle>Decisions</DecisionListTitle>
-        <Button onClick={onAddDecisionClick}>Add decision</Button>
+        {isCurrentUserParticipating && (
+          <Button onClick={onAddDecisionClick}>Add decision</Button>
+        )}
       </DecisionListTitleLine>
       <DecisionList>
         {Object.entries(decisions).map(([id, data]) => {
@@ -103,7 +107,7 @@ const Decisions: React.FC<decisionsPropsT> = ({
                   {title}
                   {pending && ' (pending)'}
                 </DecisionTitle>
-                {objective === 'general' && (
+                {isCurrentUserParticipating && objective === 'general' && (
                   <Button
                     onClick={() => onRemoveDecisionClick(parseInt(id, 10))}
                   >

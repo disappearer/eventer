@@ -5,26 +5,37 @@ import styled from 'styled-components';
 const StyledLink = styled(RouterLink)`
   text-decoration: none;
 
-  color: ${props => props.theme.colors.main};
+  color: ${(props) => props.theme.colors.main};
 
   &:visited {
-    color: ${props => props.theme.colors.main};
+    color: ${(props) => props.theme.colors.main};
+  }
+`;
+
+const StyledLinkButton = styled(RouterLink)`
+  border: 1px solid ${(props) => props.theme.colors.main};
+  border-radius: 5px;
+  padding: 7px;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.main};
+    color: white;
   }
 `;
 
 const StyledAnchor = styled.a`
   text-decoration: none;
 
-  color: ${props => props.theme.colors.main};
+  color: ${(props) => props.theme.colors.main};
 `;
 
-const Button = (component: any) => styled(component)`
-  border: 1px solid ${props => props.theme.colors.main};
+const StyledAnchorButton = styled(StyledAnchor)`
+  border: 1px solid ${(props) => props.theme.colors.main};
   border-radius: 5px;
   padding: 7px;
 
   &:hover {
-    background-color: ${props => props.theme.colors.main};
+    background-color: ${(props) => props.theme.colors.main};
     color: white;
   }
 `;
@@ -40,12 +51,16 @@ const Link: React.FC<linkPropsT> = ({
   to,
   children,
 }) => {
-  const component = external ? StyledAnchor : StyledLink;
-  const Link = asButton ? Button(component) : component;
   return external ? (
-    <Link href={to}>{children}</Link>
+    asButton ? (
+      <StyledAnchorButton href={to}>{children}</StyledAnchorButton>
+    ) : (
+      <StyledAnchor href={to}>{children}</StyledAnchor>
+    )
+  ) : asButton ? (
+    <StyledLinkButton to={to}>{children}</StyledLinkButton>
   ) : (
-    <Link to={to}>{children}</Link>
+    <StyledLink to={to}>{children}</StyledLink>
   );
 };
 

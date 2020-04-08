@@ -17,6 +17,7 @@ import {
   TimeData,
 } from './BasicEventInfo.styles';
 import { stateEventT } from './types';
+import useParticipation from './useParticipation';
 
 type basicEventInfoPropsT = {
   event: stateEventT;
@@ -37,12 +38,15 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
   leaveEvent,
 }) => {
   const { title, description, time, place, creatorId, participants } = event;
+  const isCurrentUserParticipating = useParticipation();
   return (
     <Grid>
       <Info>
         <EventTitleLine>
           <EventTitle>{title}</EventTitle>
-          <Button onClick={onEditEventClick}>Edit</Button>
+          {isCurrentUserParticipating && (
+            <Button onClick={onEditEventClick}>Edit</Button>
+          )}
         </EventTitleLine>
         <Description>{description}</Description>
         <CreatedBy>Created by {participants[creatorId].displayName}</CreatedBy>
@@ -57,12 +61,16 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
         ) : (
           <Span>TBD</Span>
         )}
-        {time && <Button onClick={onDiscussTimeClick}>Discuss</Button>}
+        {isCurrentUserParticipating && time && (
+          <Button onClick={onDiscussTimeClick}>Discuss</Button>
+        )}
       </Time>
       <Place>
         <Label>Place</Label>
         <Span>{place || 'TBD'}</Span>
-        {place && <Button onClick={onDiscussPlaceClick}>Discuss</Button>}
+        {isCurrentUserParticipating && place && (
+          <Button onClick={onDiscussPlaceClick}>Discuss</Button>
+        )}
       </Place>
       <Participants>
         <Label>Participants</Label>
