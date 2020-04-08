@@ -12,19 +12,52 @@ defmodule EventerWeb.EventChannel do
       |> Events.get_event()
       |> Events.to_map()
 
-    {:ok, %{event: event}, assign(socket, :event_id, event.id)}
+    participant_ids = Enum.map(event.participants, &Map.get(&1, :id))
+
+    socket =
+      Phoenix.Socket.assign(socket,
+        event_id: event.id,
+        creator_id: event.creator.id,
+        participant_ids: participant_ids
+      )
+
+    {:ok, %{event: event}, socket}
   end
 
-  def handle_in("join_event", %{}, socket) do
+  def handle_in("join_event", %{}, socket),
+    do: handle_message("join_event", %{}, socket)
+
+  def handle_in(message, payload, socket) do
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+    %{creator_id: creator_id, participant_ids: participant_ids} = socket.assigns
+
+    if user.id === creator_id || Enum.member?(participant_ids, user.id) do
+      handle_message(message, payload, socket)
+    else
+      {:reply,
+       {:error,
+        %{
+          errors: %{
+            permissions: "This action is not allowed for non-participants"
+          }
+        }}, socket}
+    end
+  end
+
+  def handle_message("join_event", %{}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
 
     {:ok, _} = Events.join(socket.assigns.event_id, user.id)
 
     broadcast(socket, "user_joined", %{user: Users.to_map(user)})
+
+    %{participant_ids: participant_ids} = socket.assigns
+    socket = assign(socket, :participant_ids, [user.id | participant_ids])
+
     {:reply, {:ok, %{}}, socket}
   end
 
-  def handle_in("leave_event", %{}, socket) do
+  def handle_message("leave_event", %{}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
 
     Events.leave(socket.assigns.event_id, user.id)
@@ -33,7 +66,7 @@ defmodule EventerWeb.EventChannel do
     {:reply, {:ok, %{}}, socket}
   end
 
-  def handle_in("update_event", %{"event" => event_data}, socket) do
+  def handle_message("update_event", %{"event" => event_data}, socket) do
     case Events.get_event(socket.assigns.event_id)
          |> Events.update_event(event_data) do
       {:ok, _} ->
@@ -46,7 +79,7 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_in("add_decision", %{"decision" => data}, socket) do
+  def handle_message("add_decision", %{"decision" => data}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
     event_id = socket.assigns.event_id
 
@@ -70,7 +103,7 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_in("update_decision", %{"decision" => decision}, socket) do
+  def handle_message("update_decision", %{"decision" => decision}, socket) do
     %{"id" => id, "title" => title, "description" => description} = decision
 
     case Decisions.get_decision(id)
@@ -88,7 +121,7 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_in("remove_decision", %{"decision_id" => decision_id}, socket) do
+  def handle_message("remove_decision", %{"decision_id" => decision_id}, socket) do
     case Decisions.get_decision(decision_id) |> Decisions.delete_decision() do
       {:ok, _} ->
         broadcast(socket, "decision_removed", %{decision_id: decision_id})
@@ -99,7 +132,7 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_in("resolve_decision", %{"decision" => decision}, socket) do
+  def handle_message("resolve_decision", %{"decision" => decision}, socket) do
     %{"id" => id, "resolution" => resolution} = decision
 
     case Decisions.get_decision(id)
@@ -125,7 +158,7 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_in("discard_resolution", %{"decision_id" => id}, socket) do
+  def handle_message("discard_resolution", %{"decision_id" => id}, socket) do
     with %{objective: "general"} = decision <- Decisions.get_decision(id),
          {:ok, _} <- Decisions.discard_resolution(decision) do
       broadcast(socket, "resolution_discarded", %{decision_id: id})
@@ -146,7 +179,7 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_in("open_discussion", %{"objective" => objective}, socket) do
+  def handle_message("open_discussion", %{"objective" => objective}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
 
     case Events.open_discussion(socket.assigns.event_id, objective, user.id) do
@@ -168,7 +201,7 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_in(
+  def handle_message(
         "add_poll",
         %{"decision_id" => decision_id, "poll" => poll},
         socket
@@ -188,7 +221,7 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_in(
+  def handle_message(
         "vote",
         %{
           "decision_id" => decision_id,

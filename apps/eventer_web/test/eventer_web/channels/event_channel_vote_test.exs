@@ -32,6 +32,7 @@ defmodule EventerWeb.EventChannelVoteTest do
           EventChannel,
           "event:#{event_id_hash}"
         )
+      push(socket2, "join_event", %{})
 
       [option1 | _] = decision.poll.options
 

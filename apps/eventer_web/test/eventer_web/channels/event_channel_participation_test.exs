@@ -92,5 +92,33 @@ defmodule EventerWeb.EventChannelParticipationTest do
       assert_broadcast("user_left", payload)
       assert payload === %{userId: joiner.user.id}
     end
+
+    @tag authorized: 2
+    test "'join_event' is the only message allowed for non-participants", %{
+      connections: connections
+    } do
+      [creator, joiner] = connections
+
+      event = insert(:event, %{creator: creator.user})
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, joiner_socket} =
+        subscribe_and_join(
+          joiner.socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      ref =
+        push(joiner_socket, "update_event", %{
+          event: %{"title" => "New Title", "description" => "New Description"}
+        })
+
+      assert_reply(ref, :error, %{errors: errors})
+
+      assert errors === %{
+               permissions: "This action is not allowed for non-participants"
+             }
+    end
   end
 end
