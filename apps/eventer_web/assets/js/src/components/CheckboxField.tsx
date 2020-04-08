@@ -1,3 +1,4 @@
+import { useField } from 'formik';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -8,11 +9,18 @@ const FieldWrapper = styled.div`
 const Label = styled.label`
   margin-left: 5px;
   font-size: 0.9rem;
-  color: ${props => props.theme.colors.darkerGrey};
+  color: ${(props) => props.theme.colors.darkerGrey};
 `;
 
 const Input = styled.input`
-  outline-color: ${props => props.theme.colors.main};
+  outline-color: ${(props) => props.theme.colors.main};
+`;
+
+const Error = styled.div`
+  margin-top: 3px;
+  width: 273px;
+  font-size: 0.8rem;
+  color: ${(props) => props.theme.colors.milanoRed};
 `;
 
 type checkboxFieldPropsT = {
@@ -28,6 +36,8 @@ const CheckboxField: React.FC<checkboxFieldPropsT> = ({
   onChange,
   checked = false,
 }) => {
+  const [_field, meta, _helpers] = useField(name);
+
   return (
     <FieldWrapper>
       <Input
@@ -37,6 +47,7 @@ const CheckboxField: React.FC<checkboxFieldPropsT> = ({
         checked={checked}
       />
       <Label htmlFor={name}>{label}</Label>
+      {meta.touched && meta.error ? <Error>{meta.error}</Error> : null}
     </FieldWrapper>
   );
 };
