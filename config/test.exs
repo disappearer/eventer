@@ -7,10 +7,7 @@ config :eventer_web, EventerWeb.Endpoint,
   server: false
 
 config :eventer, Eventer.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "eventer_test",
-  hostname: "localhost",
+  url: "ecto://postgres:postgres@localhost/eventer_test",
   port: "5432",
   pool: Ecto.Adapters.SQL.Sandbox
 
