@@ -21,13 +21,11 @@ config :eventer_web, EventerWeb.Endpoint,
   pubsub: [name: EventerWeb.PubSub, adapter: Phoenix.PubSub.PG2],
   live_view: [signing_salt: "W7gV8T4z"]
 
-config :eventer, Eventer.Repo,
-  database: "eventer",
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost"
 
 config :eventer, ecto_repos: [Eventer.Repo]
+
+config :eventer, Eventer.Repo,
+  url: "ecto://postgres:postgres@localhost/eventer"
 
 config :phoenix, :json_library, Jason
 

@@ -1,0 +1,11 @@
+_build
+.elixir_ls
+deps
+
+.formatter.exs
+Dockerfile
+heroku.yml
+test.rest
+
+**/README.md
+**/node_modules
