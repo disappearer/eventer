@@ -2,7 +2,7 @@
 # prepare base #
 ################
 
-FROM elixir:1.10-alpine as base
+FROM elixir:1.10-alpine AS base
 
 RUN apk add --update bash
 
@@ -24,22 +24,11 @@ COPY apps/eventer_web/mix.exs /app/apps/eventer_web/
 
 COPY . /app/
 
-################
-# prepare test #
-################
-
-FROM base as test
-
-# build deps
-ENV MIX_ENV=test
-
-RUN mix do deps.get --only $MIX_ENV
-
 ###################
 # prepare release #
 ###################
 
-FROM base as release
+FROM base AS release
 
 # install build dependencies
 RUN apk add --update yarn
@@ -81,3 +70,14 @@ USER nobody
 ENV HOME=/app
 
 CMD ["./bin/start"]
+
+################
+# prepare test #
+################
+
+FROM base AS test
+
+# build deps
+ENV MIX_ENV=test
+
+RUN mix do deps.get --only $MIX_ENV
