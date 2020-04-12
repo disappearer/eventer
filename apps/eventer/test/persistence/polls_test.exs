@@ -49,6 +49,7 @@ defmodule Persistence.PollsTest do
       assert db_poll === nil
     end
 
+    @tag :skip
     test "remove option", %{decision: decision} do
       poll = %{
         question: "Question?",
