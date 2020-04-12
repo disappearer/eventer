@@ -1,11 +1,10 @@
-###################
-# prepare release #
-###################
+################
+# prepare base #
+################
 
-FROM elixir:1.10.2-alpine as release
+FROM elixir:1.10-alpine as base
 
-# install build dependencies
-RUN apk add --update git build-base nodejs yarn
+RUN apk add --update bash
 
 # prepare build dir
 RUN mkdir /app
@@ -23,13 +22,33 @@ COPY mix.* /app/
 COPY apps/eventer/mix.exs /app/apps/eventer/
 COPY apps/eventer_web/mix.exs /app/apps/eventer_web/
 
+COPY . /app/
+
+################
+# prepare test #
+################
+
+FROM base as test
+
+# build deps
+ENV MIX_ENV=test
+
+RUN mix do deps.get --only $MIX_ENV
+
+###################
+# prepare release #
+###################
+
+FROM base as release
+
+# install build dependencies
+RUN apk add --update yarn
+
 # build deps
 ENV MIX_ENV=prod
 RUN mix do deps.get --only $MIX_ENV, deps.compile
 
-COPY . /app/
-
-# build assest
+# build assets
 WORKDIR /app/apps/eventer_web
 RUN MIX_ENV=prod mix compile
 RUN yarn --cwd ./assets
@@ -43,7 +62,7 @@ RUN MIX_ENV=prod mix release
 # prepare release image #
 #########################
 
-FROM alpine:3.11
+FROM alpine:3.11 AS production
 RUN apk add --update bash openssl
 
 EXPOSE 4000

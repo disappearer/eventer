@@ -7,7 +7,9 @@ config :eventer_web, EventerWeb.Endpoint,
   server: false
 
 config :eventer, Eventer.Repo,
-  url: "ecto://postgres:postgres@localhost/eventer_test",
+  url:
+    System.get_env("DATABASE_URL") ||
+      "ecto://postgres:postgres@localhost/eventer_test",
   port: "5432",
   pool: Ecto.Adapters.SQL.Sandbox
 

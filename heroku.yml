@@ -5,6 +5,7 @@ setup:
 build:
   docker:
     web: Dockerfile
+    target: production
   config:
     MIX_ENV: prod
     SECRET_KEY_BASE: $SECRET_KEY_BASE

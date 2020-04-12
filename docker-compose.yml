@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  eventer:
+    build: .
+    ports:
+      - 4000:4000
+    environment:
+      SECRET_KEY_BASE:
+      DATABASE_URL: 'ecto://db_user:${POSTGRES_PASSWORD}@db/eventer'
+    depends_on:
+      - eventer-db
+
+  eventer-db:
+    image: postgres:12-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: eventer
+      POSTGRES_USER: db_user
+      POSTGRES_PASSWORD:
+
+  eventer-test:
+    build:
+      context: .
+      target: test
+    environment:
+      DATABASE_URL: 'ecto://postgres:postgres@eventer-db-test/eventer_test'
+    depends_on:
+      - eventer-db-test
+    command: './run-tests'
+
+  eventer-db-test:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_DB: eventer_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
