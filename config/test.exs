@@ -15,4 +15,4 @@ config :eventer, Eventer.Repo,
 
 config :logger, level: :warning
 
-import_config "test.secret.exs"
+# import_config "test.secret.exs"
