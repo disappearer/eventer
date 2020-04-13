@@ -1,5 +1,5 @@
 version: v1.0
-name: Semaphore Python / Flask / Docker Example Pipeline
+name: Eventer test
 agent:
   machine:
     type: e1-standard-2
@@ -20,4 +20,5 @@ blocks:
 promotions:
   - name: Production deploy
     pipeline_file: semaphore-staging-deploy.yml
-            
+    auto_promote:
+      when: "result = 'passed'"

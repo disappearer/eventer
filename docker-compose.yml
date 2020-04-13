@@ -10,12 +10,21 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
+      args:
+        - HASH_ID_SALT
+        - GOOGLE_CLIENT_ID
+        - GOOGLE_CLIENT_SECRET
+        - GUARDIAN_SECRET_KEY
     image: disappearer/eventer
     ports:
       - 4000:4000
     environment:
       SECRET_KEY_BASE:
       DATABASE_URL: 'ecto://db_user:${POSTGRES_PASSWORD}@db/eventer'
+      HASH_ID_SALT:
+      GOOGLE_CLIENT_ID:
+      GOOGLE_CLIENT_SECRET:
+      GUARDIAN_SECRET_KEY:
     depends_on:
       - eventer-db-prod
 
@@ -33,8 +42,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.test
+      args:
+        - HASH_ID_SALT
     environment:
       DATABASE_URL: 'ecto://postgres:postgres@eventer-db-test/eventer_test'
+      HASH_ID_SALT:
     depends_on:
       - eventer-db-test
     command: './run-tests'

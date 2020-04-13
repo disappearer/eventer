@@ -4,6 +4,11 @@
 
 FROM eventer-base:latest AS release
 
+ARG HASH_ID_SALT
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG GUARDIAN_SECRET_KEY
+
 # install build dependencies
 RUN apk add --update yarn
 

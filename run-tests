@@ -2,4 +2,6 @@
 mix ecto.create
 mix ecto.migrate
 
+echo $HASH_ID_SALT
+
 mix test
