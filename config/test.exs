@@ -17,8 +17,8 @@ config :logger, level: :warning
 
 config :eventer_web, :hashid_salt, System.fetch_env!("HASH_ID_SALT")
 
-config :eventer_web, EventerWeb.Guardian,
-  issuer: "eventer_web",
-  secret_key: System.fetch_env!("GUARDIAN_SECRET_KEY")
+# config :eventer_web, EventerWeb.Guardian,
+#   issuer: "eventer_web",
+#   secret_key: System.fetch_env!("GUARDIAN_SECRET_KEY")
 
 # import_config "test.secret.exs"

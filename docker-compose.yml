@@ -33,8 +33,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.test
+      args:
+        - HASH_ID_SALT
     environment:
       DATABASE_URL: 'ecto://postgres:postgres@eventer-db-test/eventer_test'
+      HASH_ID_SALT:
     depends_on:
       - eventer-db-test
     command: './run-tests'
