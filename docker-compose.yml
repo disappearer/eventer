@@ -1,16 +1,25 @@
 version: '3.7'
 services:
-  eventer:
-    build: .
+  eventer-base:
+    build:
+      context: .
+      dockerfile: Dockerfile.base
+    image: eventer-base:latest
+
+  eventer-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: disappearer/eventer
     ports:
       - 4000:4000
     environment:
       SECRET_KEY_BASE:
       DATABASE_URL: 'ecto://db_user:${POSTGRES_PASSWORD}@db/eventer'
     depends_on:
-      - eventer-db
+      - eventer-db-prod
 
-  eventer-db:
+  eventer-db-prod:
     image: postgres:12-alpine
     restart: always
     ports:
@@ -23,7 +32,7 @@ services:
   eventer-test:
     build:
       context: .
-      target: test
+      dockerfile: Dockerfile.test
     environment:
       DATABASE_URL: 'ecto://postgres:postgres@eventer-db-test/eventer_test'
     depends_on:

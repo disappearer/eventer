@@ -1,0 +1,25 @@
+################
+# prepare base #
+################
+
+FROM elixir:1.10-alpine AS base
+
+RUN apk add --update bash
+
+# prepare build dir
+RUN mkdir /app
+WORKDIR /app
+
+# install hex + rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+# copy stuff
+COPY config/ /app/config/
+COPY mix.exs /app/
+COPY mix.* /app/
+
+COPY apps/eventer/mix.exs /app/apps/eventer/
+COPY apps/eventer_web/mix.exs /app/apps/eventer_web/
+
+COPY . /app/
