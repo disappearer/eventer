@@ -1,5 +1,8 @@
 import Config
 
+config :eventer, Eventer.Repo,
+  url: "ecto://postgres:postgres@localhost/eventer"
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -20,6 +23,7 @@ config :eventer_web, EventerWeb.Endpoint,
   #     cd: Path.expand("../apps/eventer_web/assets", __DIR__)
   #   ]
   # ]
+
 
 # ## SSL Support
 #

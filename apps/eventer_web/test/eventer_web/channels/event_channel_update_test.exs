@@ -28,7 +28,7 @@ defmodule EventerWeb.EventChannelUpdateTest do
 
       updated_event = Repo.get(Event, event.id) |> Repo.preload(:creator)
 
-      {changes, _, _} = diff(event, updated_event)
+      {changes, _, _} = diff(event, updated_event, [:updated_at])
 
       assert changes === [
                {[:description], event.description, "New Description"},

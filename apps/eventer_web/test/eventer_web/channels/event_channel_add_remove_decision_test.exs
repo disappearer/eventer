@@ -36,7 +36,7 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
 
       {[
          {[:decisions], '', [new_decision]}
-       ], _, _} = diff(event, updated_event)
+       ], _, _} = diff(event, updated_event, [:updated_at])
 
       assert new_decision.creator_id === user.id
       assert new_decision.event_id === event.id
@@ -134,7 +134,7 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
 
       {[
          {[:decisions], [some_decision], []}
-       ], _, _} = diff(event, updated_event)
+       ], _, _} = diff(event, updated_event, [:updated_at])
 
       assert some_decision.id === decision.id
     end

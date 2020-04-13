@@ -36,7 +36,7 @@ defmodule EventerWeb.EventChannelResolveTest do
       assert_reply(ref, :ok, %{})
 
       updated_decision = Repo.get(Decision, decision.id)
-      {changes, _, _} = diff(decision, updated_decision)
+      {changes, _, _} = diff(decision, updated_decision, [:updated_at])
 
       assert changes === [
                {[:pending], true, false},

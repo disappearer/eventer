@@ -12,12 +12,9 @@ blocks:
       jobs:
         - name: Docker build
           commands:
+            # Authenticate with Docker Hub
+            - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
             - checkout
-            - docker-compose build eventer-base
-            - docker-compose build eventer-test
-            - docker-compose up eventer-test
-
-promotions:
-  - name: Production deploy
-    pipeline_file: semaphore-staging-deploy.yml
+            - docker-compose build eventer-prod
+            - docker-compose push eventer-prod
             

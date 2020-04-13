@@ -24,9 +24,6 @@ config :eventer_web, EventerWeb.Endpoint,
 
 config :eventer, ecto_repos: [Eventer.Repo]
 
-config :eventer, Eventer.Repo,
-  url: "ecto://postgres:postgres@localhost/eventer"
-
 config :phoenix, :json_library, Jason
 
 # Configure Google OAuth

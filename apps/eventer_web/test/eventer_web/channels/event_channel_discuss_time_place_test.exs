@@ -91,7 +91,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
         decision: updated_decision
       })
 
-      {changes, _, _} = diff(decision, updated_decision)
+      {changes, _, _} = diff(decision, updated_decision, [:updated_at])
 
       assert changes === [
                {[:pending], false, true},
@@ -185,7 +185,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
         decision: updated_decision
       })
 
-      {changes, _, _} = diff(decision, updated_decision)
+      {changes, _, _} = diff(decision, updated_decision, [:updated_at])
 
       assert changes === [
                {[:pending], false, true},
