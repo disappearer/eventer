@@ -1,5 +1,5 @@
 version: v1.0
-name: Semaphore Python / Flask / Docker Example Pipeline
+name: Eventer deploy to heroku
 agent:
   machine:
     type: e1-standard-2
@@ -25,7 +25,7 @@ blocks:
         - name: eventer-heroku
       env_vars:
         - name: HEROKU_REMOTE
-          value: lexlabs-eventer
+          value: https://git.heroku.com/lexlabs-eventer.git
       jobs:
       - name: Push code
         commands:
