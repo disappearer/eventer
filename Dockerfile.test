@@ -7,4 +7,6 @@ FROM eventer-base:latest AS test
 # build deps
 ENV MIX_ENV=test
 
+RUN echo $HASH_ID_SALT
+
 RUN mix do deps.get --only $MIX_ENV, deps.compile
