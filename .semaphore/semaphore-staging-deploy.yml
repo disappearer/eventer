@@ -19,7 +19,6 @@ blocks:
             - docker-compose build eventer-prod
             - docker-compose push eventer-prod
 
-blocks:
   - name: Deploy
     task:
       secrets:
