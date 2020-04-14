@@ -21,4 +21,4 @@ promotions:
   - name: Production deploy
     pipeline_file: semaphore-staging-deploy.yml
     auto_promote:
-      when: "result = 'passed'"
+      when: "result = 'passed' and branch = 'master'"
