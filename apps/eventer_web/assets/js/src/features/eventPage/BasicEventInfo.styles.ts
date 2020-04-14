@@ -47,8 +47,7 @@ export const Info = styled.div`
   grid-area: info;
 `;
 
-export const EventTitleLine = styled.div`
-`;
+export const EventTitleLine = styled.div``;
 
 export const EventTitle = styled.h1`
   margin: 0;
@@ -82,6 +81,7 @@ export const TimePlace = styled.div`
 
   @media (max-width: ${BREAKPOINT_2}px) {
     grid-template-columns: repeat(6, minmax(40px, auto));
+    grid-gap: 20px;
     justify-content: stretch;
   }
 
@@ -96,12 +96,20 @@ export const Label = styled.h4`
 `;
 
 export const PlaceLabel = styled(Label)`
+  grid-row: 2/3;
+
+  @media (max-width: ${BREAKPOINT_3}px) {
+    grid-row: 3/4;
+  }
+
   @media (max-width: ${BREAKPOINT_2}px) {
     grid-column: 4/5;
+    grid-row: auto;
   }
 
   @media (max-width: ${BREAKPOINT_1}px) {
     grid-column: auto;
+    grid-row: 2/3;
   }
 `;
 
@@ -126,6 +134,7 @@ export const TimeData = styled.div`
 
 export const PlaceData = styled.span`
   margin-right: 10px;
+  grid-row: 2/3;
 
   @media (max-width: ${BREAKPOINT_3}px) {
     grid-column: 1/-1;
@@ -139,7 +148,7 @@ export const PlaceData = styled.span`
 
   @media (max-width: ${BREAKPOINT_1}px) {
     grid-column: auto;
-    grid-row: auto;
+    grid-row: 2/3;
   }
 `;
 
@@ -152,12 +161,20 @@ export const DiscussButton = styled(Button)`
 `;
 
 export const PlaceDiscussButton = styled(DiscussButton)`
+  grid-row: 2/3;
+
+  @media (max-width: ${BREAKPOINT_3}px) {
+    grid-row: 3/4;
+  }
+
   @media (max-width: ${BREAKPOINT_2}px) {
     grid-column: 5/6;
+    grid-row: auto;
   }
 
   @media (max-width: ${BREAKPOINT_1}px) {
     grid-column: auto;
+    grid-row: 2/3;
   }
 `;
 
