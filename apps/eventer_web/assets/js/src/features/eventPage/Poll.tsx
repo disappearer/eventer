@@ -124,7 +124,8 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
             onVote(
               {
                 decisionId,
-                customOption: { text: customOptionText },
+                customOption:
+                  customOptionText === '' ? null : { text: customOptionText },
                 optionsVotedFor: selectedOptions,
               },
               (errors) => {
