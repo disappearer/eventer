@@ -4,6 +4,8 @@ import Description from '../../components/Description';
 import { getDateString, getTimeString } from '../../util/time';
 import {
   CreatedBy,
+  DiscussButton,
+  EditEventButton,
   EventTitle,
   EventTitleLine,
   Grid,
@@ -11,10 +13,11 @@ import {
   Label,
   Participants,
   ParticipantsGrid,
-  Place,
-  Span,
-  Time,
+  PlaceData,
+  PlaceDiscussButton,
+  PlaceLabel,
   TimeData,
+  TimePlace,
 } from './BasicEventInfo.styles';
 import { stateEventT } from './types';
 import useParticipation from './useParticipation';
@@ -45,13 +48,15 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
         <EventTitleLine>
           <EventTitle>{title}</EventTitle>
           {isCurrentUserParticipating && (
-            <Button onClick={onEditEventClick}>Edit</Button>
+            <EditEventButton onClick={onEditEventClick}>
+              Edit basic info
+            </EditEventButton>
           )}
         </EventTitleLine>
         <Description>{description}</Description>
         <CreatedBy>Created by {participants[creatorId].displayName}</CreatedBy>
       </Info>
-      <Time>
+      <TimePlace>
         <Label>Time</Label>
         {time ? (
           <TimeData>
@@ -59,19 +64,21 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
             <div>{getTimeString(time)}</div>
           </TimeData>
         ) : (
-          <Span>TBD</Span>
+          <TimeData>TBD</TimeData>
         )}
         {isCurrentUserParticipating && time && (
-          <Button onClick={onDiscussTimeClick}>Discuss</Button>
+          <DiscussButton onClick={onDiscussTimeClick}>Discuss</DiscussButton>
         )}
-      </Time>
-      <Place>
-        <Label>Place</Label>
-        <Span>{place || 'TBD'}</Span>
+        {/* </Time> */}
+        {/* <Place> */}
+        <PlaceLabel>Place</PlaceLabel>
+        <PlaceData>{place || 'TBD'}</PlaceData>
         {isCurrentUserParticipating && place && (
-          <Button onClick={onDiscussPlaceClick}>Discuss</Button>
+          <PlaceDiscussButton onClick={onDiscussPlaceClick}>
+            Discuss
+          </PlaceDiscussButton>
         )}
-      </Place>
+      </TimePlace>
       <Participants>
         <Label>Participants</Label>
         <ParticipantsGrid>
