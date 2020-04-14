@@ -64,9 +64,10 @@ type pollPropsT = {
   decisionId: number;
   poll: pollT;
   onVote: voteT;
+  pending: boolean;
 };
 
-const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
+const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote, pending }) => {
   const { id: currentUserId } = useAuthorizedUser();
   const [hasVoted, setHasVoted] = useState(false);
 
@@ -113,7 +114,7 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote }) => {
   return (
     <div>
       <Question>{question}</Question>
-      {hasVoted ? (
+      {hasVoted || !pending ? (
         <PollResults options={options} />
       ) : (
         <Formik<valuesT>

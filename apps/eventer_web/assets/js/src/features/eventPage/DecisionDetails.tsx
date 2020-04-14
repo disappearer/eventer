@@ -205,7 +205,12 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
                 {poll ? (
                   <>
                     <Label>Poll</Label>
-                    <Poll poll={poll} onVote={onVote} decisionId={id} />
+                    <Poll
+                      poll={poll}
+                      onVote={onVote}
+                      decisionId={id}
+                      pending={pending}
+                    />
                   </>
                 ) : (
                   pending && (
