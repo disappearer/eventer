@@ -6,10 +6,9 @@ import { stateDecisionsT } from './types';
 import useParticipation from './useParticipation';
 
 const DecisionsWrapper = styled.div`
-  flex: 2;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  padding-right: 20px;
 
   @media (max-width: 490px) {
     padding-right: 0;
@@ -88,7 +87,7 @@ const Decisions: React.FC<decisionsPropsT> = ({
       <DecisionListTitleLine>
         <DecisionListTitle>Decisions</DecisionListTitle>
         {isCurrentUserParticipating && (
-          <Button onClick={onAddDecisionClick}>Add decision</Button>
+          <Button onClick={onAddDecisionClick}>Add</Button>
         )}
       </DecisionListTitleLine>
       <DecisionList>

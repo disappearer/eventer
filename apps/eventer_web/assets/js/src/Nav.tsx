@@ -1,14 +1,25 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
+import React, { useContext, useEffect, useState } from 'react';
+import HamburgerMenu from 'react-hamburger-menu';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useRouteMatch } from 'react-router-dom';
+import styled, { ThemeContext } from 'styled-components';
 import { reduxStateT } from './common/store';
+import Button from './components/Button';
 import Link from './components/Link';
 import { userT } from './features/authentication/userReducer';
+import { CHAT_HIDING_BREAKPOINT } from './features/eventPage/Chat';
+import {
+  setIsChatVisible,
+  toggleChat,
+} from './features/eventPage/eventActions';
 
-const Navbar = styled.nav`
+type navbarPropsT = {
+  visible: boolean;
+};
+const Navbar = styled.nav<navbarPropsT>`
   flex: none;
   display: grid;
-  padding: 10px;
+  padding-top: 10px;
   grid-row-gap: 20px;
   grid-template-columns: repeat(2, minmax(auto, 350px));
   justify-content: center;
@@ -16,12 +27,14 @@ const Navbar = styled.nav`
   @media (max-width: 620px) {
     grid-template-columns: 1fr;
     justify-items: center;
-    order: -1;
+  }
+
+  @media (max-width: ${CHAT_HIDING_BREAKPOINT}px) {
+    display: ${(props) => (props.visible ? 'grid' : 'none')};
   }
 `;
 
 const NavList = styled.div`
-  list-style-type: none;
   display: grid;
   grid-template-columns: repeat(3, auto);
   justify-content: end;
@@ -40,49 +53,123 @@ const User = styled(NavListItem)`
   }
 `;
 
+const NavbarNarrow = styled.nav<navbarPropsT>`
+  display: none;
+  grid-template-columns: 1fr;
+  align-items: center;
+
+  @media (max-width: ${CHAT_HIDING_BREAKPOINT}px) {
+    display: ${(props) => (props.visible ? 'grid' : 'none')};
+  }
+`;
+
+const Harbungen = styled.div`
+  display: none;
+  position: absolute !important;
+  z-index: 42;
+  top: 17px;
+
+  @media (max-width: ${CHAT_HIDING_BREAKPOINT}px) {
+    display: block;
+  }
+`;
+
+const ChatToggleButton = styled(Button)`
+  justify-self: end;
+  line-height: 1.1;
+  padding: 7px;
+  font-size: 0.9rem;
+`;
+
 const Nav: React.FC = () => {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const match = useRouteMatch<{ id_hash: string }>('/events/:id_hash');
+
+  const theme = useContext(ThemeContext);
   const user = useSelector<reduxStateT, userT>(({ user }) => user);
+  const isChatVisible = useSelector<reduxStateT, boolean>(
+    ({ event: { isChatVisible } }) => isChatVisible,
+  );
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    // reset menu and chat visibility if landing on an event page
+    if (match && match.params.id_hash !== 'new') {
+      setIsMenuOpen(false);
+      dispatch(setIsChatVisible(false));
+    } else {
+      setIsMenuOpen(true);
+    }
+  }, [location]);
+
+  const toggleMenu = () => {
+    setIsMenuOpen((menuOpen) => !menuOpen);
+  };
+
+  const toggleChatVisibility = () => {
+    dispatch(toggleChat());
+  };
 
   return (
-    <Navbar>
-      <NavList>
-        <NavListItem>
-          <Link to="/">Home</Link>
-        </NavListItem>
-        <NavListItem>
-          <Link to="/about">About</Link>
-        </NavListItem>
-        {!user.data.isEmpty() && (
+    <div>
+      {match && match.params.id_hash !== 'new' && (
+        <Harbungen>
+          <HamburgerMenu
+            isOpen={isMenuOpen}
+            color={theme.colors.main}
+            menuClicked={toggleMenu}
+            width={30}
+            height={19}
+            strokeWidth={1}
+          />
+        </Harbungen>
+      )}
+      <Navbar visible={isMenuOpen}>
+        <NavList>
           <NavListItem>
-            <Link to="/events/new">New Event</Link>
+            <Link to="/">Home</Link>
           </NavListItem>
-        )}
-      </NavList>
-      <User>
-        {user.data.fold(
-          () => null,
-          ({ displayName }) => (
-            <NavListItem id="display-name">{displayName}</NavListItem>
-          ),
-        )}
-        {user.data.fold(
-          () => (
+          <NavListItem>
+            <Link to="/about">About</Link>
+          </NavListItem>
+          {!user.data.isEmpty() && (
             <NavListItem>
-              <Link external={true} asButton={true} to="/auth/google">
-                Google Login
-              </Link>
+              <Link to="/events/new">New Event</Link>
             </NavListItem>
-          ),
-          () => (
-            <NavListItem>
-              <Link external={true} asButton={true} to="/auth/logout">
-                Logout
-              </Link>
-            </NavListItem>
-          ),
-        )}
-      </User>
-    </Navbar>
+          )}
+        </NavList>
+        <User>
+          {user.data.fold(
+            () => (
+              <NavListItem>
+                <Link external={true} asButton={true} to="/auth/google">
+                  Google Login
+                </Link>
+              </NavListItem>
+            ),
+            ({ displayName }) => (
+              <>
+                <NavListItem id="display-name">{displayName}</NavListItem>
+                <NavListItem>
+                  <Link external={true} asButton={true} to="/auth/logout">
+                    Logout
+                  </Link>
+                </NavListItem>
+              </>
+            ),
+          )}
+        </User>
+      </Navbar>
+      {match && match.params.id_hash !== 'new' && (
+        <NavbarNarrow visible={!isMenuOpen}>
+          <ChatToggleButton onClick={toggleChatVisibility}>
+            {isChatVisible ? 'Show event panel' : 'Show chat'}
+          </ChatToggleButton>
+        </NavbarNarrow>
+      )}
+    </div>
   );
 };
 

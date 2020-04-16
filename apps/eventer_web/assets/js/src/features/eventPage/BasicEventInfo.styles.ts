@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import Button from '../../components/Button';
 
-const BREAKPOINT_1 = '380';
-const BREAKPOINT_2 = '540';
-const BREAKPOINT_3 = '670';
+export const BREAKPOINT_1 = '380';
+export const BREAKPOINT_2 = '540';
+export const BREAKPOINT_3 = '670';
 
 export const Grid = styled.div`
   flex: none;
