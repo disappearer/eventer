@@ -13,20 +13,11 @@ const AppWrapper = styled.div`
   margin: 0 auto;
   max-width: 800px;
   position: relative;
-
-  @media (max-width: 620px) {
-    grid-template-columns: auto;
-  }
 `;
 
 const Content = styled.div`
-  grid-column: 2/3;
-  padding: 0 30px;
-
-  @media (max-width: 620px) {
-    grid-column: 1/2;
-    padding: 10px 20px;
-  }
+  box-sizing: border-box;
+  padding: 10px 20px;
 
   height: 100%;
 
