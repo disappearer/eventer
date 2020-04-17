@@ -54,6 +54,7 @@ defmodule Eventer.Persistence.Events do
           (p.has_left == false and
              p.user_id == ^user.id) or
             e.creator_id == ^user.id,
+        distinct: true,
         order_by: [desc: e.time]
       )
 
