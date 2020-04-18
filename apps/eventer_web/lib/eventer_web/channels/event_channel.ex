@@ -2,7 +2,7 @@ defmodule EventerWeb.EventChannel do
   use EventerWeb, :channel
 
   alias EventerWeb.IdHasher
-  alias Eventer.Persistence.{Events, Users, Decisions}
+  alias Eventer.Persistence.{Events, Users, Decisions, Messages}
   alias Eventer.Decision
 
   def join("event:" <> event_id_hash, _message, socket) do
@@ -253,6 +253,38 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:error, %{errors: errors}}, socket}
 
       {:error, errors} ->
+        {:reply, {:error, %{errors: errors}}, socket}
+    end
+  end
+
+  def handle_message("get_chat_messages", %{}, socket) do
+    messages =
+      socket.assigns.event_id
+      |> Messages.get_messages()
+      |> Enum.map(&Messages.to_map/1)
+
+    {:reply, {:ok, %{messages: messages}}, socket}
+  end
+
+  def handle_message("chat_shout", %{"message" => message}, socket) do
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+    event_id = socket.assigns.event_id
+
+    case Messages.insert_message(%{
+           user_id: user.id,
+           event_id: event_id,
+           text: message
+         }) do
+      {:ok, _} ->
+        broadcast(socket, "chat_shout", %{
+          user_id: user.id,
+          message: message
+        })
+
+        {:reply, {:ok, %{}}, socket}
+
+      {:error, changeset} ->
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
         {:reply, {:error, %{errors: errors}}, socket}
     end
   end
