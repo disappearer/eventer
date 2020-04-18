@@ -2,7 +2,7 @@ defmodule EventerWeb.Factory do
   use ExMachina.Ecto, repo: Eventer.Repo
   import TestUtil
 
-  alias Eventer.{User, Event, Decision, Poll}
+  alias Eventer.{User, Event, Decision, Poll, Message}
 
   def event_factory do
     %Event{
@@ -17,7 +17,7 @@ defmodule EventerWeb.Factory do
   def user_factory do
     %User{
       display_name: sequence("Name"),
-      email: sequence(:email, &"me#{&1}@example.com"),
+      email: sequence(:email, &"me#{&1}@example.com")
     }
   end
 
@@ -27,7 +27,7 @@ defmodule EventerWeb.Factory do
       description: sequence("Decision description"),
       event: build(:event),
       creator: build(:user),
-      poll: build(:poll),
+      poll: build(:poll)
     }
   end
 
@@ -40,5 +40,13 @@ defmodule EventerWeb.Factory do
 
   def option_factory do
     %Poll.Option{id: sequence("id"), text: sequence("Option")}
+  end
+
+  def message_factory do
+    %Message{
+      text: sequence("Message"),
+      user: build(:user),
+      event: build(:event)
+    }
   end
 end
