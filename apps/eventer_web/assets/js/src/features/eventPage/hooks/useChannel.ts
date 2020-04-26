@@ -15,8 +15,8 @@ import {
   updateStateDecision,
   updateStateEvent,
   updateStateVote,
-} from './stateTransformations';
-import { stateEventT } from './types';
+} from '../stateTransformations';
+import { stateEventT } from '../types';
 
 type useChannelT = (
   token: string,

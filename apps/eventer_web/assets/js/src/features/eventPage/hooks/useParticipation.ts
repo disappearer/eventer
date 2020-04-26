@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { reduxStateT } from '../../common/store';
-import { userT } from '../authentication/userReducer';
-import EventContext from './EventContext';
+import { reduxStateT } from '../../../common/store';
+import { userT } from '../../authentication/userReducer';
+import EventContext from '../EventContext';
 
 type useParticipationT = () => boolean;
 const useParticipation: useParticipationT = () => {

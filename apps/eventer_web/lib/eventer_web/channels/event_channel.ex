@@ -27,6 +27,9 @@ defmodule EventerWeb.EventChannel do
   def handle_in("join_event", %{}, socket),
     do: handle_message("join_event", %{}, socket)
 
+  def handle_in("get_chat_messages", %{}, socket),
+    do: handle_message("get_chat_messages", %{}, socket)
+
   def handle_in(message, payload, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
     %{creator_id: creator_id, participant_ids: participant_ids} = socket.assigns
@@ -266,22 +269,24 @@ defmodule EventerWeb.EventChannel do
     {:reply, {:ok, %{messages: messages}}, socket}
   end
 
-  def handle_message("chat_shout", %{"message" => message}, socket) do
+  def handle_message("chat_shout", %{"text" => text}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
     event_id = socket.assigns.event_id
 
     case Messages.insert_message(%{
            user_id: user.id,
            event_id: event_id,
-           text: message
+           text: text
          }) do
-      {:ok, _} ->
+      {:ok, message} ->
         broadcast(socket, "chat_shout", %{
+          id: message.id,
           user_id: user.id,
-          message: message
+          text: text,
+          inserted_at: message.inserted_at
         })
 
-        {:reply, {:ok, %{}}, socket}
+        {:reply, {:ok, %{message: Messages.to_map(message)}}, socket}
 
       {:error, changeset} ->
         errors = Eventer.Persistence.Util.get_error_map(changeset)

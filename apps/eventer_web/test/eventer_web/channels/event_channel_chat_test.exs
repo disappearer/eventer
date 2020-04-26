@@ -25,8 +25,16 @@ defmodule EventerWeb.EventChannelChatTest do
       assert_reply(ref, :ok, %{})
 
       message = "Hell World!"
-      ref = push(joiner_socket, "chat_shout", %{message: message})
-      assert_reply(ref, :ok, %{})
+      ref = push(joiner_socket, "chat_shout", %{text: message})
+      assert_reply(ref, :ok, %{message: reply_message})
+
+      %{id: id, text: text, event_id: event_id, user_id: user_id} =
+        reply_message
+
+      assert id !== nil
+      assert text === message
+      assert event_id === event.id
+      assert user_id === joiner.user.id
 
       [%Message{text: text, event_id: event_id, user_id: user_id}] =
         Messages.get_messages(event.id)
@@ -55,10 +63,27 @@ defmodule EventerWeb.EventChannelChatTest do
       assert_reply(ref, :ok, %{})
 
       message = "Hell World!"
-      push(joiner_socket, "chat_shout", %{message: message})
+      ref = push(joiner_socket, "chat_shout", %{text: message})
+      assert_reply(ref, :ok, %{})
+
+      [
+        %Message{
+          id: id,
+          text: text,
+          event_id: event_id,
+          user_id: user_id,
+          inserted_at: inserted_at
+        }
+      ] = Messages.get_messages(event.id)
 
       assert_broadcast("chat_shout", payload)
-      assert payload === %{user_id: joiner.user.id, message: message}
+
+      assert payload === %{
+               id: id,
+               user_id: joiner.user.id,
+               text: message,
+               inserted_at: inserted_at
+             }
     end
 
     @tag authorized: 2
@@ -85,6 +110,35 @@ defmodule EventerWeb.EventChannelChatTest do
 
       ref = push(joiner_socket, "join_event", %{})
       assert_reply(ref, :ok, %{})
+
+      ref = push(joiner_socket, "get_chat_messages", %{})
+      assert_reply(ref, :ok, %{messages: reply_messages})
+
+      message_maps = Enum.map(messages, &Messages.to_map/1)
+      assert reply_messages === message_maps
+    end
+
+    @tag authorized: 2
+    test "'get_chat_messages' gets event chat messages for non-participants", %{
+      connections: connections
+    } do
+      [creator, joiner] = connections
+      event = insert(:event, %{creator: creator.user})
+
+      messages =
+        insert_list(13, :message, %{
+          event: event,
+          user: creator.user
+        })
+
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, joiner_socket} =
+        subscribe_and_join(
+          joiner.socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
 
       ref = push(joiner_socket, "get_chat_messages", %{})
       assert_reply(ref, :ok, %{messages: reply_messages})

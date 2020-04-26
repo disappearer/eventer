@@ -38,7 +38,7 @@ export const DecisionsAndChat = styled.div`
 
   @media (max-height: 530px) {
     min-height: auto;
-    max-height: calc(100vh - 3px);
+    max-height: calc(100vh - 30px);
   }
 `;
 

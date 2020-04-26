@@ -11,7 +11,7 @@ import {
   updateDecisionT,
   updateEventT,
   voteT,
-} from './types';
+} from '../types';
 
 type useChannelCallbacksT = (
   channel: Option<Channel>,
