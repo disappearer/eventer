@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { dummyEvent } from './EventContext';
-import { stateEventT } from './types';
+import { dummyEvent } from '../EventContext';
+import { stateEventT } from '../types';
 import { Option } from 'funfix';
 
 type usePreviousEventT = (oe: Option<stateEventT>) => stateEventT;

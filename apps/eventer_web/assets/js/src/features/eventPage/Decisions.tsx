@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Button from '../../components/Button';
 import { formatTime } from '../../util/time';
 import { stateDecisionsT } from './types';
-import useParticipation from './useParticipation';
+import useParticipation from './hooks/useParticipation';
 
 const DecisionsWrapper = styled.div`
   flex: 1;

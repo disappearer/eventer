@@ -20,7 +20,7 @@ import {
   TimePlace,
 } from './BasicEventInfo.styles';
 import { stateEventT } from './types';
-import useParticipation from './useParticipation';
+import useParticipation from './hooks/useParticipation';
 
 type basicEventInfoPropsT = {
   event: stateEventT;

@@ -1,6 +1,6 @@
 import { None, Option, Some } from 'funfix';
 import { useState, useCallback } from 'react';
-import { specificObjectiveT } from './types';
+import { specificObjectiveT } from '../types';
 
 type eventUpdateFormModalChildT = {
   component: 'EventUpdateForm';

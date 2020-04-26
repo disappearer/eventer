@@ -15,7 +15,7 @@ import {
   updateDecisionT,
   voteT,
 } from './types';
-import useParticipation from './useParticipation';
+import useParticipation from './hooks/useParticipation';
 
 const Wrapper = styled.div`
   display: grid;

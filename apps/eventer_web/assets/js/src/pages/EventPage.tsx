@@ -24,11 +24,11 @@ import EventUpdateForm from '../features/eventPage/EventUpdateForm';
 import OpenDiscussionConfirmation from '../features/eventPage/OpenDiscussionConfirmation';
 import RemoveDecisionConfirmation from '../features/eventPage/RemoveDecisionConfirmation';
 import { stateEventT } from '../features/eventPage/types';
-import useChannel from '../features/eventPage/useChannel';
-import useChannelCallbacks from '../features/eventPage/useChannelCallbacks';
-import useWindowSize from '../features/eventPage/useChatHidingBreakpoint';
-import useModal from '../features/eventPage/useModal';
-import usePreviousEvent from '../features/eventPage/usePreviousEvent';
+import useChannel from '../features/eventPage/hooks/useChannel';
+import useChannelCallbacks from '../features/eventPage/hooks/useChannelCallbacks';
+import useChatHidingBreakpoint from '../features/eventPage/hooks/useChatHidingBreakpoint';
+import useModal from '../features/eventPage/hooks/useModal';
+import usePreviousEvent from '../features/eventPage/hooks/usePreviousEvent';
 import { hasExistingDecision } from '../features/eventPage/util';
 
 const EventPage: React.FC = () => {
@@ -63,7 +63,7 @@ const EventPage: React.FC = () => {
     hideModal,
   } = useModal();
 
-  useWindowSize();
+  const isScreenWide = useChatHidingBreakpoint();
 
   const isChatVisible = useSelector<reduxStateT, boolean>(
     ({ event: { isChatVisible } }) => isChatVisible,
@@ -82,7 +82,11 @@ const EventPage: React.FC = () => {
           <EventPageWrapper>
             <HorizontalSeparator />
             <ChatWrapper visible={isChatVisible}>
-              <Chat visible={isChatVisible} />
+              <Chat
+                visible={!isScreenWide && isChatVisible}
+                isFullWidthChat={false}
+                channel={channel}
+              />
             </ChatWrapper>
             <EventPanel visible={!isChatVisible}>
               <BasicEventInfo
@@ -103,7 +107,7 @@ const EventPage: React.FC = () => {
                   onRemoveDecisionClick={showRemoveDecisionModal}
                 />
                 <VerticalSeparator />
-                <Chat visible={isChatVisible} />
+                <Chat isFullWidthChat={true} visible={isScreenWide} channel={channel} />
               </DecisionsAndChat>
 
               <Modal shouldShowModal={shouldShowModal} hideModal={hideModal}>

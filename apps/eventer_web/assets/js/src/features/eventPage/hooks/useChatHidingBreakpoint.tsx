@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { CHAT_HIDING_BREAKPOINT } from './Chat';
-import { setIsChatVisible } from './eventActions';
+import { CHAT_HIDING_BREAKPOINT } from '../Chat';
 
 const chatHidingBreakpoint = parseInt(CHAT_HIDING_BREAKPOINT, 10);
 
-const useChatHiddingBreakpoint = () => {
-  const dispatch = useDispatch();
-
+type useChatHiddingBreakpointT = () => boolean;
+const useChatHiddingBreakpoint: useChatHiddingBreakpointT = () => {
   const [isWide, setIsWide] = useState(false);
   function getSize() {
     return {
@@ -24,10 +21,8 @@ const useChatHiddingBreakpoint = () => {
     function handleResize() {
       const { width } = getSize();
       if (width > chatHidingBreakpoint && !isWide) {
-        dispatch(setIsChatVisible(true));
         setIsWide(true);
       } else if (isWide) {
-        dispatch(setIsChatVisible(false));
         setIsWide(false);
       }
     }
@@ -35,6 +30,8 @@ const useChatHiddingBreakpoint = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isWide]);
+
+  return isWide;
 };
 
 export default useChatHiddingBreakpoint;
