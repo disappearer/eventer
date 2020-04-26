@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import CheckboxField from '../../components/CheckboxField';
 import TextField from '../../components/TextField';
 import TimeField from '../../components/TimeField';
-import { createEvent } from '../../util/event_service';
+import { createEvent } from '../../util/eventService';
 import DecisionsForm from './DecisionsForm';
 import {
   handleIndecision,

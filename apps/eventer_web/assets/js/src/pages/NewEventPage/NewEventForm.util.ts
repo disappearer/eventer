@@ -1,4 +1,4 @@
-import { eventDataT } from '../../util/event_service';
+import { eventDataT } from '../../util/eventService';
 import { objectiveT, specificObjectiveT } from '../EventPage/types';
 
 type decisionT = {

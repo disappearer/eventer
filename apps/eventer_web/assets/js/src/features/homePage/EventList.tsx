@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Description from '../../components/Description';
 import Link from '../../components/Link';
+import Loader from '../../components/Loader';
 import Title from '../../components/Title';
 import Top from '../../components/Top';
-import { eventT, getEvents } from '../../util/event_service';
+import { eventT, getEvents } from '../../util/eventService';
 import { formatTime } from '../../util/time';
-import Loader from '../../components/Loader';
 
 const Events = styled.div``;
 
