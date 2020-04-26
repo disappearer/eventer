@@ -1,6 +1,6 @@
 import { combineReducers, createStore } from 'redux';
 import userReducer, { userT } from '../features/authentication/userReducer';
-import eventReducer, { eventT } from '../features/eventPage/eventReducer';
+import eventReducer, { eventT } from '../features/event/eventReducer';
 
 export type reduxStateT = {
   user: userT;
