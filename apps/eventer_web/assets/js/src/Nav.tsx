@@ -7,11 +7,8 @@ import { reduxStateT } from './common/store';
 import Button from './components/Button';
 import Link from './components/Link';
 import { userT } from './features/authentication/userReducer';
-import { CHAT_HIDING_BREAKPOINT } from './features/eventPage/Chat';
-import {
-  setIsChatVisible,
-  toggleChat,
-} from './features/eventPage/eventActions';
+import { setIsChatVisible, toggleChat } from './features/event/eventActions';
+import { CHAT_HIDING_BREAKPOINT } from './pages/EventPage/Chat';
 
 type navbarPropsT = {
   visible: boolean;

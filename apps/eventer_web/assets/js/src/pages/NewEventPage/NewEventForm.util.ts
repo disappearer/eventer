@@ -1,5 +1,5 @@
-import { eventDataT } from '../../util/event_service';
-import { objectiveT, specificObjectiveT } from '../eventPage/types';
+import { eventDataT } from '../../util/eventService';
+import { objectiveT, specificObjectiveT } from '../EventPage/types';
 
 type decisionT = {
   title: string;
@@ -18,7 +18,7 @@ export type valuesT = {
 };
 
 type mapValuesToEventDataT = (v: valuesT) => eventDataT;
-export const mapValuesToEventData: mapValuesToEventDataT = values => {
+export const mapValuesToEventData: mapValuesToEventDataT = (values) => {
   const { timeUndecided, placeUndecided, ...otherValues } = values;
 
   return {
@@ -46,7 +46,7 @@ export const handleIndecision: addDecisionIfUndecidedT = (
     objective === 'time' ? values.timeUndecided : values.placeUndecided;
   const { decisions } = values;
   const index = decisions.findIndex(
-    decision => decision.objective === objective,
+    (decision) => decision.objective === objective,
   );
   if (isUndecidedObjective) {
     if (index === -1) {

@@ -1,16 +1,16 @@
 import { None, Option } from 'funfix';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { reduxStateT } from '../common/store';
-import Loader from '../components/Loader';
-import Modal from '../components/Modal';
-import { useAuthorizedUser } from '../features/authentication/useAuthorizedUser';
-import AddDecisionForm from '../features/eventPage/AddDecisionForm';
-import BasicEventInfo from '../features/eventPage/BasicEventInfo';
-import Chat from '../features/eventPage/Chat';
-import DecisionDetails from '../features/eventPage/DecisionDetails';
-import Decisions from '../features/eventPage/Decisions';
-import EventContext from '../features/eventPage/EventContext';
+import { reduxStateT } from '../../common/store';
+import Loader from '../../components/Loader';
+import Modal from '../../components/Modal';
+import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
+import AddDecisionForm from './AddDecisionForm';
+import BasicEventInfo from './BasicEventInfo';
+import Chat from './Chat';
+import DecisionDetails from './DecisionDetails';
+import Decisions from './Decisions';
+import EventContext from './EventContext';
 import {
   ChatWrapper,
   DecisionsAndChat,
@@ -19,17 +19,17 @@ import {
   HorizontalSeparator,
   LoaderWrapper,
   VerticalSeparator,
-} from '../features/eventPage/EventPage.styles';
-import EventUpdateForm from '../features/eventPage/EventUpdateForm';
-import OpenDiscussionConfirmation from '../features/eventPage/OpenDiscussionConfirmation';
-import RemoveDecisionConfirmation from '../features/eventPage/RemoveDecisionConfirmation';
-import { stateEventT } from '../features/eventPage/types';
-import useChannel from '../features/eventPage/hooks/useChannel';
-import useChannelCallbacks from '../features/eventPage/hooks/useChannelCallbacks';
-import useChatHidingBreakpoint from '../features/eventPage/hooks/useChatHidingBreakpoint';
-import useModal from '../features/eventPage/hooks/useModal';
-import usePreviousEvent from '../features/eventPage/hooks/usePreviousEvent';
-import { hasExistingDecision } from '../features/eventPage/util';
+} from './EventPage.styles';
+import EventUpdateForm from './EventUpdateForm';
+import useChannel from './hooks/useChannel';
+import useChannelCallbacks from './hooks/useChannelCallbacks';
+import useChatHidingBreakpoint from './hooks/useChatHidingBreakpoint';
+import useModal from './hooks/useModal';
+import usePreviousEvent from './hooks/usePreviousEvent';
+import OpenDiscussionConfirmation from './OpenDiscussionConfirmation';
+import RemoveDecisionConfirmation from './RemoveDecisionConfirmation';
+import { stateEventT } from './types';
+import { hasExistingDecision } from './util';
 
 const EventPage: React.FC = () => {
   const { token, id: currentUserId } = useAuthorizedUser();
@@ -107,7 +107,11 @@ const EventPage: React.FC = () => {
                   onRemoveDecisionClick={showRemoveDecisionModal}
                 />
                 <VerticalSeparator />
-                <Chat isFullWidthChat={true} visible={isScreenWide} channel={channel} />
+                <Chat
+                  isFullWidthChat={true}
+                  visible={isScreenWide}
+                  channel={channel}
+                />
               </DecisionsAndChat>
 
               <Modal shouldShowModal={shouldShowModal} hideModal={hideModal}>

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { pollT, voteT } from './types';
-import { useAuthorizedUser } from '../authentication/useAuthorizedUser';
+import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
 import PollResults from './PollResults';
 import { Formik, Form } from 'formik';
 

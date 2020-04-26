@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import store, { reduxStateT } from '../../common/store';
-import { getCookieToken } from '../../util/cookie_helper';
-import { fetchUser } from '../../util/user_service';
-import { setUser } from './userActions';
 import { useSelector } from 'react-redux';
+import store, { reduxStateT } from '../../common/store';
+import { getCookieToken } from '../../util/cookieHelper';
+import { fetchUser } from '../../util/userService';
+import { setUser } from './userActions';
 import { userT } from './userReducer';
 
 type useCheckAuthenticationT = () => { checking: boolean };

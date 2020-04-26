@@ -1,4 +1,4 @@
-import { getCookieToken } from './cookie_helper';
+import { getCookieToken } from './cookieHelper';
 
 export type getReturnT<dataT> = {
   ok: boolean;

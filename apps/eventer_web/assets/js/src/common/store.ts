@@ -1,7 +1,6 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { combineReducers, createStore } from 'redux';
 import userReducer, { userT } from '../features/authentication/userReducer';
-import eventReducer, { eventT } from '../features/eventPage/eventReducer';
-import logger from 'redux-logger';
+import eventReducer, { eventT } from '../features/event/eventReducer';
 
 export type reduxStateT = {
   user: userT;
