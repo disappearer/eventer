@@ -4,7 +4,7 @@ import Layout from './Layout';
 import Nav from './Nav';
 import About from './pages/AboutPage';
 import EventPage from './pages/EventPage/EventPage';
-import HomePage from './pages/HomePage';
+import HomePage from './pages/HomePage/HomePage';
 import NewEventPage from './pages/NewEventPage/NewEventPage';
 
 const Router: React.FC = () => {
