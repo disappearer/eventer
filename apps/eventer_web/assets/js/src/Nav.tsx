@@ -7,7 +7,7 @@ import { reduxStateT } from './common/store';
 import Button from './components/Button';
 import Link from './components/Link';
 import { userT } from './features/authentication/userReducer';
-import { CHAT_HIDING_BREAKPOINT } from './features/eventPage/Chat';
+import { CHAT_HIDING_BREAKPOINT } from './pages/EventPage/Chat';
 import {
   setIsChatVisible,
   toggleChat,

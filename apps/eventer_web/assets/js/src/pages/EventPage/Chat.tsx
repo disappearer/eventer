@@ -9,7 +9,7 @@ import React, {
   useMemo,
 } from 'react';
 import styled from 'styled-components';
-import { useAuthorizedUser } from '../authentication/useAuthorizedUser';
+import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
 import EventContext from './EventContext';
 
 export const CHAT_HIDING_BREAKPOINT = '490';

@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import styled from 'styled-components';
 import Nav from './Nav';
 import About from './pages/AboutPage';
-import EventPage from './pages/EventPage';
+import EventPage from './pages/EventPage/EventPage';
 import HomePage from './pages/HomePage';
-import NewEventPage from './pages/NewEventPage';
-import styled from 'styled-components';
+import NewEventPage from './pages/NewEventPage/NewEventPage';
 
 const AppWrapper = styled.div`
   height: 100%;
