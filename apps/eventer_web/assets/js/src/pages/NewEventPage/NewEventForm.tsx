@@ -7,12 +7,9 @@ import CheckboxField from '../../components/CheckboxField';
 import TextField from '../../components/TextField';
 import TimeField from '../../components/TimeField';
 import { createEvent } from '../../util/eventService';
+import { ButtonsGrid } from '../EventPage/Form.styles';
 import DecisionsForm from './DecisionsForm';
-import {
-  handleIndecision,
-  mapValuesToEventData,
-  valuesT,
-} from './NewEventForm.util';
+import { handleIndecision, mapValuesToEventData, valuesT } from './NewEventForm.util';
 
 const FormGrid = styled.div`
   display: grid;
@@ -27,8 +24,8 @@ const FormGroup = styled.div`
   align-items: center;
 `;
 
-const SubmitButton = styled(Button)`
-  justify-self: center;
+const ButtonsGridMod = styled(ButtonsGrid)`
+  grid-template-columns: repeat(2, auto);
 `;
 
 const initialValues = {
@@ -111,15 +108,25 @@ const NewEventForm: React.FC = () => {
               </FormGroup>
 
               <DecisionsForm values={values} onChange={handleChange} />
-
-              <SubmitButton
-                primary
-                type="submit"
-                isSubmitting={isSubmitting}
-                disabled={isSubmitting}
-              >
-                Create event
-              </SubmitButton>
+              <ButtonsGridMod>
+                <Button
+                  primary
+                  type="submit"
+                  isSubmitting={isSubmitting}
+                  disabled={isSubmitting}
+                >
+                  Create event
+                </Button>
+                <Button
+                  primary
+                  type="button"
+                  onClick={() => {
+                    history.push('/');
+                  }}
+                >
+                  Cancel
+                </Button>
+              </ButtonsGridMod>
             </FormGrid>
           </Form>
         );
