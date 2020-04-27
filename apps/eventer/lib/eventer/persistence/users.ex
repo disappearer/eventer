@@ -33,8 +33,9 @@ defmodule Eventer.Persistence.Users do
   def to_map(%User{} = user) do
     %{
       id: user.id,
-      displayName: user.name,
-      email: user.email
+      name: user.name,
+      email: user.email,
+      image: user.image
     }
   end
 end

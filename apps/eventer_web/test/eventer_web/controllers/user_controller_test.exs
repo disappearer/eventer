@@ -16,7 +16,7 @@ defmodule EventerWeb.UserControllerTest do
              "user" => %{
                "id" => user.id,
                "email" => user.email,
-               "displayName" => user.name
+               "name" => user.name
              }
            }
   end

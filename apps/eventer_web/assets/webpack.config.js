@@ -18,6 +18,7 @@ module.exports = (env, options) => ({
   output: {
     filename: 'app.js',
     path: path.resolve(__dirname, '../priv/static/js'),
+    publicPath: '/js/',
   },
   module: {
     rules: [
@@ -37,6 +38,10 @@ module.exports = (env, options) => ({
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: ['file-loader'],
+      },
     ],
   },
   plugins: [
@@ -44,6 +49,6 @@ module.exports = (env, options) => ({
     new CopyWebpackPlugin([{ from: 'static/', to: '../' }]),
   ],
   resolve: {
-    extensions: [".ts", ".tsx", ".js", ".jsx"]
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
 });

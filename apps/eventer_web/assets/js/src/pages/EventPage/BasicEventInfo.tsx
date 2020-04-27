@@ -54,7 +54,7 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
           )}
         </EventTitleLine>
         <Description>{description}</Description>
-        <CreatedBy>Created by {participants[creatorId].displayName}</CreatedBy>
+        <CreatedBy>Created by {participants[creatorId].name}</CreatedBy>
       </Info>
       <TimePlace>
         <Label>Time</Label>
@@ -82,7 +82,7 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
         <ParticipantsGrid>
           {Object.entries(participants).map(
             ([participantId, participantData]) => (
-              <div key={participantId}>{participantData.displayName}</div>
+              <div key={participantId}>{participantData.name}</div>
             ),
           )}
           {creatorId !== currentUserId && (
