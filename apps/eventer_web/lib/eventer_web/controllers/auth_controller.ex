@@ -8,7 +8,7 @@ defmodule EventerWeb.AuthController do
   @ten_days 10 * 24 * 60 * 60
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
-    case Users.find_or_create(auth.info) do
+    case auth.info |> Map.from_struct() |> Users.insert_or_update() do
       {:ok, user} ->
         {:ok, token, _} = Guardian.encode_and_sign(user)
 

@@ -33,16 +33,29 @@ export const Messages = styled.div`
 `;
 
 export const Message = styled.div`
+  display: grid;
+  column-gap: 10px;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'avatar name'
+    'avatar message';
   padding: 5px 0;
 `;
 
+export const Avatar = styled.img`
+  grid-area: avatar;
+  border-radius: 50%;
+`;
+
 export const UserName = styled.div`
+  grid-area: name;
   color: ${(props) => props.theme.colors.secondary};
   letter-spacing: 0.03rem;
   font-weight: 400;
 `;
 
 export const MessageText = styled.div`
+  grid-area: message;
   color: ${(props) => props.theme.colors.mineShaft};
   font-size: 1rem;
 `;

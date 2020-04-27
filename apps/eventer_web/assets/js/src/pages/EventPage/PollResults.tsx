@@ -56,7 +56,7 @@ const getVoters: getVotersT = (option, event) => {
     const { participants, exParticipants } = event;
     const voters = option.votes.reduce((voters, voterId) => {
       const voter = participants[voterId] || exParticipants[voterId];
-      return `${voters} ${voter.displayName},`;
+      return `${voters} ${voter.name},`;
     }, '');
     return voters.slice(0, -1);
   }

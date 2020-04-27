@@ -3,8 +3,18 @@ import { Channel } from 'phoenix';
 import React, { useContext, useMemo, useRef, useState } from 'react';
 import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
 import { useChannelForChat } from './Chat.hooks';
-import { ChatWrapper, Input, Message, Messages, MessageText, Title, UserName } from './Chat.styles';
+import {
+  ChatWrapper,
+  Input,
+  Message,
+  Messages,
+  MessageText,
+  Title,
+  UserName,
+  Avatar,
+} from './Chat.styles';
 import EventContext from './EventContext';
+import avatarPlaceholder from '../../../../static/images/avatar-placeholder.png';
 
 export const CHAT_HIDING_BREAKPOINT = '490';
 
@@ -56,9 +66,13 @@ const Chat: React.FC<chatPropsT> = ({
       <Messages ref={messagesRef}>
         {messages.map(({ id, user_id, text }) => {
           const user = participants[user_id] || exParticipants[user_id];
+          const imageUrl = user.image
+            ? `${user.image}=s40-c`
+            : avatarPlaceholder;
           return (
             <Message key={id}>
-              <UserName>{user.displayName}</UserName>
+              <Avatar src={imageUrl} width={40} height={40} />
+              <UserName>{user.name}</UserName>
               <MessageText>{text}</MessageText>
             </Message>
           );

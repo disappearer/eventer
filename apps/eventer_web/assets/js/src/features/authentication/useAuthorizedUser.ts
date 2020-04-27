@@ -6,7 +6,8 @@ import { userT, userDataT } from './userReducer';
 const dummyUserData: userDataT = {
   id: -1,
   email: '',
-  displayName: '',
+  name: '',
+  image: '',
   token: '',
 };
 

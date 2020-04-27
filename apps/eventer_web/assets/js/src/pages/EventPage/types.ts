@@ -55,8 +55,9 @@ export type stateDecisionsT = {
 export type responseDecisionsT = responseDecisionT[];
 
 export type userT = {
-  displayName: string;
+  name: string;
   email: string;
+  image: string;
 };
 export type responseUserT = userT & {
   id: number;

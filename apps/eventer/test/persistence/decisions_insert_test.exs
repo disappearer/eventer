@@ -8,7 +8,7 @@ defmodule Persistence.DecisionsInsertTest do
       {:ok, user} =
         Users.insert_user(%{
           email: "test@example.com",
-          display_name: "Test User"
+          name: "Test User"
         })
 
       {:ok, event} =

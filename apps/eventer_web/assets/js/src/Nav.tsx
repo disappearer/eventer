@@ -146,9 +146,9 @@ const Nav: React.FC = () => {
                 </Link>
               </NavListItem>
             ),
-            ({ displayName }) => (
+            ({ name }) => (
               <>
-                <NavListItem id="display-name">{displayName}</NavListItem>
+                <NavListItem id="display-name">{name}</NavListItem>
                 <NavListItem>
                   <Link external={true} asButton={true} to="/auth/logout">
                     Logout
