@@ -1,60 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import { Form, Formik } from 'formik';
+import React, { useEffect, useState } from 'react';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-import { pollT, voteT } from './types';
 import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
+import {
+  CustomOption,
+  Description,
+  Option,
+  Options,
+  Question,
+} from './Poll.styles';
 import PollResults from './PollResults';
-import { Formik, Form } from 'formik';
-
-const Question = styled.div`
-  margin-bottom: 7px;
-`;
-
-const Options = styled.div`
-  display: grid;
-  justify-items: start;
-  grid-gap: 7px;
-  margin-bottom: 14px;
-`;
-
-const Description = styled.div`
-  font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.darkerGrey};
-  max-width: 273px;
-`;
-
-type optionPropsT = {
-  selected?: boolean;
-};
-
-const Option = styled.div<optionPropsT>`
-  font-size: 0.9rem;
-  padding: 5px 17px;
-  text-align: center;
-  border-radius: 27px;
-  ${(props) =>
-    props.selected
-      ? `border: 1px solid ${props.theme.colors.pale};
-          background: ${props.theme.colors.paler};`
-      : `border: 1px solid ${props.theme.colors.lighterGrey};`}
-
-  &:hover {
-    cursor: pointer;
-    box-shadow: 0 0 3px ${(props) => props.theme.colors.main};
-  }
-`;
-
-const CustomOption = styled(Option)`
-  text-align: left;
-  border: 1px solid transparent;
-  padding: 5px;
-
-  &:hover {
-    cursor: default;
-    box-shadow: none;
-  }
-`;
+import { pollT, voteT } from './types';
 
 type valuesT = {
   customOption: string;
@@ -68,6 +25,13 @@ type pollPropsT = {
 };
 
 const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote, pending }) => {
+  const {
+    question,
+    custom_answer_enabled,
+    options,
+    multiple_answers_enabled,
+  } = poll;
+
   const { id: currentUserId } = useAuthorizedUser();
   const [hasVoted, setHasVoted] = useState(false);
 
@@ -76,20 +40,6 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote, pending }) => {
   }, [currentUserId, poll]);
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [customOptionText, setCustomOptionText] = useState('');
-
-  const handleCustomOptionTextChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setCustomOptionText(event.target.value);
-  };
-
-  const {
-    question,
-    custom_answer_enabled,
-    options,
-    multiple_answers_enabled,
-  } = poll;
 
   const toggleSelectedOption = (id: string) => {
     setSelectedOptions((currentlySelectedOptions) => {
@@ -103,6 +53,14 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote, pending }) => {
         return currentlySelectedOptions === [id] ? [] : [id];
       }
     });
+  };
+
+  const [customOptionText, setCustomOptionText] = useState('');
+
+  const handleCustomOptionTextChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setCustomOptionText(event.target.value);
   };
 
   const canSubmitVote =

@@ -69,8 +69,6 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
         {isCurrentUserParticipating && time && (
           <DiscussButton onClick={onDiscussTimeClick}>Discuss</DiscussButton>
         )}
-        {/* </Time> */}
-        {/* <Place> */}
         <PlaceLabel>Place</PlaceLabel>
         <PlaceData>{place || 'TBD'}</PlaceData>
         {isCurrentUserParticipating && place && (

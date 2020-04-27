@@ -1,11 +1,25 @@
-import React, { useContext, useState } from 'react';
-import styled from 'styled-components';
+import React, { useContext } from 'react';
 import Button from '../../components/Button';
 import { formatTime } from '../../util/time';
+import { useDecisionActions } from './DecisionDetails.hooks';
+import {
+  DecisionTitle,
+  InfoArea,
+  Label,
+  ObjectiveArea,
+  PollArea,
+  RemovedDecision,
+  ResolutionArea,
+  ResolutionLabel,
+  StatusArea,
+  TitleLine,
+  Wrapper,
+} from './DecisionDetails.styles';
 import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
 import DiscardResolutionConfirmation from './DiscardResolutionConfirmation';
 import EventContext from './EventContext';
+import useParticipation from './hooks/useParticipation';
 import Poll from './Poll';
 import PollForm from './PollForm';
 import {
@@ -15,92 +29,6 @@ import {
   updateDecisionT,
   voteT,
 } from './types';
-import useParticipation from './hooks/useParticipation';
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(63px, 103px)) auto;
-  grid-template-areas:
-    'info info poll'
-    'objective status poll'
-    'resolution resolution poll';
-
-  grid-gap: 23px;
-  justify-items: start;
-  justify-content: start;
-  align-items: start;
-
-  @media (max-width: 440px) {
-    grid-template-columns: repeat(2, minmax(63px, 123px));
-    grid-template-areas:
-      'info info'
-      'objective status'
-      'resolution resolution'
-      'poll poll'
-      'poll poll'
-      'poll poll';
-  }
-`;
-
-const TitleLine = styled.div`
-  display: grid;
-  grid-template-columns: auto minmax(60px, auto);
-  grid-gap: 20px;
-  justify-content: start;
-  align-items: center;
-
-  margin-bottom: 5px;
-`;
-
-const DecisionTitle = styled.h2`
-  margin: 0;
-`;
-
-const InfoArea = styled.div`
-  grid-area: info;
-`;
-
-const StatusArea = styled.div`
-  grid-area: status;
-`;
-
-const ObjectiveArea = styled.div`
-  grid-area: objective;
-`;
-
-const PollArea = styled.div`
-  grid-area: poll;
-  margin-left: 10px;
-
-  @media (max-width: 440px) {
-    margin: 0;
-  }
-`;
-
-const ResolutionArea = styled.div`
-  grid-area: resolution;
-`;
-
-const Label = styled.h4`
-  margin: 0;
-  margin-bottom: 5px;
-`;
-
-const ResolutionLabel = styled.h4`
-  margin: 0;
-`;
-
-const RemovedDecision = styled.h4`
-  display: inline;
-  margin: 0;
-`;
-
-type decisionActionT =
-  | 'view'
-  | 'edit'
-  | 'resolve'
-  | 'discard_resolution'
-  | 'add_poll';
 
 type decisionDetailsPropsT = {
   id: number;
@@ -124,32 +52,15 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
 
   const decision = event.decisions[id] || previousEvent.decisions[id];
 
-  const [decisionAction, setDecisionAction] = useState<decisionActionT>('view');
-
-  const showEditForm = () => {
-    setDecisionAction('edit');
-  };
-
-  const showResolveForm = () => {
-    setDecisionAction('resolve');
-  };
-
-  const resetDecisionModal = () => {
-    setDecisionAction('view');
-  };
-
-  const showDiscardConfirmation = () => {
-    setDecisionAction('discard_resolution');
-  };
-
-  const discardResolution = () => {
-    onResolutionDiscard(id);
-    resetDecisionModal();
-  };
-
-  const showAddPollForm = () => {
-    setDecisionAction('add_poll');
-  };
+  const {
+    decisionAction,
+    showEditForm,
+    showDiscardConfirmation,
+    showAddPollForm,
+    showResolveForm,
+    resetDecisionModal,
+    discardResolution,
+  } = useDecisionActions(id, onResolutionDiscard);
 
   if (!event.decisions[id]) {
     return (

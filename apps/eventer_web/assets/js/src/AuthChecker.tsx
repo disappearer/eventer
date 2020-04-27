@@ -8,7 +8,7 @@ const LoaderWrapper = styled.div`
   padding-top: 100px;
 `;
 
-const RouterWithAuthCheck: React.FC = () => {
+const AuthChecker: React.FC = ({ children }) => {
   const { checking } = useCheckAuthentication();
 
   return checking ? (
@@ -16,8 +16,8 @@ const RouterWithAuthCheck: React.FC = () => {
       <Loader />
     </LoaderWrapper>
   ) : (
-    <Router />
+    <>{children}</>
   );
 };
 
-export default RouterWithAuthCheck;
+export default AuthChecker;
