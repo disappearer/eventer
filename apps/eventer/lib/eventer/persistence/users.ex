@@ -21,23 +21,19 @@ defmodule Eventer.Persistence.Users do
     Repo.get_by(User, %{email: email})
   end
 
-  def find_or_create(info) do
+  def insert_or_update(info) do
     case get_by_email(info.email) do
-      %User{} = user ->
-        {:ok, user}
-
-      _ ->
-        insert_user(%{
-          email: info.email,
-          display_name: info.name || info.email
-        })
+      nil -> %User{email: info.email}
+      user -> user
     end
+    |> User.changeset(info)
+    |> Repo.insert_or_update()
   end
 
   def to_map(%User{} = user) do
     %{
       id: user.id,
-      displayName: user.display_name,
+      displayName: user.name,
       email: user.email
     }
   end

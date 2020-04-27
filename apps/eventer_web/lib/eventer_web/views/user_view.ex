@@ -6,7 +6,7 @@ defmodule EventerWeb.UserView do
       user: %{
         id: user.id,
         email: user.email,
-        displayName: user.display_name
+        displayName: user.name
       }
     }
   end

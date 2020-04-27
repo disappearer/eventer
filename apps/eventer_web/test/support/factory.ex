@@ -16,7 +16,7 @@ defmodule EventerWeb.Factory do
 
   def user_factory do
     %User{
-      display_name: sequence("Name"),
+      name: sequence("Name"),
       email: sequence(:email, &"me#{&1}@example.com")
     }
   end

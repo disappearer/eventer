@@ -11,7 +11,7 @@ defmodule Persistence.EventsParticipantsTest do
       {:ok, user} =
         Users.insert_user(%{
           email: "test@example.com",
-          display_name: "Test User"
+          name: "Test User"
         })
 
       {:ok, event} =
@@ -39,7 +39,7 @@ defmodule Persistence.EventsParticipantsTest do
       {:ok, new_user} =
         Users.insert_user(%{
           email: "test1@example.com",
-          display_name: "New User"
+          name: "New User"
         })
 
       {:ok, _} = Events.join(event.id, new_user.id)
@@ -68,13 +68,13 @@ defmodule Persistence.EventsParticipantsTest do
       {:ok, user1} =
         Users.insert_user(%{
           email: "test1@example.com",
-          display_name: "New User 1"
+          name: "New User 1"
         })
 
       {:ok, user2} =
         Users.insert_user(%{
           email: "test2@example.com",
-          display_name: "New User 2"
+          name: "New User 2"
         })
 
       {:ok, _} = Events.join(event.id, user1.id)
@@ -94,7 +94,7 @@ defmodule Persistence.EventsParticipantsTest do
       {:ok, user} =
         Users.insert_user(%{
           email: "test1@example.com",
-          display_name: "New User 1"
+          name: "New User 1"
         })
 
       Events.join(event.id, user.id)
