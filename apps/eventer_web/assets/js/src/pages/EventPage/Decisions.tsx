@@ -1,73 +1,19 @@
 import React from 'react';
-import styled from 'styled-components';
 import Button from '../../components/Button';
 import { formatTime } from '../../util/time';
-import { stateDecisionsT } from './types';
+import {
+  Decision,
+  DecisionList,
+  DecisionListTitle,
+  DecisionListTitleLine,
+  DecisionsWrapper,
+  DecisionTitle,
+  DecisionTitleLine,
+  Description,
+  Objective,
+} from './Decisions.styles';
 import useParticipation from './hooks/useParticipation';
-
-const DecisionsWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 490px) {
-    padding-right: 0;
-  }
-`;
-
-const DecisionListTitleLine = styled.div`
-  flex: none;
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-gap: 20px;
-  justify-content: start;
-  justify-items: start;
-  align-items: center;
-  margin-bottom: 14px;
-`;
-
-const DecisionListTitle = styled.h3`
-  display: inline-block;
-  margin: 0;
-`;
-
-const DecisionTitleLine = styled.div`
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-gap: 10px;
-  justify-content: start;
-  justify-items: start;
-  align-items: center;
-`;
-
-const DecisionTitle = styled.h4`
-  margin: 0;
-  display: inline-block;
-  text-decoration: underline;
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const DecisionList = styled.div`
-  flex: 1;
-  overflow-y: auto;
-`;
-
-const Decision = styled.div`
-  margin-bottom: 19px;
-`;
-
-const Description = styled.div`
-  margin-top: 5px;
-`;
-
-const Objective = styled.div`
-  margin-top: 5px;
-  font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.darkerGrey};
-`;
+import { stateDecisionsT } from './types';
 
 type decisionsPropsT = {
   decisions: stateDecisionsT;
