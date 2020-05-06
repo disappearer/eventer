@@ -9,7 +9,8 @@ defmodule EventerWeb.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      EventerWeb.Endpoint
+      EventerWeb.Endpoint,
+      EventerWeb.Presence
       # Starts a worker by calling: EventerWeb.Worker.start_link(arg)
       # {EventerWeb.Worker, arg},
     ]

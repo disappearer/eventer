@@ -2,8 +2,8 @@ defmodule EventerWeb.EventChannelChatTest do
   use EventerWeb.ChannelCase
 
   alias EventerWeb.{IdHasher, EventChannel}
-  alias Eventer.Persistence.{Events, Users, Messages}
-  alias Eventer.{Repo, Message}
+  alias Eventer.Persistence.Messages
+  alias Eventer.Message
 
   describe "Event chat" do
     @tag authorized: 2
@@ -69,9 +69,6 @@ defmodule EventerWeb.EventChannelChatTest do
       [
         %Message{
           id: id,
-          text: text,
-          event_id: event_id,
-          user_id: user_id,
           inserted_at: inserted_at
         }
       ] = Messages.get_messages(event.id)

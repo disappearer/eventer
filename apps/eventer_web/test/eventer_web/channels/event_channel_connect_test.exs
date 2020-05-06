@@ -5,9 +5,10 @@ defmodule EventerWeb.EventChannelConnectTest do
   alias Eventer.Persistence.Events
 
   describe "Event channel connect" do
-    test "returns event data" do
-      user = insert(:user)
-
+    @tag authorized: 1
+    test "returns event data", %{
+      connections: [%{user: user, socket: socket}]
+    } do
       event = insert(:event, %{creator: user})
 
       options = build_list(3, :option)
@@ -25,8 +26,7 @@ defmodule EventerWeb.EventChannelConnectTest do
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, reply, _} =
-        socket(UserSocket, "user:#{user.id}", %{})
-        |> subscribe_and_join(EventChannel, "event:#{event_id_hash}")
+        subscribe_and_join(socket, EventChannel, "event:#{event_id_hash}")
 
       assert reply === %{event: event}
 
@@ -39,9 +39,10 @@ defmodule EventerWeb.EventChannelConnectTest do
       Jason.encode!(event)
     end
 
-    test "Jason doesn't crash when no votes" do
-      user = insert(:user)
-
+    @tag authorized: 1
+    test "Jason doesn't crash when no votes", %{
+      connections: [%{user: user, socket: socket}]
+    } do
       event = insert(:event, %{creator: user})
 
       insert(:decision, %{event: event, creator: user})
@@ -50,8 +51,7 @@ defmodule EventerWeb.EventChannelConnectTest do
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, reply, _} =
-        socket(UserSocket, "user:#{user.id}", %{})
-        |> subscribe_and_join(EventChannel, "event:#{event_id_hash}")
+        subscribe_and_join(socket, EventChannel, "event:#{event_id_hash}")
 
       assert reply === %{event: event}
 
@@ -76,9 +76,10 @@ defmodule EventerWeb.EventChannelConnectTest do
       assert resource === user
     end
 
-    test "assigns event id to socket" do
-      user = insert(:user)
-
+    @tag authorized: 1
+    test "assigns event id to socket", %{
+      connections: [%{user: user, socket: socket}]
+    } do
       event = insert(:event, %{creator: user})
       insert(:decision, %{event: event, creator: user})
 
@@ -86,8 +87,7 @@ defmodule EventerWeb.EventChannelConnectTest do
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
-        socket(UserSocket, "user:#{user.id}", %{})
-        |> subscribe_and_join(EventChannel, "event:#{event_id_hash}")
+        subscribe_and_join(socket, EventChannel, "event:#{event_id_hash}")
 
       assert socket.assigns.event_id === event.id
     end
