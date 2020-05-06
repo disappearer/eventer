@@ -1,7 +1,7 @@
 defmodule EventerWeb.EventChannel do
   use EventerWeb, :channel
 
-  alias EventerWeb.IdHasher
+  alias EventerWeb.{IdHasher, Presence}
   alias Eventer.Persistence.{Events, Users, Decisions, Messages}
   alias Eventer.Decision
 
@@ -21,6 +21,8 @@ defmodule EventerWeb.EventChannel do
         participant_ids: participant_ids
       )
 
+    if is_participant(socket), do: send(self(), :join_presence)
+
     {:ok, %{event: event}, socket}
   end
 
@@ -31,10 +33,7 @@ defmodule EventerWeb.EventChannel do
     do: handle_message("get_chat_messages", %{}, socket)
 
   def handle_in(message, payload, socket) do
-    user = Guardian.Phoenix.Socket.current_resource(socket)
-    %{creator_id: creator_id, participant_ids: participant_ids} = socket.assigns
-
-    if user.id === creator_id || Enum.member?(participant_ids, user.id) do
+    if is_participant(socket) do
       handle_message(message, payload, socket)
     else
       {:reply,
@@ -56,6 +55,8 @@ defmodule EventerWeb.EventChannel do
 
     %{participant_ids: participant_ids} = socket.assigns
     socket = assign(socket, :participant_ids, [user.id | participant_ids])
+
+    send(self(), :join_presence)
 
     {:reply, {:ok, %{}}, socket}
   end
@@ -292,6 +293,22 @@ defmodule EventerWeb.EventChannel do
         errors = Eventer.Persistence.Util.get_error_map(changeset)
         {:reply, {:error, %{errors: errors}}, socket}
     end
+  end
+
+  def handle_info(:join_presence, socket) do
+    push(socket, "presence_state", Presence.list(socket))
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+    {:ok, _} = Presence.track(socket, user.id, %{
+      online_at: inspect(System.system_time(:second))
+    })
+    {:noreply, socket}
+  end
+
+  defp is_participant(socket) do
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+    %{creator_id: creator_id, participant_ids: participant_ids} = socket.assigns
+
+    user.id === creator_id || Enum.member?(participant_ids, user.id)
   end
 
   defp check_multiple_vote(decision, options) do

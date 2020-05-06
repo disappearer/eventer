@@ -193,3 +193,20 @@ export const ParticipantsGrid = styled.div`
   font-size: 0.9rem;
   line-height: 1;
 `;
+
+export const Participant = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 5px;
+  align-items: center;
+`;
+
+export const PresenceIndicator = styled.div<{ isOnline?: boolean }>`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid ${({ isOnline, theme }) =>
+    isOnline ? theme.colors.main : theme.colors.lighterGrey};
+}
+  background: ${({isOnline, theme}) => isOnline ? theme.colors.main : 'transparent'}
+`;

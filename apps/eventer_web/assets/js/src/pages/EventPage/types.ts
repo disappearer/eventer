@@ -58,6 +58,7 @@ export type userT = {
   name: string;
   email: string;
   image: string;
+  isOnline: boolean;
 };
 export type responseUserT = userT & {
   id: number;
