@@ -9,7 +9,9 @@ import {
 } from './types';
 
 type mapResponseEventToStateEventT = (r: responseEventT) => stateEventT;
-export const mapResponseEventToStateEvent: mapResponseEventToStateEventT = responseEvent => {
+export const mapResponseEventToStateEvent: mapResponseEventToStateEventT = (
+  responseEvent,
+) => {
   const {
     decisions,
     participants,
@@ -82,6 +84,60 @@ export const moveToExParticipants: moveToExParticipantsT = (
     ...rest,
     participants: otherParticipants,
     exParticipants: { ...exParticipants, [userId]: leavingUser },
+  };
+};
+
+type setPresenceDataT = (
+  e: stateEventT,
+  p: { [id: string]: {} },
+) => stateEventT;
+export const setPresenceData: setPresenceDataT = (
+  currentEvent,
+  presenceState,
+) => {
+  const { participants, ...rest } = currentEvent;
+  const updatedParticipants = Object.keys(presenceState).reduce(
+    (users, userId) => {
+      const id = parseInt(userId, 10);
+      const user = users[id];
+      return { ...participants, [id]: { ...user, isOnline: true } };
+    },
+    participants,
+  );
+  return {
+    ...rest,
+    participants: updatedParticipants,
+  };
+};
+
+type updatePresenceDataT = (
+  e: stateEventT,
+  pd: { joins: { [id: string]: {} }; leaves: { [id: string]: {} } },
+) => stateEventT;
+export const updatePresenceData: updatePresenceDataT = (
+  currentEvent,
+  presenceDiff,
+) => {
+  const { participants, ...rest } = currentEvent;
+  const participantsWithJoined = Object.keys(presenceDiff.joins).reduce(
+    (users, userId) => {
+      const id = parseInt(userId, 10);
+      const user = users[id];
+      return { ...participants, [id]: { ...user, isOnline: true } };
+    },
+    participants,
+  );
+  const participantsWithoutLeft = Object.keys(presenceDiff.leaves).reduce(
+    (users, userId) => {
+      const id = parseInt(userId, 10);
+      const user = users[id];
+      return { ...participants, [id]: { ...user, isOnline: false } };
+    },
+    participantsWithJoined,
+  );
+  return {
+    ...rest,
+    participants: participantsWithoutLeft,
   };
 };
 
@@ -262,7 +318,7 @@ export const updateStateVote: updateStateVoteT = (
   const { poll } = decision;
   if (poll) {
     const { options } = poll;
-    const updatedOptions = options.map(option =>
+    const updatedOptions = options.map((option) =>
       optionsVotedFor.includes(option.id)
         ? { ...option, votes: [...option.votes, userId] }
         : option,

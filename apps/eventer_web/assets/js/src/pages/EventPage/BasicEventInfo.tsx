@@ -18,6 +18,8 @@ import {
   PlaceLabel,
   TimeData,
   TimePlace,
+  PresenceIndicator,
+  Participant,
 } from './BasicEventInfo.styles';
 import { stateEventT } from './types';
 import useParticipation from './hooks/useParticipation';
@@ -82,7 +84,12 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
         <ParticipantsGrid>
           {Object.entries(participants).map(
             ([participantId, participantData]) => (
-              <div key={participantId}>{participantData.name}</div>
+              <Participant key={participantId}>
+                <div>
+                  <PresenceIndicator isOnline={participantData.isOnline} />
+                </div>
+                {participantData.name}
+              </Participant>
             ),
           )}
           {creatorId !== currentUserId && (
