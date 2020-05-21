@@ -26,6 +26,7 @@ defmodule EventerWeb.ConnCase do
       alias EventerWeb.Router.Helpers, as: Routes
 
       import EventerWeb.Factory
+      import EventerWeb.ConnCase
 
       # The default endpoint for testing
       @endpoint EventerWeb.Endpoint
@@ -53,5 +54,16 @@ defmodule EventerWeb.ConnCase do
   setup _tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Eventer.Repo)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
+  end
+
+  def diff(struct1, struct2, ignored_keys \\ []) do
+    map1 = struct1 |> KitchenSink.Struct.to_map() |> Map.drop(ignored_keys)
+    map2 = struct2 |> KitchenSink.Struct.to_map() |> Map.drop(ignored_keys)
+
+    delta =
+      KitchenSink.Map.diff(map1, map2)
+      |> Enum.sort()
+
+    {delta, map1, map2}
   end
 end

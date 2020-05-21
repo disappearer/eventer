@@ -11,7 +11,11 @@ defmodule EventerWeb.UserView do
     }
   end
 
-  def render("error.json", %{message: message}) do
-    %{message: message}
+  def render("firebase_token.json", %{id: id}) do
+    %{id: id}
+  end
+
+  def render("error.json", %{errors: errors}) do
+    %{errors: errors}
   end
 end

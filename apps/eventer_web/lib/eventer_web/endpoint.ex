@@ -22,7 +22,7 @@ defmodule EventerWeb.Endpoint do
     at: "/",
     from: :eventer_web,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(css fonts images js favicon.ico robots.txt firebase-messaging-sw.js)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

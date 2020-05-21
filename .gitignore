@@ -23,7 +23,7 @@ erl_crash.dump
 
 # Ignore secret configs
 /config/*.secret.exs
-
+service_account.json
 
 # osx
 .DS_Store

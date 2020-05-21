@@ -16,11 +16,10 @@ const useCheckAuthentication: useCheckAuthenticationT = () => {
       const token = getCookieToken();
       if (token) {
         const result = await fetchUser();
-        switch (result.ok) {
-          case true:
-            store.dispatch(setUser({ ...result.data.user, token }));
-          default:
-            setChecking(false);
+        if (result.ok) {
+          store.dispatch(setUser({ ...result.data.user, token }));
+        } else {
+          setChecking(false);
         }
       } else {
         setChecking(false);
