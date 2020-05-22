@@ -14,7 +14,7 @@ blocks:
           commands:
             - checkout
             - ls ~
-            - cp $GOOGLE_APPLICATION_CREDENTIALS .
+            - cp ~/service_account.json eventer
             - docker-compose build eventer-base
             - docker-compose build eventer-test
             - docker-compose up eventer-test
