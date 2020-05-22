@@ -43,7 +43,6 @@ export const useChannelForChat: useChannelForChatT = (
         .receive('ok', ({ messages }: { messages: messageT[] }) => {
           setMessages(messages);
           setAlreadyRendered(true);
-          console.log('setMessages');
           setTimeout(scrollToBottom, 50);
         });
 
