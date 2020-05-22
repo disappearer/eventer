@@ -15,6 +15,7 @@ blocks:
             - checkout
             - ls ~
             - cp ~/service_account.json .
+            - cp ~/firebaseData.js ./apps/eventer_web/assets
             - docker-compose build eventer-base
             - docker-compose build eventer-test
             - docker-compose up eventer-test
