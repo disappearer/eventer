@@ -14,7 +14,7 @@ blocks:
           commands:
             - checkout
             - ls ~
-            - cp ~/service_account.json eventer
+            - cp ~/service_account.json .
             - docker-compose build eventer-base
             - docker-compose build eventer-test
             - docker-compose up eventer-test
