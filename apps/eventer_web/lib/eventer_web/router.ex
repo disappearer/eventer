@@ -36,6 +36,7 @@ defmodule EventerWeb.Router do
     pipe_through :guardian_auth
 
     get "/me", UserController, :index
+    post "/me/firebase_token", UserController, :add_firebase_token
     resources "/events", EventController, only: [:index, :create]
   end
 

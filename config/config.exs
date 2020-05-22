@@ -21,7 +21,6 @@ config :eventer_web, EventerWeb.Endpoint,
   pubsub: [name: EventerWeb.PubSub, adapter: Phoenix.PubSub.PG2],
   live_view: [signing_salt: "W7gV8T4z"]
 
-
 config :eventer, ecto_repos: [Eventer.Repo]
 
 config :phoenix, :json_library, Jason
@@ -47,5 +46,6 @@ config :eventer_web, EventerWeb.Guardian,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
+config :goth, json: System.get_env("GOOGLE_APPLICATION_CREDENTIALS") |> File.read!()
 
 import_config "#{Mix.env()}.exs"

@@ -49,6 +49,7 @@ defmodule EventerWeb.MixProject do
       {:guardian_phoenix, "~> 2.0"},
       {:ex_machina, "~> 2.3", only: :test},
       {:hashids, "~> 2.0"},
+      {:goth, "~> 1.1.0"},
       {:eventer, in_umbrella: true}
     ]
   end
