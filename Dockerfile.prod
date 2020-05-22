@@ -8,6 +8,7 @@ ARG HASH_ID_SALT
 ARG GOOGLE_CLIENT_ID
 ARG GOOGLE_CLIENT_SECRET
 ARG GUARDIAN_SECRET_KEY
+ARG GOOGLE_APPLICATION_CREDENTIALS=/app/service_account.json
 
 # install build dependencies
 RUN apk add --update yarn

@@ -18,6 +18,7 @@ RUN mix local.hex --force && \
 COPY config/ /app/config/
 COPY mix.exs /app/
 COPY mix.* /app/
+COPY service_account.json /app/
 
 COPY apps/eventer/mix.exs /app/apps/eventer/
 COPY apps/eventer_web/mix.exs /app/apps/eventer_web/

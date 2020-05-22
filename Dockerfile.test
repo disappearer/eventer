@@ -5,6 +5,7 @@
 FROM eventer-base:latest AS test
 
 ARG HASH_ID_SALT
+ARG GOOGLE_APPLICATION_CREDENTIALS=/app/service_account.json
 
 # build deps
 ENV MIX_ENV=test
