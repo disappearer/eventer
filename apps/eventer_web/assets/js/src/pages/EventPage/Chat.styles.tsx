@@ -54,6 +54,13 @@ export const UserName = styled.div`
   font-weight: 400;
 `;
 
+export const TimeStamp = styled.span`
+  margin-left: 5px;
+  color: ${(props) => props.theme.colors.lighterGrey};
+  font-weight: 300;
+  font-size: 0.8rem;
+`;
+
 export const MessageText = styled.div`
   grid-area: message;
   color: ${(props) => props.theme.colors.mineShaft};
