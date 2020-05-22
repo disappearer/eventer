@@ -13,6 +13,7 @@ blocks:
         - name: Docker build
           commands:
             - checkout
+            - ls ~
             - cp $GOOGLE_APPLICATION_CREDENTIALS .
             - docker-compose build eventer-base
             - docker-compose build eventer-test
