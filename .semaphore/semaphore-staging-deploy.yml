@@ -16,6 +16,7 @@ blocks:
             - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
             - checkout
             - cp ~/service_account.json .
+            - cp ~/firebaseData.js ./apps/eventer_web/assets
             - docker-compose build eventer-base
             - docker-compose build eventer-prod
             - docker-compose push eventer-prod
