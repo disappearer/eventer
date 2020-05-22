@@ -15,6 +15,7 @@ blocks:
             # Authenticate with Docker Hub
             - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
             - checkout
+            - cp ~/service_account.json .
             - docker-compose build eventer-base
             - docker-compose build eventer-prod
             - docker-compose push eventer-prod
