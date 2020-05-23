@@ -43,7 +43,8 @@ defmodule EventerWeb.FirebaseNotifier do
           }
         })
 
-      HTTPoison.post(url, body, headers)
+      res = HTTPoison.post(url, body, headers)
+      IO.inspect res, label: "FCM result"
     end)
   end
 end
