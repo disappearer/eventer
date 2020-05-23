@@ -59,9 +59,13 @@ defmodule Eventer.Persistence.Users do
     |> Repo.insert_or_update()
   end
 
-  def get_firebase_token(id) do
-    q = from(ft in FirebaseToken, where: ft.id == ^id)
-    Repo.one(q)
+  def get_firebase_token(id),
+    do: Repo.one(from(ft in FirebaseToken, where: ft.id == ^id))
+
+  # not covered with tests
+  def get_firebase_tokens(user_ids) do
+    Repo.all(from(ft in FirebaseToken, where: ft.user_id in ^user_ids))
+    |> Enum.map(&Map.get(&1, :token))
   end
 
   def to_map(%User{} = user) do

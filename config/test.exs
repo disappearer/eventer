@@ -6,6 +6,8 @@ config :eventer_web, EventerWeb.Endpoint,
   http: [port: 4002],
   server: false
 
+config :eventer_web, :notifier, EventerWeb.NotifierMock
+
 config :eventer, Eventer.Repo,
   url:
     System.get_env("DATABASE_URL") ||

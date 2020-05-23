@@ -5,6 +5,8 @@ defmodule EventerWeb.EventChannel do
   alias Eventer.Persistence.{Events, Users, Decisions, Messages}
   alias Eventer.Decision
 
+  @notifier Application.get_env(:eventer_web, :notifier)
+
   def join("event:" <> event_id_hash, _message, socket) do
     event =
       event_id_hash
@@ -287,6 +289,7 @@ defmodule EventerWeb.EventChannel do
           inserted_at: message.inserted_at
         })
 
+        notify_absent_participants(event_id, socket)
         {:reply, {:ok, %{message: Messages.to_map(message)}}, socket}
 
       {:error, changeset} ->
@@ -298,9 +301,12 @@ defmodule EventerWeb.EventChannel do
   def handle_info(:join_presence, socket) do
     push(socket, "presence_state", Presence.list(socket))
     user = Guardian.Phoenix.Socket.current_resource(socket)
-    {:ok, _} = Presence.track(socket, user.id, %{
-      online_at: inspect(System.system_time(:second))
-    })
+
+    {:ok, _} =
+      Presence.track(socket, user.id, %{
+        online_at: inspect(System.system_time(:second))
+      })
+
     {:noreply, socket}
   end
 
@@ -347,5 +353,28 @@ defmodule EventerWeb.EventChannel do
   defp append_custom_option(options, decision, _custom_option) do
     new_option = List.last(decision.poll.options)
     {[new_option.id | options], new_option}
+  end
+
+  defp notify_absent_participants(event_id, socket) do
+    event = Events.get_event(event_id)
+
+    get_absent_participants(event, socket)
+    |> @notifier.notify_absent_participants(event,  %{
+      title: "'#{event.title}' is active!",
+      body: "Someone wrote in the event chat."
+    })
+  end
+
+  defp get_absent_participants(
+         %{participants: participants, creator_id: creator_id},
+         socket
+       ) do
+    participant_ids = [creator_id | Enum.map(participants, &Map.get(&1, :id))]
+
+    present_participant_ids =
+      Presence.list(socket)
+      |> Enum.map(fn {id, _} -> Integer.parse(id) |> elem(0) end)
+
+    Enum.filter(participant_ids, &(&1 not in present_participant_ids))
   end
 end

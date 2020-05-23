@@ -41,6 +41,7 @@ defmodule EventerWeb.MixProject do
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:httpoison, "~> 1.6"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
@@ -48,6 +49,7 @@ defmodule EventerWeb.MixProject do
       {:guardian, "~> 2.0"},
       {:guardian_phoenix, "~> 2.0"},
       {:ex_machina, "~> 2.3", only: :test},
+      {:mox, "~> 0.5", only: :test},
       {:hashids, "~> 2.0"},
       {:goth, "~> 1.1.0"},
       {:eventer, in_umbrella: true}
