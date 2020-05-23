@@ -6,8 +6,11 @@ import About from './pages/AboutPage';
 import EventPage from './pages/EventPage/EventPage';
 import HomePage from './pages/HomePage/HomePage';
 import NewEventPage from './pages/NewEventPage/NewEventPage';
+import { useFirebase } from './util/firebase';
 
 const Router: React.FC = () => {
+  useFirebase();
+
   return (
     <BrowserRouter>
       <Layout>

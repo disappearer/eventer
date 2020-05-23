@@ -12,6 +12,8 @@ import Config
 config :eventer_web,
   generators: [context_app: false]
 
+config :eventer_web, :notifier, EventerWeb.FirebaseNotifier
+
 # Configures the endpoint
 config :eventer_web, EventerWeb.Endpoint,
   url: [host: "localhost"],
@@ -46,6 +48,7 @@ config :eventer_web, EventerWeb.Guardian,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
-config :goth, json: System.get_env("GOOGLE_APPLICATION_CREDENTIALS") |> File.read!()
+config :goth,
+  json: System.get_env("GOOGLE_APPLICATION_CREDENTIALS") |> File.read!()
 
 import_config "#{Mix.env()}.exs"
