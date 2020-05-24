@@ -19,8 +19,6 @@ const getOSAndBrowser: getOSAndBrowserT = () => {
 };
 
 const initFirebase = () => {
-  console.log("initFirebase -> firebaseConfig", firebaseConfig)
-  console.log("initFirebase -> vapidKey", vapidKey)
   firebase.initializeApp(firebaseConfig);
 
   const messaging = firebase.messaging();
@@ -48,8 +46,14 @@ const initFirebase = () => {
     })
     .catch((err) => {
       console.log('An error occurred while retrieving token. ', err);
-      // showToken('Error retrieving Instance ID token. ', err);
-      // setTokenSentToServer(false);
+      const nav = navigator as Navigator & {
+        brave: boolean;
+      };
+      if (nav.brave) {
+        alert(
+          `Push notifications registration failed.\nSince you are using Brave, please make sure to enable "Use Google Services for Push Messaging" option in the "Privacy and security" section of the browser preferences.`,
+        );
+      }
     });
 
   messaging.onTokenRefresh(() => {
@@ -78,10 +82,10 @@ export const useFirebase = () => {
   const { data } = useSelector<reduxStateT, userT>(({ user }) => user);
 
   const [firebaseInitialized, setFirebaseInitialized] = useState(false);
-  
+
   useEffect(() => {
-    if(!firebaseInitialized && !data.isEmpty()) {
+    if (!firebaseInitialized && !data.isEmpty()) {
       initFirebase();
     }
-  }, [data, firebaseInitialized, setFirebaseInitialized])
-}
+  }, [data, firebaseInitialized, setFirebaseInitialized]);
+};
