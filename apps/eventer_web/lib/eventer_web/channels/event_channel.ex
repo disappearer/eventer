@@ -361,7 +361,7 @@ defmodule EventerWeb.EventChannel do
     get_absent_participants(event, socket)
     |> @notifier.notify_absent_participants(event,  %{
       title: "'#{event.title}' is active!",
-      body: "Someone wrote in the event chat."
+      body: "Someone wrote in the chat."
     })
   end
 
