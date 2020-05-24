@@ -53,10 +53,13 @@ export const useChannelForChat: useChannelForChatT = (
       channel.on('chat_shout', (message) => {
         if (message.user_id !== user.id) {
           if (Notification.permission === 'granted' && document.hidden) {
-            const notification = new Notification(`'${eventTitle}' is active!`, {
-              body: 'Someone wrote in the chat.',
-              requireInteraction: true,
-            });
+            const notification = new Notification(
+              `"${eventTitle}" is active!`,
+              {
+                body: 'Someone wrote in the chat.',
+                requireInteraction: true,
+              },
+            );
             notification.onclick = function () {
               window.focus();
             };
