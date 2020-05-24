@@ -31,7 +31,7 @@ const Chat: React.FC<chatPropsT> = ({
   channel: channelOption,
 }) => {
   const {
-    event: { participants, exParticipants },
+    event: { participants, exParticipants, title },
   } = useContext(EventContext);
   const user = useAuthorizedUser();
 
@@ -46,6 +46,7 @@ const Chat: React.FC<chatPropsT> = ({
     user,
     visible,
     messagesRef,
+    title,
   );
 
   const [messageText, setMessageText] = useState('');

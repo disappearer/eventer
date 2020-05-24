@@ -144,7 +144,7 @@ const useChannel: useChannelT = (token, setEvent) => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [id_hash]);
 
   return { channel };
 };

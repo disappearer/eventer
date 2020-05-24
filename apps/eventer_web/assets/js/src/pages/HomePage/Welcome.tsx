@@ -14,7 +14,7 @@ const Title = styled(CommonTitle)`
 const SubTitle = styled.h3`
   justify-self: center;
   letter-spacing: 0.2rem;
-  color: ${props => props.theme.colors.pale};
+  color: ${(props) => props.theme.colors.pale};
   align-self: start;
   margin: 0;
   text-align: center;
@@ -23,7 +23,7 @@ const SubTitle = styled.h3`
 const Description = styled.div`
   margin-top: 53px;
   max-width: 700px;
-  color: ${props => props.theme.colors.tundora};
+  color: ${(props) => props.theme.colors.tundora};
 `;
 
 const Paragraph = styled.p`
@@ -44,14 +44,13 @@ const Welcome: React.FC = () => {
       </Top>
       <Description>
         <Paragraph>
-          Are you tired of overly complicated, rigid event organizing tools? Are
-          you tired of sifting through countless messages or emails when trying
-          to make things happen with your friends? Are you tired of trying to
-          figure out who said what? Are you tired of not having the ability to
-          set clear planning goals? Are you tired of being forced to define a
-          time or place of the event? Are you tired of being spammed with
-          messages for stuff you can't participate in? Do you want to break
-          free?
+          Eventer is an app designed to aid groups of people in event
+          organizing. If you don't know when or where the event will happen, you
+          can decide that with your friends. If you can't attend, just don't
+          join an event and you won't be spammed with messages as you normally
+          would in group chats or mailing lists. You can plan hikes, road-trips,
+          parties, bank robberies and whatever you can imagine. The sky is the
+          limit!
         </Paragraph>
         <DoIt>Log in and start the fun!</DoIt>
       </Description>

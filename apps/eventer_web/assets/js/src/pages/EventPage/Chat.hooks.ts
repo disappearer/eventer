@@ -2,6 +2,7 @@ import { Option } from 'funfix';
 import { Channel } from 'phoenix';
 import React, { useCallback, useEffect, useState } from 'react';
 import { userDataT } from '../../features/authentication/userReducer';
+import { useParams } from 'react-router-dom';
 
 type messageT = {
   id: number | string;
@@ -17,14 +18,17 @@ type useChannelForChatT = (
   user: userDataT,
   visible: boolean,
   messagesRef: React.RefObject<HTMLDivElement>,
+  eventTitle: string,
 ) => { messages: messageT[]; sendMessage: sendMessageT };
 export const useChannelForChat: useChannelForChatT = (
   channelOption,
   user,
   visible,
   messagesRef,
+  eventTitle,
 ) => {
-  const [alreadyRendered, setAlreadyRendered] = useState(false);
+  const { id_hash } = useParams();
+  const [latestIdHash, setLatestIdHash] = useState('');
   const [messages, setMessages] = useState<messageT[]>([]);
 
   const scrollToBottom = useCallback(() => {
@@ -36,18 +40,27 @@ export const useChannelForChat: useChannelForChatT = (
   }, [messagesRef]);
 
   useEffect(() => {
-    if (!alreadyRendered && !channelOption.isEmpty() && visible) {
+    if (latestIdHash !== id_hash && !channelOption.isEmpty() && visible) {
       const channel = channelOption.get();
       channel
         .push('get_chat_messages', {})
         .receive('ok', ({ messages }: { messages: messageT[] }) => {
           setMessages(messages);
-          setAlreadyRendered(true);
+          setLatestIdHash(id_hash || 'undefined');
           setTimeout(scrollToBottom, 50);
         });
 
       channel.on('chat_shout', (message) => {
         if (message.user_id !== user.id) {
+          if (Notification.permission === 'granted' && document.hidden) {
+            const notification = new Notification(`'${eventTitle}' is active!`, {
+              body: 'Someone wrote in the chat.',
+              requireInteraction: true,
+            });
+            notification.onclick = function () {
+              window.focus();
+            };
+          }
           const messagesDiv = messagesRef.current;
           if (messagesDiv) {
             const shouldScrollToBottom =
@@ -61,7 +74,7 @@ export const useChannelForChat: useChannelForChatT = (
         }
       });
     }
-  }, [channelOption, visible]);
+  }, [channelOption, visible, id_hash, latestIdHash, setLatestIdHash]);
 
   const sendMessage = useCallback<sendMessageT>(
     (text, timestamp) => {

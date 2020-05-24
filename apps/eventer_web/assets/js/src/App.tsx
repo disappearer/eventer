@@ -5,12 +5,15 @@ import AuthChecker from './AuthChecker';
 import store from './common/store';
 import theme from './common/theme';
 import Router from './Router';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <AuthChecker>
+          <ToastContainer />
           <Router />
         </AuthChecker>
       </ThemeProvider>
