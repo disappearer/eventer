@@ -19,6 +19,8 @@ const getOSAndBrowser: getOSAndBrowserT = () => {
 };
 
 const initFirebase = () => {
+  console.log("initFirebase -> firebaseConfig", firebaseConfig)
+  console.log("initFirebase -> vapidKey", vapidKey)
   firebase.initializeApp(firebaseConfig);
 
   const messaging = firebase.messaging();
