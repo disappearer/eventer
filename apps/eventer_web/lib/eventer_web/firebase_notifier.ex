@@ -36,7 +36,8 @@ defmodule EventerWeb.FirebaseNotifier do
                 badge: "/badge-icon.png"
               },
               fcm_options: %{
-                link: "http://localhost:4000/events/#{event_id_hash}"
+                link:
+                  "https://lexlabs-eventer.herokuapp.com/events/#{event_id_hash}"
               }
             },
             token: firebase_token
@@ -44,7 +45,7 @@ defmodule EventerWeb.FirebaseNotifier do
         })
 
       res = HTTPoison.post(url, body, headers)
-      IO.inspect res, label: "FCM result"
+      IO.inspect(res, label: "FCM result")
     end)
   end
 end
