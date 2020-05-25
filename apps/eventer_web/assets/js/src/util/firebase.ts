@@ -7,7 +7,7 @@ import { UAParser } from 'ua-parser-js';
 import { firebaseConfig, vapidKey } from '../../../firebaseData';
 import { reduxStateT } from '../common/store';
 import { userT } from '../features/authentication/userReducer';
-import { navigateT, useNavigation } from './navigation';
+import { useNavigation } from './navigation';
 import { addFirebaseToken } from './userService';
 
 type BraveNavigator = Navigator & {
@@ -25,7 +25,8 @@ const getOSAndBrowser: getOSAndBrowserT = () => {
   };
 };
 
-const initFirebase = (navigate: navigateT) => {
+type initFirebaseT = () => firebase.messaging.Messaging;
+const initFirebase: initFirebaseT = () => {
   firebase.initializeApp(firebaseConfig);
 
   const messaging = firebase.messaging();
@@ -77,25 +78,54 @@ const initFirebase = (navigate: navigateT) => {
       });
   });
 
-  messaging.onMessage((payload) => {
-    const text = `${payload.notification.title}\n${payload.notification.body}`;
-    toast(text, {
-      onClick: () => navigate(`/events/${payload.data.id_hash}`),
-      autoClose: false,
-    });
-    // ...
-  });
+  return messaging;
 };
 
 export const useFirebase = () => {
   const { navigate } = useNavigation();
+
   const { data } = useSelector<reduxStateT, userT>(({ user }) => user);
+  const isTabFocused = useSelector<reduxStateT, boolean>(
+    ({ notifications: { isTabFocused } }) => isTabFocused,
+  );
+
+  const [
+    messaging,
+    setMessaging,
+  ] = useState<firebase.messaging.Messaging | null>(null);
 
   const [firebaseInitialized, setFirebaseInitialized] = useState(false);
 
   useEffect(() => {
     if (!firebaseInitialized && !data.isEmpty()) {
-      initFirebase(navigate);
+      setMessaging(initFirebase());
     }
   }, [data, firebaseInitialized, setFirebaseInitialized]);
+
+  useEffect(() => {
+    if (messaging) {
+      messaging.onMessage((payload) => {
+        const text = `${payload.notification.title}\n${payload.notification.body}`;
+        if (isTabFocused) {
+          toast(text, {
+            onClick: () => navigate(`/events/${payload.data.id_hash}`),
+            autoClose: false,
+          });
+        } else {
+          if (Notification.permission === 'granted') {
+            const notification = new Notification(
+              `"${payload.notification.title}" is active!`,
+              {
+                body: 'Someone wrote in the chat.',
+                requireInteraction: true,
+              },
+            );
+            notification.onclick = function () {
+              window.focus();
+            };
+          }
+        }
+      });
+    }
+  }, [messaging, isTabFocused]);
 };
