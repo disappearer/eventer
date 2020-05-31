@@ -2,6 +2,7 @@ defmodule EventerWeb.FirebaseNotifier do
   alias Eventer.Persistence.Users
 
   @behaviour EventerWeb.Notifier
+  @domain_url Application.get_env(:eventer_web, :notification_domain_url)
 
   @impl EventerWeb.Notifier
   def notify_absent_participants(participant_ids, event, notification) do
@@ -37,7 +38,7 @@ defmodule EventerWeb.FirebaseNotifier do
               },
               fcm_options: %{
                 link:
-                  "https://lexlabs-eventer.herokuapp.com/events/#{event_id_hash}"
+                  "#{@domain_url}/events/#{event_id_hash}"
               }
             },
             token: firebase_token

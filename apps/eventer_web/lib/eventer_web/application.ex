@@ -10,7 +10,8 @@ defmodule EventerWeb.Application do
     children = [
       # Start the endpoint when the application starts
       EventerWeb.Endpoint,
-      EventerWeb.Presence
+      EventerWeb.Presence,
+      EventerWeb.ChannelWatcher
       # Starts a worker by calling: EventerWeb.Worker.start_link(arg)
       # {EventerWeb.Worker, arg},
     ]

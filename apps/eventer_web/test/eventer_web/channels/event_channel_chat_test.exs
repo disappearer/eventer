@@ -155,7 +155,6 @@ defmodule EventerWeb.EventChannelChatTest do
       assert reply_messages === message_maps
     end
 
-    @tag :wip
     @tag authorized: 3
     test "'chat_shout' notifies absent participants", %{
       connections: connections
@@ -169,8 +168,8 @@ defmodule EventerWeb.EventChannelChatTest do
       event_id_hash = IdHasher.encode(event.id)
 
       event_id = event.id
-      notification_title = "'#{event.title}' is active!"
-      notification_body = "Someone wrote in the event chat."
+      notification_title = "\"#{event.title}\" is active!"
+      notification_body = "Someone wrote in the chat."
 
       EventerWeb.NotifierMock
       |> expect(:notify_absent_participants, fn [^creator_id, ^joiner1_id],
@@ -207,7 +206,6 @@ defmodule EventerWeb.EventChannelChatTest do
 
       ref = push(joiner_socket2, "join_event", %{})
       assert_reply(ref, :ok, %{})
-
       message = "Hell World!"
       ref = push(joiner_socket2, "chat_shout", %{text: message})
       assert_reply(ref, :ok, _)

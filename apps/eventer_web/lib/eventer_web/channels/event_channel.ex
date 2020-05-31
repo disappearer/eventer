@@ -1,7 +1,7 @@
 defmodule EventerWeb.EventChannel do
   use EventerWeb, :channel
 
-  alias EventerWeb.{IdHasher, Presence}
+  alias EventerWeb.{IdHasher, Presence, ChannelWatcher}
   alias Eventer.Persistence.{Events, Users, Decisions, Messages}
   alias Eventer.Decision
 
@@ -23,7 +23,16 @@ defmodule EventerWeb.EventChannel do
         participant_ids: participant_ids
       )
 
-    if is_participant(socket), do: send(self(), :join_presence)
+    if is_participant(socket) do
+      send(self(), :join_presence)
+      %{id: user_id} = Guardian.Phoenix.Socket.current_resource(socket)
+
+      :ok =
+        ChannelWatcher.monitor(
+          self(),
+          {__MODULE__, :leave, [event.id, user_id]}
+        )
+    end
 
     {:ok, %{event: event}, socket}
   end
@@ -59,6 +68,12 @@ defmodule EventerWeb.EventChannel do
     socket = assign(socket, :participant_ids, [user.id | participant_ids])
 
     send(self(), :join_presence)
+
+    :ok =
+      ChannelWatcher.monitor(
+        self(),
+        {__MODULE__, :leave, [socket.assigns.event_id, user.id]}
+      )
 
     {:reply, {:ok, %{}}, socket}
   end
@@ -310,6 +325,9 @@ defmodule EventerWeb.EventChannel do
     {:noreply, socket}
   end
 
+  def leave(event_id, user_id),
+    do: Users.set_last_event_visit(user_id, event_id)
+
   defp is_participant(socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
     %{creator_id: creator_id, participant_ids: participant_ids} = socket.assigns
@@ -359,7 +377,7 @@ defmodule EventerWeb.EventChannel do
     event = Events.get_event(event_id)
 
     get_absent_participants(event, socket)
-    |> @notifier.notify_absent_participants(event,  %{
+    |> @notifier.notify_absent_participants(event, %{
       title: "\"#{event.title}\" is active!",
       body: "Someone wrote in the chat."
     })

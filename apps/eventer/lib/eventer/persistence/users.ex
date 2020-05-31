@@ -1,5 +1,5 @@
 defmodule Eventer.Persistence.Users do
-  alias Eventer.{User, Repo, FirebaseToken}
+  alias Eventer.{User, Participation, Repo, FirebaseToken}
 
   import Ecto.Query
 
@@ -66,6 +66,22 @@ defmodule Eventer.Persistence.Users do
   def get_firebase_tokens(user_ids) do
     Repo.all(from(ft in FirebaseToken, where: ft.user_id in ^user_ids))
     |> Enum.map(&Map.get(&1, :token))
+  end
+
+  def get_last_event_visit(user_id, event_id) do
+    participation =
+      Repo.one(
+        from(p in Participation,
+          where: p.user_id == ^user_id and p.event_id == ^event_id
+        )
+      )
+    participation.last_visited
+  end
+
+  def set_last_event_visit(user_id, event_id) do
+    Repo.get_by(Participation, event_id: event_id, user_id: user_id)
+    |> Participation.changeset(%{last_visited: Timex.now()})
+    |> Repo.update()
   end
 
   def to_map(%User{} = user) do
