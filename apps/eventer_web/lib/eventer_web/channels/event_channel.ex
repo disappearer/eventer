@@ -25,13 +25,13 @@ defmodule EventerWeb.EventChannel do
 
     if is_participant(socket) do
       send(self(), :join_presence)
-      %{id: user_id} = Guardian.Phoenix.Socket.current_resource(socket)
+      # %{id: user_id} = Guardian.Phoenix.Socket.current_resource(socket)
 
-      :ok =
-        ChannelWatcher.monitor(
-          self(),
-          {__MODULE__, :leave, [event.id, user_id]}
-        )
+      # :ok =
+      #   ChannelWatcher.monitor(
+      #     self(),
+      #     {__MODULE__, :leave, [event.id, user_id]}
+      #   )
     end
 
     {:ok, %{event: event}, socket}
@@ -69,11 +69,11 @@ defmodule EventerWeb.EventChannel do
 
     send(self(), :join_presence)
 
-    :ok =
-      ChannelWatcher.monitor(
-        self(),
-        {__MODULE__, :leave, [socket.assigns.event_id, user.id]}
-      )
+    # :ok =
+    #   ChannelWatcher.monitor(
+    #     self(),
+    #     {__MODULE__, :leave, [socket.assigns.event_id, user.id]}
+    #   )
 
     {:reply, {:ok, %{}}, socket}
   end
@@ -278,6 +278,16 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
+  def handle_message("get_chat_messages_after", %{"after" => after_time}, socket) do
+    IO.inspect after_time, label: "after_time"
+    messages =
+      socket.assigns.event_id
+      |> Messages.get_messages(after_time)
+      |> Enum.map(&Messages.to_map/1)
+
+    {:reply, {:ok, %{messages: messages}}, socket}
+  end
+
   def handle_message("get_chat_messages", %{}, socket) do
     messages =
       socket.assigns.event_id
@@ -325,8 +335,8 @@ defmodule EventerWeb.EventChannel do
     {:noreply, socket}
   end
 
-  def leave(event_id, user_id),
-    do: Users.set_last_event_visit(user_id, event_id)
+  # def leave(event_id, user_id),
+  #   do: Users.set_last_event_visit(user_id, event_id)
 
   defp is_participant(socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)

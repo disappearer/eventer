@@ -66,6 +66,7 @@ defmodule EventerWeb.EventChannelPresenceTest do
       )
     end
 
+    @tag :skip
     @tag authorized: 2
     test "'join_event' triggers channel leave monitoring", %{
       connections: connections

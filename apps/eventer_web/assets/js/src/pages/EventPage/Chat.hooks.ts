@@ -3,6 +3,8 @@ import { Channel } from 'phoenix';
 import React, { useCallback, useEffect, useState } from 'react';
 import { userDataT } from '../../features/authentication/userReducer';
 import { useParams } from 'react-router-dom';
+import { reduxStateT } from '../../common/store';
+import { useSelector } from 'react-redux';
 
 type messageT = {
   id: number | string;
@@ -18,24 +20,33 @@ type useChannelForChatT = (
   user: userDataT,
   visible: boolean,
   messagesRef: React.RefObject<HTMLDivElement>,
-  eventTitle: string,
 ) => { messages: messageT[]; sendMessage: sendMessageT };
 export const useChannelForChat: useChannelForChatT = (
   channelOption,
   user,
   visible,
   messagesRef,
-  eventTitle,
 ) => {
   const { id_hash } = useParams();
   const [latestIdHash, setLatestIdHash] = useState('');
+  const [previousIsJoined, setPreviousIsJoined] = useState(true);
   const [messages, setMessages] = useState<messageT[]>([]);
+  const isJoined = useSelector<reduxStateT, boolean>(
+    ({ event: { isJoined } }) => isJoined,
+  );
 
   const scrollToBottom = useCallback(() => {
     const messagesDiv = messagesRef.current;
     if (messagesDiv) {
       messagesDiv.scrollTop =
         messagesDiv.scrollHeight - messagesDiv.clientHeight;
+    }
+  }, [messagesRef]);
+
+  const scrollABit = useCallback(() => {
+    const messagesDiv = messagesRef.current;
+    if (messagesDiv) {
+      messagesDiv.scrollTop = messagesDiv.scrollTop + 13;
     }
   }, [messagesRef]);
 
@@ -65,7 +76,44 @@ export const useChannelForChat: useChannelForChatT = (
         }
       });
     }
-  }, [channelOption, visible, id_hash, latestIdHash, setLatestIdHash]);
+  }, [channelOption, visible, id_hash, latestIdHash]);
+
+  useEffect(() => {
+    const rejoined = isJoined && !previousIsJoined;
+    if (latestIdHash === id_hash && rejoined && visible) {
+      if (messages.length) {
+        const after = messages[messages.length - 1].inserted_at;
+        const channel = channelOption.get();
+        channel
+          .push('get_chat_messages_after', { after })
+          .receive('ok', ({ messages }: { messages: messageT[] }) => {
+            setMessages((currentMessages) => [...currentMessages, ...messages]);
+            setLatestIdHash(id_hash || 'undefined');
+            setTimeout(scrollABit, 50);
+          })
+          .receive('error', (error) => {
+            console.log('error', error);
+          });
+      } else {
+        const channel = channelOption.get();
+        channel
+          .push('get_chat_messages', {})
+          .receive('ok', ({ messages }: { messages: messageT[] }) => {
+            setMessages(messages);
+            setLatestIdHash(id_hash || 'undefined');
+          });
+      }
+    }
+    setPreviousIsJoined(isJoined);
+  }, [
+    channelOption,
+    visible,
+    messages,
+    isJoined,
+    previousIsJoined,
+    latestIdHash,
+    id_hash,
+  ]);
 
   const sendMessage = useCallback<sendMessageT>(
     (text, timestamp) => {
