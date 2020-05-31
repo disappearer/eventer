@@ -23,6 +23,9 @@ config :eventer_web, EventerWeb.Endpoint,
   pubsub: [name: EventerWeb.PubSub, adapter: Phoenix.PubSub.PG2],
   live_view: [signing_salt: "W7gV8T4z"]
 
+config :eventer_web, :notification_domain_url, "http://localhost:4000"
+config :eventer_web, :should_handle_leave, true
+
 config :eventer, ecto_repos: [Eventer.Repo]
 
 config :phoenix, :json_library, Jason

@@ -19,6 +19,9 @@ import {
   updateStateVote,
 } from '../stateTransformations';
 import { stateEventT } from '../types';
+import { useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
+import { setIsJoined } from '../../../features/event/eventActions';
 
 type useChannelT = (
   token: string,
@@ -29,27 +32,33 @@ type useChannelT = (
 const useChannel: useChannelT = (token, setEvent) => {
   const { id_hash } = useParams();
   const [channel, setChannel] = useState<Option<Channel>>(None);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const socket = new Socket('/socket', { params: { token } });
     socket.connect();
 
-    const channel = getNewChannel(id_hash, setEvent, socket);
+    const channel = getNewChannel(id_hash, setEvent, socket, dispatch);
 
-    window.addEventListener('blur', () => {
-      console.log('leave');
+    const leaveChannel = () => {
       channel.leave();
-    });
-    window.addEventListener('focus', () => {
-      console.log('join');
-      const channel = getNewChannel(id_hash, setEvent, socket);
-      setChannel(Some(channel));
-    });
+      dispatch(setIsJoined(false));
+    };
+
+    const joinChannel = () => {
+      const newChannel = getNewChannel(id_hash, setEvent, socket, dispatch);
+      setChannel(Some(newChannel));
+    };
+
+    window.addEventListener('blur', leaveChannel);
+    window.addEventListener('focus', joinChannel);
 
     setChannel(Some(channel));
 
     return () => {
       socket.disconnect();
+      window.removeEventListener('blur', leaveChannel);
+      window.removeEventListener('focus', joinChannel);
     };
   }, [id_hash]);
 
@@ -60,14 +69,16 @@ type getNewChannelT = (
   hashId: string | undefined,
   setEvent: React.Dispatch<React.SetStateAction<Option<stateEventT>>>,
   socket: Socket,
+  dispatch: Dispatch,
 ) => Channel;
-const getNewChannel: getNewChannelT = (hashId, setEvent, socket) => {
+const getNewChannel: getNewChannelT = (hashId, setEvent, socket, dispatch) => {
   const channel = socket.channel(`event:${hashId}`);
   channel
     .join()
     .receive('ok', ({ event }) => {
       const stateEvent = mapResponseEventToStateEvent(event);
       setEvent(Some(stateEvent));
+      dispatch(setIsJoined(true));
     })
     .receive('error', ({ reason }) => console.log('failed join', reason));
 

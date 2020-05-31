@@ -7,6 +7,7 @@ config :eventer_web, EventerWeb.Endpoint,
   server: false
 
 config :eventer_web, :notifier, EventerWeb.NotifierMock
+config :eventer_web, :should_handle_leave, false
 
 config :eventer, Eventer.Repo,
   url:

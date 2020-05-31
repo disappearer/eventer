@@ -127,6 +127,50 @@ defmodule EventerWeb.EventChannelChatTest do
     end
 
     @tag authorized: 2
+    test "'get_chat_messages' with after field", %{
+      connections: connections
+    } do
+      [creator, joiner] = connections
+      event = insert(:event, %{creator: creator.user})
+
+      messages =
+        insert_list(3, :message, %{
+          event: event,
+          user: creator.user
+        })
+
+      before_second_insert = Timex.now()
+
+      Process.sleep(1000)
+
+      new_messages =
+        insert_list(3, :message, %{
+          event: event,
+          user: creator.user
+        })
+
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, joiner_socket} =
+        subscribe_and_join(
+          joiner.socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      ref = push(joiner_socket, "join_event", %{})
+      assert_reply(ref, :ok, %{})
+
+      ref =
+        push(joiner_socket, "get_chat_messages_after", %{after: before_second_insert})
+
+      assert_reply(ref, :ok, %{messages: reply_messages})
+
+      message_maps = Enum.map(new_messages, &Messages.to_map/1)
+      assert reply_messages === message_maps
+    end
+
+    @tag authorized: 2
     test "'get_chat_messages' gets event chat messages for non-participants", %{
       connections: connections
     } do
@@ -155,7 +199,6 @@ defmodule EventerWeb.EventChannelChatTest do
       assert reply_messages === message_maps
     end
 
-    @tag :wip
     @tag authorized: 3
     test "'chat_shout' notifies absent participants", %{
       connections: connections
@@ -169,8 +212,8 @@ defmodule EventerWeb.EventChannelChatTest do
       event_id_hash = IdHasher.encode(event.id)
 
       event_id = event.id
-      notification_title = "'#{event.title}' is active!"
-      notification_body = "Someone wrote in the event chat."
+      notification_title = "\"#{event.title}\" is active!"
+      notification_body = "Someone wrote in the chat."
 
       EventerWeb.NotifierMock
       |> expect(:notify_absent_participants, fn [^creator_id, ^joiner1_id],
@@ -207,7 +250,6 @@ defmodule EventerWeb.EventChannelChatTest do
 
       ref = push(joiner_socket2, "join_event", %{})
       assert_reply(ref, :ok, %{})
-
       message = "Hell World!"
       ref = push(joiner_socket2, "chat_shout", %{text: message})
       assert_reply(ref, :ok, _)

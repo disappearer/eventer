@@ -2,6 +2,7 @@ defmodule Eventer.Persistence.Messages do
   import Ecto.Query
 
   alias Eventer.{Message, Repo}
+  alias Eventer.Persistence.Users
 
   def insert_message(attrs) do
     %Message{}
@@ -14,6 +15,32 @@ defmodule Eventer.Persistence.Messages do
       from(
         m in Message,
         where: m.event_id == ^event_id,
+        select: m,
+        order_by: m.inserted_at
+      )
+
+    Repo.all(q)
+  end
+
+  def get_messages(event_id, after_time) do
+    q =
+      from(
+        m in Message,
+        where: m.event_id == ^event_id and m.inserted_at > ^after_time,
+        select: m,
+        order_by: m.inserted_at
+      )
+
+    Repo.all(q)
+  end
+
+  def get_new_messages(event_id, user_id) do
+    last_visited = Users.get_last_event_visit(user_id, event_id)
+
+    q =
+      from(
+        m in Message,
+        where: m.event_id == ^event_id and m.inserted_at >= ^last_visited,
         select: m,
         order_by: m.inserted_at
       )

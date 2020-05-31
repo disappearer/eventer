@@ -52,6 +52,9 @@ import Config
 
 config :eventer_web, :hashid_salt, System.fetch_env!("HASH_ID_SALT")
 
+config :eventer_web, :notification_domain_url, "https://lexlabs-eventer.herokuapp.com"
+
+
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: System.fetch_env!("GOOGLE_CLIENT_ID"),
   client_secret: System.fetch_env!("GOOGLE_CLIENT_SECRET")
