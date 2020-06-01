@@ -9,7 +9,7 @@ defmodule EventerWeb.EventChannelUpdateTest do
     test "'update_event' updates the event in DB", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
@@ -41,7 +41,7 @@ defmodule EventerWeb.EventChannelUpdateTest do
   test "'event_updated' is broadcasted", %{
     connections: [%{user: user, socket: socket}]
   } do
-    event = insert(:event, %{creator: user})
+    event = insert_event(%{creator: user})
     event_id_hash = IdHasher.encode(event.id)
 
     {:ok, _, socket} =
@@ -65,7 +65,7 @@ defmodule EventerWeb.EventChannelUpdateTest do
   test "'update_event' fails if missing title", %{
     connections: [%{user: user, socket: socket}]
   } do
-    event = insert(:event, %{creator: user})
+    event = insert_event(%{creator: user})
     event_id_hash = IdHasher.encode(event.id)
 
     {:ok, _, socket} =

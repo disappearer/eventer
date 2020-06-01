@@ -2,7 +2,7 @@ defmodule EventerWeb.Factory do
   use ExMachina.Ecto, repo: Eventer.Repo
   import TestUtil
 
-  alias Eventer.{User, Event, Decision, Poll, Message}
+  alias Eventer.{User, Event, Decision, Poll, Message, Participation}
 
   def event_factory do
     %Event{
@@ -48,5 +48,23 @@ defmodule EventerWeb.Factory do
       user: build(:user),
       event: build(:event)
     }
+  end
+
+  def participation_factory do
+    %Participation{
+      user: build(:user),
+      event: build(:event)
+    }
+  end
+
+  def with_participation(event, user) do
+    insert(:participation, event: event, user: user)
+    event
+  end
+
+  def insert_event(params) do
+    %{creator: creator} = params
+    insert(:event, params)
+    |> with_participation(creator)
   end
 end

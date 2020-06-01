@@ -9,7 +9,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'resolve_decision' updates the general decision", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -48,7 +48,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'decision_resolved' is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -82,7 +82,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'resolve_decision' fails if empty resolution", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -114,7 +114,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'resolve_decision' for time decision updates the event time", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user, time: nil})
+      event = insert_event(%{creator: user, time: nil})
 
       decision =
         insert(:decision, %{event: event, creator: user, objective: "time"})
@@ -151,7 +151,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'resolve_decision' for place decision updates the event place", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user, place: nil})
+      event = insert_event(%{creator: user, place: nil})
 
       decision =
         insert(:decision, %{event: event, creator: user, objective: "place"})
@@ -189,7 +189,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'discard_resolution' updates the general decision", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       resolution = "Some resolution"
 
       decision =
@@ -231,7 +231,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'decision_resolved' is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       resolution = "Some resolution"
 
       decision =
@@ -266,7 +266,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'discard_resolution' fails if objective not 'general'", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user, time: nil})
+      event = insert_event(%{creator: user, time: nil})
       decision =
         insert(:decision, %{
           event: event,
@@ -299,7 +299,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     test "'resolve_decision' for time decision fails if time in the past", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user, time: nil})
+      event = insert_event(%{creator: user, time: nil})
 
       decision =
         insert(:decision, %{event: event, creator: user, objective: "time"})

@@ -9,7 +9,7 @@ defmodule EventerWeb.EventChannelUpdateDecisionTest do
     test "'update_decision' title, description - success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -50,7 +50,7 @@ defmodule EventerWeb.EventChannelUpdateDecisionTest do
     test "'decision_updated' is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -83,7 +83,7 @@ defmodule EventerWeb.EventChannelUpdateDecisionTest do
     test "'update_decision' fails with empty title", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)

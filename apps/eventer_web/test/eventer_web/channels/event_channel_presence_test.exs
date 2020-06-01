@@ -13,7 +13,7 @@ defmodule EventerWeb.EventChannelPresenceTest do
       connections: connections
     } do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, joiner_socket} =
@@ -72,7 +72,7 @@ defmodule EventerWeb.EventChannelPresenceTest do
       connections: connections
     } do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, joiner_socket} =

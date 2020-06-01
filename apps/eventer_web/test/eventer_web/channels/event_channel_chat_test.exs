@@ -19,7 +19,7 @@ defmodule EventerWeb.EventChannelChatTest do
       |> expect(:notify_absent_participants, fn _, _, _ -> nil end)
 
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, joiner_socket} =
@@ -60,7 +60,7 @@ defmodule EventerWeb.EventChannelChatTest do
       |> expect(:notify_absent_participants, fn _, _, _ -> nil end)
 
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, joiner_socket} =
@@ -99,7 +99,7 @@ defmodule EventerWeb.EventChannelChatTest do
       connections: connections
     } do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
 
       messages =
         insert_list(13, :message, %{
@@ -131,13 +131,12 @@ defmodule EventerWeb.EventChannelChatTest do
       connections: connections
     } do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
 
-      messages =
-        insert_list(3, :message, %{
-          event: event,
-          user: creator.user
-        })
+      insert_list(3, :message, %{
+        event: event,
+        user: creator.user
+      })
 
       before_second_insert = Timex.now()
 
@@ -162,7 +161,9 @@ defmodule EventerWeb.EventChannelChatTest do
       assert_reply(ref, :ok, %{})
 
       ref =
-        push(joiner_socket, "get_chat_messages_after", %{after: before_second_insert})
+        push(joiner_socket, "get_chat_messages_after", %{
+          after: before_second_insert
+        })
 
       assert_reply(ref, :ok, %{messages: reply_messages})
 
@@ -175,7 +176,7 @@ defmodule EventerWeb.EventChannelChatTest do
       connections: connections
     } do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
 
       messages =
         insert_list(13, :message, %{
@@ -200,7 +201,7 @@ defmodule EventerWeb.EventChannelChatTest do
     end
 
     @tag authorized: 3
-    test "'chat_shout' notifies absent participants", %{
+    test "'chat_shout' notifies absent participants only once", %{
       connections: connections
     } do
       [creator, joiner1, joiner2] = connections
@@ -208,7 +209,8 @@ defmodule EventerWeb.EventChannelChatTest do
       creator_id = creator.user.id
       joiner1_id = joiner1.user.id
 
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
+
       event_id_hash = IdHasher.encode(event.id)
 
       event_id = event.id
@@ -216,12 +218,12 @@ defmodule EventerWeb.EventChannelChatTest do
       notification_body = "Someone wrote in the chat."
 
       EventerWeb.NotifierMock
-      |> expect(:notify_absent_participants, fn [^creator_id, ^joiner1_id],
-                                                %Event{id: ^event_id},
-                                                %{
-                                                  title: ^notification_title,
-                                                  body: ^notification_body
-                                                } ->
+      |> expect(:notify_absent_participants, 1, fn [^creator_id, ^joiner1_id],
+                                                   %Event{id: ^event_id},
+                                                   %{
+                                                     title: ^notification_title,
+                                                     body: ^notification_body
+                                                   } ->
         nil
       end)
 
@@ -251,6 +253,49 @@ defmodule EventerWeb.EventChannelChatTest do
       ref = push(joiner_socket2, "join_event", %{})
       assert_reply(ref, :ok, %{})
       message = "Hell World!"
+      ref = push(joiner_socket2, "chat_shout", %{text: message})
+      assert_reply(ref, :ok, _)
+      ref = push(joiner_socket2, "chat_shout", %{text: message})
+      assert_reply(ref, :ok, _)
+      ref = push(joiner_socket2, "chat_shout", %{text: message})
+      assert_reply(ref, :ok, _)
+      ref = push(joiner_socket2, "chat_shout", %{text: message})
+      assert_reply(ref, :ok, _)
+
+      # creator joins event
+      {:ok, _, creator_socket} =
+        subscribe_and_join(
+          creator.socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      EventerWeb.NotifierMock
+      |> expect(:notify_absent_participants, 0, fn _, _, _ ->
+        nil
+      end)
+
+      # 2nd user shout
+      ref = push(joiner_socket2, "chat_shout", %{text: message})
+      assert_reply(ref, :ok, _)
+
+      # creator leaves page
+      Process.unlink(creator_socket.channel_pid)
+      leave(creator_socket)
+
+      EventerWeb.NotifierMock
+      |> expect(:notify_absent_participants, 1, fn [^creator_id],
+                                                   %Event{id: ^event_id},
+                                                   %{
+                                                     title: ^notification_title,
+                                                     body: ^notification_body
+                                                   } ->
+        nil
+      end)
+
+      # 2nd user shout
+      ref = push(joiner_socket2, "chat_shout", %{text: message})
+      assert_reply(ref, :ok, _)
       ref = push(joiner_socket2, "chat_shout", %{text: message})
       assert_reply(ref, :ok, _)
     end

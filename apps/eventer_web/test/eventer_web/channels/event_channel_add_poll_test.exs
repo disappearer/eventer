@@ -9,7 +9,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
     test "'add_poll' success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -54,7 +54,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
     test "'add_poll' with multi-vote success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -101,7 +101,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
     test "'add_poll' with one option and custom answer enabled success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -145,7 +145,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
          %{
            connections: [%{user: user, socket: socket}]
          } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -189,7 +189,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
     test "'add_poll' fails with duplicate options", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user, poll: nil})
 
       decision = Repo.get(Decision, decision.id)
@@ -230,7 +230,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
     test "'add_poll' fails if less than 2 options and no question", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -268,7 +268,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
     test "'add_poll' fails if fixed and has less than 2 options", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)
@@ -306,7 +306,7 @@ defmodule EventerWeb.EventChannelAddPollTest do
     test "'poll_added' is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       decision = Repo.get(Decision, decision.id)

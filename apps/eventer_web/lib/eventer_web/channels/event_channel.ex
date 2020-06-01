@@ -1,16 +1,17 @@
 defmodule EventerWeb.EventChannel do
   use EventerWeb, :channel
 
-  alias EventerWeb.{IdHasher, Presence, ChannelWatcher}
+  alias EventerWeb.{IdHasher, Presence}
   alias Eventer.Persistence.{Events, Users, Decisions, Messages}
   alias Eventer.Decision
 
   @notifier Application.get_env(:eventer_web, :notifier)
 
   def join("event:" <> event_id_hash, _message, socket) do
+    event_id = IdHasher.decode(event_id_hash)
+
     event =
-      event_id_hash
-      |> IdHasher.decode()
+      event_id
       |> Events.get_event()
       |> Events.to_map()
 
@@ -25,7 +26,8 @@ defmodule EventerWeb.EventChannel do
 
     if is_participant(socket) do
       send(self(), :join_presence)
-      # %{id: user_id} = Guardian.Phoenix.Socket.current_resource(socket)
+      %{id: user_id} = Guardian.Phoenix.Socket.current_resource(socket)
+      Users.clear_notification_pending(user_id, event_id)
 
       # :ok =
       #   ChannelWatcher.monitor(
@@ -278,8 +280,11 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
-  def handle_message("get_chat_messages_after", %{"after" => after_time}, socket) do
-    IO.inspect after_time, label: "after_time"
+  def handle_message(
+        "get_chat_messages_after",
+        %{"after" => after_time},
+        socket
+      ) do
     messages =
       socket.assigns.event_id
       |> Messages.get_messages(after_time)
@@ -386,11 +391,16 @@ defmodule EventerWeb.EventChannel do
   defp notify_absent_participants(event_id, socket) do
     event = Events.get_event(event_id)
 
-    get_absent_participants(event, socket)
-    |> @notifier.notify_absent_participants(event, %{
-      title: "\"#{event.title}\" is active!",
-      body: "Someone wrote in the chat."
-    })
+    absentee_ids = get_absent_participants(event, socket)
+
+    if not Enum.empty?(absentee_ids) do
+      @notifier.notify_absent_participants(absentee_ids, event, %{
+        title: "\"#{event.title}\" is active!",
+        body: "Someone wrote in the chat."
+      })
+
+      Users.set_notification_pending(absentee_ids, event_id)
+    end
   end
 
   defp get_absent_participants(
@@ -404,5 +414,10 @@ defmodule EventerWeb.EventChannel do
       |> Enum.map(fn {id, _} -> Integer.parse(id) |> elem(0) end)
 
     Enum.filter(participant_ids, &(&1 not in present_participant_ids))
+    |> filter_unnotified(socket.assigns.event_id)
+  end
+
+  defp filter_unnotified(absentee_ids, event_id) do
+    Users.get_unnotified_users_ids(absentee_ids, event_id)
   end
 end

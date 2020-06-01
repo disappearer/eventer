@@ -9,7 +9,7 @@ defmodule EventerWeb.EventChannelConnectTest do
     test "returns event data", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
 
       options = build_list(3, :option)
       [option1 | [option2 | _]] = options
@@ -43,7 +43,7 @@ defmodule EventerWeb.EventChannelConnectTest do
     test "Jason doesn't crash when no votes", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
 
       insert(:decision, %{event: event, creator: user})
 
@@ -80,7 +80,7 @@ defmodule EventerWeb.EventChannelConnectTest do
     test "assigns event id to socket", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       insert(:decision, %{event: event, creator: user})
 
       event = Events.get_event(event.id) |> Events.to_map()

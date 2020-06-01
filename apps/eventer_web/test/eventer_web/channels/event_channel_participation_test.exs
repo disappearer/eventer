@@ -11,7 +11,7 @@ defmodule EventerWeb.EventChannelParticipationTest do
       connections: connections
     } do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, joiner_socket} =
@@ -27,13 +27,13 @@ defmodule EventerWeb.EventChannelParticipationTest do
       participants =
         event |> Repo.preload(:participants) |> Map.get(:participants)
 
-      assert participants === [joiner.user]
+      assert participants === [creator.user, joiner.user]
     end
 
     @tag authorized: 2
     test "'user_joined' is broadcasted", %{connections: connections} do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, joiner_socket} =
@@ -53,7 +53,7 @@ defmodule EventerWeb.EventChannelParticipationTest do
       connections: connections
     } do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       {:ok, _} = Events.join(event.id, joiner.user.id)
       event_id_hash = IdHasher.encode(event.id)
 
@@ -69,14 +69,14 @@ defmodule EventerWeb.EventChannelParticipationTest do
 
       event = Events.get_event(event.id)
 
-      assert event.participants === []
+      assert event.participants === [creator.user]
       assert event.ex_participants === [joiner.user]
     end
 
     @tag authorized: 2
     test "'user_left' is broadcasted", %{connections: connections} do
       [creator, joiner] = connections
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, joiner_socket} =
@@ -99,7 +99,7 @@ defmodule EventerWeb.EventChannelParticipationTest do
     } do
       [creator, joiner] = connections
 
-      event = insert(:event, %{creator: creator.user})
+      event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, joiner_socket} =
