@@ -13,7 +13,7 @@ defmodule EventerWeb.EventChannelVoteTest do
         %{user: user2, socket: socket2}
       ]
     } do
-      event = insert(:event, %{creator: user1})
+      event = insert_event(%{creator: user1})
       decision = insert(:decision, %{event: event, creator: user1})
       decision = Repo.get(Decision, decision.id)
 
@@ -71,7 +71,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
       decision = Repo.get(Decision, decision.id)
 
@@ -107,7 +107,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' custom option success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
       decision = Repo.get(Decision, decision.id)
 
@@ -143,7 +143,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' custom option is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
       decision = Repo.get(Decision, decision.id)
 
@@ -189,7 +189,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' multiple success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       poll = build(:poll, %{multiple_answers_enabled: true})
       decision = insert(:decision, %{event: event, creator: user, poll: poll})
       decision = Repo.get(Decision, decision.id)
@@ -235,7 +235,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' multiple with custom option success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       poll = build(:poll, %{multiple_answers_enabled: true})
       decision = insert(:decision, %{event: event, creator: user, poll: poll})
       decision = Repo.get(Decision, decision.id)
@@ -276,7 +276,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' multiple fails if not enabled", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       poll = build(:poll, %{multiple_answers_enabled: false})
       decision = insert(:decision, %{event: event, creator: user, poll: poll})
       decision = Repo.get(Decision, decision.id)
@@ -308,7 +308,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' overwrites previous votes", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
       decision = Repo.get(Decision, decision.id)
 
@@ -356,7 +356,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' custom option fails if same as existing", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
       decision = Repo.get(Decision, decision.id)
 
@@ -386,7 +386,7 @@ defmodule EventerWeb.EventChannelVoteTest do
     test "'vote' custom option fails if fixed poll", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       poll = build(:poll, %{custom_answer_enabled: false})
       decision = insert(:decision, %{event: event, creator: user, poll: poll})
       decision = Repo.get(Decision, decision.id)

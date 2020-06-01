@@ -9,7 +9,7 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
     test "'add_decision' success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
@@ -48,7 +48,7 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
     test "'decision_updated' is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
@@ -80,7 +80,7 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
     test "'add_decision' fails with empty title", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
@@ -109,7 +109,7 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
     test "'remove_decision' success", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       event_id_hash = IdHasher.encode(event.id)
@@ -143,7 +143,7 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
     test "'decision_removed' is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       decision = insert(:decision, %{event: event, creator: user})
 
       event_id_hash = IdHasher.encode(event.id)

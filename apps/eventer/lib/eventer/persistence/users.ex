@@ -75,6 +75,7 @@ defmodule Eventer.Persistence.Users do
           where: p.user_id == ^user_id and p.event_id == ^event_id
         )
       )
+
     participation.last_visited
   end
 
@@ -82,6 +83,30 @@ defmodule Eventer.Persistence.Users do
     Repo.get_by(Participation, event_id: event_id, user_id: user_id)
     |> Participation.changeset(%{last_visited: Timex.now()})
     |> Repo.update()
+  end
+
+  def set_notification_pending(user_ids, event_id) do
+    from(p in Participation,
+      where: p.user_id in ^user_ids and p.event_id == ^event_id
+    )
+    |> Repo.update_all(set: [notification_pending: true])
+  end
+
+  def clear_notification_pending(user_id, event_id) do
+    Repo.get_by(Participation, event_id: event_id, user_id: user_id)
+    |> Participation.changeset(%{notification_pending: false})
+    |> Repo.update()
+  end
+
+  def get_unnotified_users_ids(user_ids, event_id) do
+    Repo.all(
+      from(p in Participation,
+        where:
+          p.user_id in ^user_ids and p.event_id == ^event_id and
+            p.notification_pending == false,
+        select: p.user_id
+      )
+    )
   end
 
   def to_map(%User{} = user) do

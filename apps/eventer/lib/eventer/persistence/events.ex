@@ -6,9 +6,25 @@ defmodule Eventer.Persistence.Events do
   import Ecto.Query
 
   def insert_event(attrs) do
-    %Event{}
-    |> Event.changeset(attrs)
-    |> Repo.insert()
+    Repo.transaction(fn ->
+      case %Event{}
+           |> Event.changeset(attrs)
+           |> Repo.insert() do
+        {:error, changeset} ->
+          Repo.rollback(changeset)
+
+        {:ok, event} ->
+          %{creator_id: creator_id, id: event_id} = event
+
+          case join(event_id, creator_id) do
+            {:error, changeset} ->
+              Repo.rollback(changeset)
+
+            {:ok, _} ->
+              event
+          end
+      end
+    end)
   end
 
   def get_event(id) do
@@ -51,9 +67,8 @@ defmodule Eventer.Persistence.Events do
         left_join: p in Participation,
         on: p.event_id == e.id,
         where:
-          (p.has_left == false and
-             p.user_id == ^user.id) or
-            e.creator_id == ^user.id,
+          p.has_left == false and
+            p.user_id == ^user.id,
         distinct: true,
         order_by: [desc: e.time]
       )

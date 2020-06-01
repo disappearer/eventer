@@ -14,8 +14,8 @@ defmodule EventerWeb.EventControllerListTest do
           DateTime.compare(e1.time, e2.time) === :gt
         end)
 
-      timeless_event = insert(:event, %{creator: user, time: nil})
-      regular_event = insert(:event, %{creator: user})
+      timeless_event = insert_event(%{creator: user, time: nil})
+      regular_event = insert_event(%{creator: user})
       events = [timeless_event | [regular_event | events]]
 
       conn =

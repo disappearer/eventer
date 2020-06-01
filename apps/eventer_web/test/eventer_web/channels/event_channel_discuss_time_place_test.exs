@@ -11,7 +11,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
          %{
            connections: [%{user: user, socket: socket}]
          } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
@@ -34,7 +34,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
          %{
            connections: [%{user: user, socket: socket}]
          } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
@@ -62,7 +62,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
          %{
            connections: [%{user: user, socket: socket}]
          } do
-      event = insert(:event, %{creator: user, time: nil})
+      event = insert_event(%{creator: user, time: nil})
 
       decision =
         insert(:decision, %{
@@ -104,7 +104,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
          %{
            connections: [%{user: user, socket: socket}]
          } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
@@ -128,7 +128,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
          %{
            connections: [%{user: user, socket: socket}]
          } do
-      event = insert(:event, %{creator: user})
+      event = insert_event(%{creator: user})
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
@@ -156,7 +156,7 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
          %{
            connections: [%{user: user, socket: socket}]
          } do
-      event = insert(:event, %{creator: user, place: nil})
+      event = insert_event(%{creator: user, place: nil})
 
       decision =
         insert(:decision, %{
