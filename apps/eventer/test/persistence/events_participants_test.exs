@@ -47,7 +47,7 @@ defmodule Persistence.EventsParticipantsTest do
 
       updated_event = Events.get_event(event.id)
 
-      assert updated_event.participants === [new_user]
+      assert updated_event.participants === [user, new_user]
     end
 
     test "join fails for non-existent user", %{event: event} do
@@ -64,7 +64,7 @@ defmodule Persistence.EventsParticipantsTest do
       assert message === "Event does not exist"
     end
 
-    test "leave", %{event: event} do
+    test "leave", %{event: event, user: creator} do
       {:ok, user1} =
         Users.insert_user(%{
           email: "test1@example.com",
@@ -81,12 +81,12 @@ defmodule Persistence.EventsParticipantsTest do
       {:ok, _} = Events.join(event.id, user2.id)
       updated_event = Events.get_event(event.id)
 
-      assert updated_event.participants === [user1, user2]
+      assert updated_event.participants === [creator, user1, user2]
 
       {1, nil} = Events.leave(event.id, user1.id)
       event_left = Events.get_event(event.id)
 
-      assert event_left.participants === [user2]
+      assert event_left.participants === [creator, user2]
       assert event_left.ex_participants === [user1]
     end
 

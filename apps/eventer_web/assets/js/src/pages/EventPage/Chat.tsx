@@ -13,6 +13,7 @@ import {
   UserName,
   Avatar,
   TimeStamp,
+  BotMessage,
 } from './Chat.styles';
 import EventContext from './EventContext';
 import avatarPlaceholder from '../../../../static/images/avatar-placeholder.png';
@@ -63,17 +64,29 @@ const Chat: React.FC<chatPropsT> = ({
 
   return (
     <ChatWrapper visible={visible} isFullWidthChat={isFullWidthChat}>
-      <Title>Chat</Title>
+      <Title>Chat and updates</Title>
       <Messages ref={messagesRef}>
-        {messages.map(({ id, user_id, text, inserted_at }) => {
-          const user = participants[user_id] || exParticipants[user_id];
-          const imageUrl = user.image
-            ? `${user.image}=s40-c`
-            : avatarPlaceholder;
+        {messages.map(({ id, user_id, text, inserted_at, is_bot }) => {
           const at =
             inserted_at === '...'
               ? inserted_at
               : format(parseISO(inserted_at + 'Z'), 'h:mm b (E, dd. LLL)');
+
+          if (is_bot) {
+            return (
+              <BotMessage key={id}>
+                <TimeStamp>
+                  {at} - {text}
+                </TimeStamp>
+              </BotMessage>
+            );
+          }
+
+          const user = participants[user_id] || exParticipants[user_id];
+          const imageUrl = user.image
+            ? `${user.image}=s40-c`
+            : avatarPlaceholder;
+
           return (
             <Message key={id}>
               <Avatar src={imageUrl} width={40} height={40} />

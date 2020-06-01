@@ -67,6 +67,10 @@ export const MessageText = styled.div`
   font-size: 1rem;
 `;
 
+export const BotMessage = styled.div`
+  padding: 5px 0;
+`;
+
 export const Input = styled.input`
   width: 90%;
   margin-bottom: 20px;

@@ -5,11 +5,16 @@ defmodule EventerWeb.EventChannelParticipationTest do
   alias Eventer.Persistence.{Events, Users}
   alias Eventer.Repo
 
+  import Mox
+
   describe "Event participation" do
     @tag authorized: 2
     test "'join_event' adds user to event participants", %{
       connections: connections
     } do
+      EventerWeb.NotifierMock
+      |> expect(:notify_absent_participants, fn _, _, _ -> nil end)
+
       [creator, joiner] = connections
       event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
@@ -46,12 +51,21 @@ defmodule EventerWeb.EventChannelParticipationTest do
       push(joiner_socket, "join_event", %{})
       assert_broadcast("user_joined", payload)
       assert payload === %{user: Users.to_map(joiner.user)}
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+
+      assert payload.text ===
+               "#{joiner.user.name} has joined \"#{event.title}\"."
     end
 
     @tag authorized: 2
     test "'leave_event' moves user from participants to ex_participants", %{
       connections: connections
     } do
+      EventerWeb.NotifierMock
+      |> expect(:notify_absent_participants, fn _, _, _ -> nil end)
+
       [creator, joiner] = connections
       event = insert_event(%{creator: creator.user})
       {:ok, _} = Events.join(event.id, joiner.user.id)
@@ -75,6 +89,9 @@ defmodule EventerWeb.EventChannelParticipationTest do
 
     @tag authorized: 2
     test "'user_left' is broadcasted", %{connections: connections} do
+      EventerWeb.NotifierMock
+      |> expect(:notify_absent_participants, fn _, _, _ -> nil end)
+
       [creator, joiner] = connections
       event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)
@@ -88,9 +105,15 @@ defmodule EventerWeb.EventChannelParticipationTest do
 
       push(joiner_socket, "join_event", %{})
       assert_broadcast("user_joined", payload)
+      assert_broadcast("chat_shout", _)
+
       push(joiner_socket, "leave_event", %{})
       assert_broadcast("user_left", payload)
       assert payload === %{userId: joiner.user.id}
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+      assert payload.text === "#{joiner.user.name} has left \"#{event.title}\"."
     end
 
     @tag authorized: 2

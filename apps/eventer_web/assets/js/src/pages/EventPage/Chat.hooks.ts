@@ -11,6 +11,7 @@ type messageT = {
   text: string;
   user_id: number;
   inserted_at: string;
+  is_bot: boolean;
 };
 
 type sendMessageT = (text: string, timestamp: number) => void;
@@ -62,7 +63,7 @@ export const useChannelForChat: useChannelForChatT = (
         });
 
       channel.on('chat_shout', (message) => {
-        if (message.user_id !== user.id) {
+        if (message.user_id !== user.id || message.is_bot) {
           const messagesDiv = messagesRef.current;
           if (messagesDiv) {
             const shouldScrollToBottom =
@@ -120,7 +121,13 @@ export const useChannelForChat: useChannelForChatT = (
       const tempId = `temp:${timestamp}`;
       setMessages((currentMessages) => [
         ...currentMessages,
-        { id: tempId, user_id: user.id, text, inserted_at: '...' },
+        {
+          id: tempId,
+          user_id: user.id,
+          text,
+          inserted_at: '...',
+          is_bot: false,
+        },
       ]);
       setTimeout(scrollToBottom, 50);
       channelOption

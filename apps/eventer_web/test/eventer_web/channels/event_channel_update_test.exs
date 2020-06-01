@@ -59,6 +59,10 @@ defmodule EventerWeb.EventChannelUpdateTest do
 
     assert_broadcast("event_updated", payload)
     assert payload === %{event: event_data}
+
+    assert_broadcast("chat_shout", payload)
+    assert payload.is_bot === true
+    assert payload.text === "#{user.name} updated event title and/or description."
   end
 
   @tag authorized: 1
