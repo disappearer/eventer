@@ -77,6 +77,12 @@ defmodule EventerWeb.EventChannelUpdateDecisionTest do
       assert_broadcast("decision_updated", payload)
 
       assert payload === data
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+
+      assert payload.text ===
+               "#{user.name} updated the \"#{decision.title}\" decision title and/or description."
     end
 
     @tag authorized: 1

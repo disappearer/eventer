@@ -61,8 +61,9 @@ defmodule EventerWeb.EventChannel do
 
   def handle_message("join_event", %{}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
+    event_id = socket.assigns.event_id
 
-    {:ok, _} = Events.join(socket.assigns.event_id, user.id)
+    {:ok, _} = Events.join(event_id, user.id)
 
     broadcast(socket, "user_joined", %{user: Users.to_map(user)})
 
@@ -71,13 +72,15 @@ defmodule EventerWeb.EventChannel do
 
     send(self(), :join_presence)
 
+    event = Events.get_event(event_id)
+
+    bot_shout("#{user.name} has joined \"#{event.title}\".", socket)
+
     # :ok =
     #   ChannelWatcher.monitor(
     #     self(),
     #     {__MODULE__, :leave, [socket.assigns.event_id, user.id]}
     #   )
-
-    {:reply, {:ok, %{}}, socket}
   end
 
   def handle_message("leave_event", %{}, socket) do
@@ -86,6 +89,11 @@ defmodule EventerWeb.EventChannel do
     Events.leave(socket.assigns.event_id, user.id)
 
     broadcast(socket, "user_left", %{userId: user.id})
+
+    event = Events.get_event(socket.assigns.event_id)
+
+    bot_shout("#{user.name} has left \"#{event.title}\".", socket)
+
     {:reply, {:ok, %{}}, socket}
   end
 
@@ -94,7 +102,10 @@ defmodule EventerWeb.EventChannel do
          |> Events.update_event(event_data) do
       {:ok, _} ->
         broadcast(socket, "event_updated", %{event: event_data})
-        {:reply, {:ok, %{}}, socket}
+
+        user = Guardian.Phoenix.Socket.current_resource(socket)
+
+        bot_shout("#{user.name} updated event name and/or description.", socket)
 
       {:error, changeset} ->
         errors = Eventer.Persistence.Util.get_error_map(changeset)
@@ -118,7 +129,10 @@ defmodule EventerWeb.EventChannel do
           decision: Decisions.to_map(decision)
         })
 
-        {:reply, {:ok, %{}}, socket}
+        bot_shout(
+          "#{user.name} has added the \"#{decision.title}\" decision.",
+          socket
+        )
 
       {:error, changeset} ->
         errors = Eventer.Persistence.Util.get_error_map(changeset)
@@ -129,14 +143,21 @@ defmodule EventerWeb.EventChannel do
   def handle_message("update_decision", %{"decision" => decision}, socket) do
     %{"id" => id, "title" => title, "description" => description} = decision
 
-    case Decisions.get_decision(id)
+    db_decision = Decisions.get_decision(id)
+
+    case db_decision
          |> Decisions.update_decision(%{title: title, description: description}) do
       {:ok, _} ->
         broadcast(socket, "decision_updated", %{
           decision: %{id: id, title: title, description: description}
         })
 
-        {:reply, {:ok, %{}}, socket}
+        user = Guardian.Phoenix.Socket.current_resource(socket)
+
+        bot_shout(
+          "#{user.name} updated the \"#{db_decision.title}\" decision title and/or description.",
+          socket
+        )
 
       {:error, changeset} ->
         errors = Eventer.Persistence.Util.get_error_map(changeset)
@@ -146,9 +167,16 @@ defmodule EventerWeb.EventChannel do
 
   def handle_message("remove_decision", %{"decision_id" => decision_id}, socket) do
     case Decisions.get_decision(decision_id) |> Decisions.delete_decision() do
-      {:ok, _} ->
+      {:ok, decision} ->
         broadcast(socket, "decision_removed", %{decision_id: decision_id})
         {:reply, {:ok, %{}}, socket}
+
+        user = Guardian.Phoenix.Socket.current_resource(socket)
+
+        bot_shout(
+          "#{user.name} has removed the \"#{decision.title}\" decision.",
+          socket
+        )
 
       {:error, _} ->
         {:reply, {:error, %{}}, socket}
@@ -158,14 +186,21 @@ defmodule EventerWeb.EventChannel do
   def handle_message("resolve_decision", %{"decision" => decision}, socket) do
     %{"id" => id, "resolution" => resolution} = decision
 
-    case Decisions.get_decision(id)
+    db_decision = Decisions.get_decision(id)
+
+    case db_decision
          |> Decisions.resolve_decision(resolution) do
       {:ok, _} ->
         broadcast(socket, "decision_resolved", %{
           decision: %{id: id, resolution: resolution}
         })
 
-        {:reply, {:ok, %{}}, socket}
+        user = Guardian.Phoenix.Socket.current_resource(socket)
+
+        bot_shout(
+          "#{user.name} resolved the \"#{db_decision.title}\" decision.",
+          socket
+        )
 
       {:error, changeset} ->
         errors =
@@ -185,6 +220,12 @@ defmodule EventerWeb.EventChannel do
     with %{objective: "general"} = decision <- Decisions.get_decision(id),
          {:ok, _} <- Decisions.discard_resolution(decision) do
       broadcast(socket, "resolution_discarded", %{decision_id: id})
+      user = Guardian.Phoenix.Socket.current_resource(socket)
+
+      bot_shout(
+        "#{user.name} has discarded the resolution for the \"#{decision.title}\" decision.",
+        socket
+      )
 
       {:reply, {:ok, %{}}, socket}
     else
@@ -212,7 +253,10 @@ defmodule EventerWeb.EventChannel do
           decision: Decisions.to_map(new_decision)
         })
 
-        {:reply, {:ok, %{}}, socket}
+        bot_shout(
+          "#{user.name} has opened #{objective} for discussion.",
+          socket
+        )
 
       {:ok, {:updated_decision, updated_decision}} ->
         broadcast(socket, "discussion_opened", %{
@@ -220,7 +264,10 @@ defmodule EventerWeb.EventChannel do
           decision: Decisions.to_map(updated_decision)
         })
 
-        {:reply, {:ok, %{}}, socket}
+        bot_shout(
+          "#{user.name} has opened #{objective} for discussion.",
+          socket
+        )
     end
   end
 
@@ -236,7 +283,12 @@ defmodule EventerWeb.EventChannel do
           poll: Polls.to_map(decision.poll)
         })
 
-        {:reply, {:ok, %{}}, socket}
+        user = Guardian.Phoenix.Socket.current_resource(socket)
+
+        bot_shout(
+          "#{user.name} has added a poll for the \"#{decision.title}\" decision.",
+          socket
+        )
 
       {:error, changeset} ->
         errors = Eventer.Persistence.Util.get_error_map(changeset)
@@ -269,7 +321,10 @@ defmodule EventerWeb.EventChannel do
         options: options
       })
 
-      {:reply, {:ok, %{}}, socket}
+      bot_shout(
+        "#{user.name} voted in the \"#{decision.title}\" decision poll.",
+        socket
+      )
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         errors = Eventer.Persistence.Util.get_error_map(changeset)
@@ -302,24 +357,33 @@ defmodule EventerWeb.EventChannel do
     {:reply, {:ok, %{messages: messages}}, socket}
   end
 
-  def handle_message("chat_shout", %{"text" => text}, socket) do
+  def handle_message(
+        "chat_shout",
+        %{"text" => text, "is_bot" => is_bot},
+        socket
+      ) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
     event_id = socket.assigns.event_id
 
     case Messages.insert_message(%{
            user_id: user.id,
            event_id: event_id,
-           text: text
+           text: text,
+           is_bot: is_bot
          }) do
       {:ok, message} ->
         broadcast(socket, "chat_shout", %{
           id: message.id,
           user_id: user.id,
           text: text,
+          is_bot: is_bot,
           inserted_at: message.inserted_at
         })
 
-        notify_absent_participants(event_id, socket)
+        notification_body =
+          if is_bot, do: text, else: "Someone wrote in the chat."
+
+        notify_absent_participants(event_id, socket, notification_body)
         {:reply, {:ok, %{message: Messages.to_map(message)}}, socket}
 
       {:error, changeset} ->
@@ -327,6 +391,18 @@ defmodule EventerWeb.EventChannel do
         {:reply, {:error, %{errors: errors}}, socket}
     end
   end
+
+  def handle_message(
+        "chat_shout",
+        %{"text" => text},
+        socket
+      ),
+      do:
+        handle_message(
+          "chat_shout",
+          %{"text" => text, "is_bot" => false},
+          socket
+        )
 
   def handle_info(:join_presence, socket) do
     push(socket, "presence_state", Presence.list(socket))
@@ -388,7 +464,7 @@ defmodule EventerWeb.EventChannel do
     {[new_option.id | options], new_option}
   end
 
-  defp notify_absent_participants(event_id, socket) do
+  defp notify_absent_participants(event_id, socket, body) do
     event = Events.get_event(event_id)
 
     absentee_ids = get_absent_participants(event, socket)
@@ -396,7 +472,7 @@ defmodule EventerWeb.EventChannel do
     if not Enum.empty?(absentee_ids) do
       @notifier.notify_absent_participants(absentee_ids, event, %{
         title: "\"#{event.title}\" is active!",
-        body: "Someone wrote in the chat."
+        body: body
       })
 
       Users.set_notification_pending(absentee_ids, event_id)
@@ -404,20 +480,32 @@ defmodule EventerWeb.EventChannel do
   end
 
   defp get_absent_participants(
-         %{participants: participants, creator_id: creator_id},
+         %{participants: participants},
          socket
        ) do
-    participant_ids = [creator_id | Enum.map(participants, &Map.get(&1, :id))]
+    participant_ids = Enum.map(participants, &Map.get(&1, :id))
+    user = Guardian.Phoenix.Socket.current_resource(socket)
 
     present_participant_ids =
       Presence.list(socket)
       |> Enum.map(fn {id, _} -> Integer.parse(id) |> elem(0) end)
 
-    Enum.filter(participant_ids, &(&1 not in present_participant_ids))
+    Enum.filter(
+      participant_ids,
+      &(&1 not in [user.id | present_participant_ids])
+    )
     |> filter_unnotified(socket.assigns.event_id)
   end
 
   defp filter_unnotified(absentee_ids, event_id) do
     Users.get_unnotified_users_ids(absentee_ids, event_id)
   end
+
+  defp bot_shout(text, socket),
+    do:
+      handle_message(
+        "chat_shout",
+        %{"text" => text, "is_bot" => true},
+        socket
+      )
 end

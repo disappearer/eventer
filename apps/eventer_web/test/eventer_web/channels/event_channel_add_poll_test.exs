@@ -343,6 +343,12 @@ defmodule EventerWeb.EventChannelAddPollTest do
       assert new_opt2.text === opt2.text
       assert new_opt1.id !== nil
       assert new_opt2.id !== nil
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+
+      assert payload.text ===
+               "#{user.name} has added a poll for the \"#{decision.title}\" decision."
     end
   end
 end

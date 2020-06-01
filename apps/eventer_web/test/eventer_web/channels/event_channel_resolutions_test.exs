@@ -76,6 +76,12 @@ defmodule EventerWeb.EventChannelResolveTest do
       assert_broadcast("decision_resolved", payload)
 
       assert payload === data
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+
+      assert payload.text ===
+               "#{user.name} resolved the \"#{decision.title}\" decision."
     end
 
     @tag authorized: 1
@@ -228,7 +234,7 @@ defmodule EventerWeb.EventChannelResolveTest do
     end
 
     @tag authorized: 1
-    test "'decision_resolved' is broadcasted", %{
+    test "'resolution_discarded' is broadcasted", %{
       connections: [%{user: user, socket: socket}]
     } do
       event = insert_event(%{creator: user})
@@ -260,6 +266,12 @@ defmodule EventerWeb.EventChannelResolveTest do
       assert_broadcast("resolution_discarded", payload)
 
       assert payload === %{decision_id: decision.id}
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+
+      assert payload.text ===
+               "#{user.name} has discarded the resolution for the \"#{decision.title}\" decision."
     end
 
     @tag authorized: 1
@@ -267,6 +279,7 @@ defmodule EventerWeb.EventChannelResolveTest do
       connections: [%{user: user, socket: socket}]
     } do
       event = insert_event(%{creator: user, time: nil})
+
       decision =
         insert(:decision, %{
           event: event,

@@ -74,6 +74,11 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
       assert new_decision.event_id === event.id
       assert new_decision.title === decision_data.decision.title
       assert new_decision.description === decision_data.decision.description
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+      assert payload.text ===
+               "#{user.name} has added the \"#{new_decision.title}\" decision."
     end
 
     @tag authorized: 1
@@ -161,6 +166,11 @@ defmodule EventerWeb.EventChannelAddRemoveDecisionTest do
 
       assert_broadcast("decision_removed", %{decision_id: decision_id})
       assert decision_id === decision.id
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+      assert payload.text ===
+               "#{user.name} has removed the \"#{decision.title}\" decision."
     end
   end
 end

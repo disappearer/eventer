@@ -6,12 +6,16 @@ defmodule EventerWeb.EventChannelPresenceTest do
   alias Eventer.{Participation, Repo}
 
   import Ecto.Query
+  import Mox
 
   describe "Event presence" do
     @tag authorized: 2
     test "'join_event' adds user to event participants", %{
       connections: connections
     } do
+      EventerWeb.NotifierMock
+      |> expect(:notify_absent_participants, fn _, _, _ -> nil end)
+
       [creator, joiner] = connections
       event = insert_event(%{creator: creator.user})
       event_id_hash = IdHasher.encode(event.id)

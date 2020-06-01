@@ -5,6 +5,8 @@ defmodule EventerWeb.EventChannelVoteTest do
   alias Eventer.{Decision, Repo}
   alias Eventer.Persistence.Decisions
 
+  import Mox
+
   describe "Vote" do
     @tag authorized: 2
     test "'vote' success", %{
@@ -13,6 +15,9 @@ defmodule EventerWeb.EventChannelVoteTest do
         %{user: user2, socket: socket2}
       ]
     } do
+      EventerWeb.NotifierMock
+      |> expect(:notify_absent_participants, fn _, _, _ -> nil end)
+
       event = insert_event(%{creator: user1})
       decision = insert(:decision, %{event: event, creator: user1})
       decision = Repo.get(Decision, decision.id)
@@ -32,6 +37,7 @@ defmodule EventerWeb.EventChannelVoteTest do
           EventChannel,
           "event:#{event_id_hash}"
         )
+
       push(socket2, "join_event", %{})
 
       [option1 | _] = decision.poll.options
@@ -101,6 +107,12 @@ defmodule EventerWeb.EventChannelVoteTest do
 
       assert voter_id === user.id
       assert options === [option1.id]
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+
+      assert payload.text ===
+               "#{user.name} voted in the \"#{decision.title}\" decision poll."
     end
 
     @tag authorized: 1

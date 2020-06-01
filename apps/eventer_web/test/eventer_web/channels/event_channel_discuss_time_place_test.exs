@@ -55,6 +55,12 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
       assert new_decision.objective === "time"
       assert new_decision.pending === true
       assert new_decision.resolution === nil
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+
+      assert payload.text ===
+               "#{user.name} has opened time for discussion."
     end
 
     @tag authorized: 1
@@ -191,6 +197,11 @@ defmodule EventerWeb.EventChannelOpenDiscussionTest do
                {[:pending], false, true},
                {[:resolution], place, nil}
              ]
+
+      assert_broadcast("chat_shout", payload)
+      assert payload.is_bot === true
+      assert payload.text ===
+               "#{user.name} has opened place for discussion."
     end
   end
 end
