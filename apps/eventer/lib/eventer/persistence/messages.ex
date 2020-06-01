@@ -52,6 +52,7 @@ defmodule Eventer.Persistence.Messages do
     %{
       id: message.id,
       text: message.text,
+      is_bot: message.is_bot,
       user_id: message.user_id,
       event_id: message.event_id,
       inserted_at: message.inserted_at

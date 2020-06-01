@@ -14,7 +14,7 @@ defmodule Eventer.Message do
 
   def changeset(event, params \\ %{}) do
     event
-    |> cast(params, [:text, :user_id, :event_id])
+    |> cast(params, [:text, :user_id, :event_id, :is_bot])
     |> validate_required(:text, message: "Text can't be blank")
     |> assoc_constraint(:event, message: "Event does not exist")
     |> validate_identity()

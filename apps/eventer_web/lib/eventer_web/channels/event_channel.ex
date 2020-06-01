@@ -105,7 +105,7 @@ defmodule EventerWeb.EventChannel do
 
         user = Guardian.Phoenix.Socket.current_resource(socket)
 
-        bot_shout("#{user.name} updated event name and/or description.", socket)
+        bot_shout("#{user.name} updated event title and/or description.", socket)
 
       {:error, changeset} ->
         errors = Eventer.Persistence.Util.get_error_map(changeset)
