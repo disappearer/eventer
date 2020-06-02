@@ -1,12 +1,13 @@
 import { Option } from 'funfix';
 import { Channel } from 'phoenix';
-import React, { useCallback, useEffect, useState } from 'react';
-import { userDataT } from '../../features/authentication/userReducer';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import { userDataT } from '../../../features/authentication/userReducer';
 import { useParams } from 'react-router-dom';
-import { reduxStateT } from '../../common/store';
+import { reduxStateT } from '../../../common/store';
 import { useSelector } from 'react-redux';
+import { groupChatMessages, dayMessagesT } from './util';
 
-type messageT = {
+export type messageT = {
   id: number | string;
   text: string;
   user_id: number;
@@ -21,7 +22,7 @@ type useChannelForChatT = (
   user: userDataT,
   visible: boolean,
   messagesRef: React.RefObject<HTMLDivElement>,
-) => { messages: messageT[]; sendMessage: sendMessageT };
+) => { groupedMessages: dayMessagesT[]; sendMessage: sendMessageT };
 export const useChannelForChat: useChannelForChatT = (
   channelOption,
   user,
@@ -72,6 +73,7 @@ export const useChannelForChat: useChannelForChatT = (
       channel
         .push('get_chat_messages', {})
         .receive('ok', ({ messages }: { messages: messageT[] }) => {
+          groupChatMessages(messages);
           setMessages(messages);
           setLatestIdHash(id_hash || 'undefined');
           setTimeout(scrollToBottom, 50);
@@ -148,5 +150,7 @@ export const useChannelForChat: useChannelForChatT = (
     [channelOption],
   );
 
-  return { messages, sendMessage };
+  const groupedMessages = useMemo(() => groupChatMessages(messages), [messages]);
+
+  return { groupedMessages, sendMessage };
 };

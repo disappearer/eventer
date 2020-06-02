@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { CHAT_HIDING_BREAKPOINT } from './Chat';
+import { CHAT_HIDING_BREAKPOINT } from './Chat/Chat';
 
 type visibilityPropsT = {
   visible: boolean;

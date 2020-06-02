@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CHAT_HIDING_BREAKPOINT } from '../Chat';
+import { CHAT_HIDING_BREAKPOINT } from '../Chat/Chat';
 
 const chatHidingBreakpoint = parseInt(CHAT_HIDING_BREAKPOINT, 10);
 

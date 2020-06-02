@@ -7,7 +7,7 @@ import Modal from '../../components/Modal';
 import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
 import AddDecisionForm from './AddDecisionForm';
 import BasicEventInfo from './BasicEventInfo';
-import Chat from './Chat';
+import Chat from './Chat/Chat';
 import DecisionDetails from './DecisionDetails';
 import Decisions from './Decisions';
 import EventContext from './EventContext';
