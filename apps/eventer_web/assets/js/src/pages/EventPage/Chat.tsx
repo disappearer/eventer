@@ -76,7 +76,7 @@ const Chat: React.FC<chatPropsT> = ({
             return (
               <BotMessage key={id}>
                 <TimeStamp>
-                  {at} - {text}
+                {text} {at}
                 </TimeStamp>
               </BotMessage>
             );

@@ -51,6 +51,21 @@ export const useChannelForChat: useChannelForChatT = (
     }
   }, [messagesRef]);
 
+  const handleIncomingMessages = useCallback((message) => {
+    if (message.user_id !== user.id || message.is_bot) {
+      const messagesDiv = messagesRef.current;
+      if (messagesDiv) {
+        const shouldScrollToBottom =
+          messagesDiv.scrollTop ===
+          messagesDiv.scrollHeight - messagesDiv.clientHeight;
+        setMessages((oldMessages) => [...oldMessages, message]);
+        if (shouldScrollToBottom) {
+          setTimeout(scrollToBottom, 50);
+        }
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (latestIdHash !== id_hash && !channelOption.isEmpty() && visible) {
       const channel = channelOption.get();
@@ -62,20 +77,7 @@ export const useChannelForChat: useChannelForChatT = (
           setTimeout(scrollToBottom, 50);
         });
 
-      channel.on('chat_shout', (message) => {
-        if (message.user_id !== user.id || message.is_bot) {
-          const messagesDiv = messagesRef.current;
-          if (messagesDiv) {
-            const shouldScrollToBottom =
-              messagesDiv.scrollTop ===
-              messagesDiv.scrollHeight - messagesDiv.clientHeight;
-            setMessages((oldMessages) => [...oldMessages, message]);
-            if (shouldScrollToBottom) {
-              setTimeout(scrollToBottom, 50);
-            }
-          }
-        }
-      });
+      channel.on('chat_shout', handleIncomingMessages);
     }
   }, [channelOption, visible, id_hash, latestIdHash]);
 
@@ -95,6 +97,8 @@ export const useChannelForChat: useChannelForChatT = (
           .receive('error', (error) => {
             console.log('error', error);
           });
+
+        channel.on('chat_shout', handleIncomingMessages);
       } else {
         const channel = channelOption.get();
         channel

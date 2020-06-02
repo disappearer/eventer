@@ -68,7 +68,7 @@ export const MessageText = styled.div`
 `;
 
 export const BotMessage = styled.div`
-  padding: 5px 0;
+  padding: 7px 0;
 `;
 
 export const Input = styled.input`
