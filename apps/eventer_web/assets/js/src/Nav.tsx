@@ -8,7 +8,7 @@ import Button from './components/Button';
 import Link from './components/Link';
 import { userT } from './features/authentication/userReducer';
 import { setIsChatVisible, toggleChat } from './features/event/eventActions';
-import { CHAT_HIDING_BREAKPOINT } from './pages/EventPage/Chat';
+import { CHAT_HIDING_BREAKPOINT } from './pages/EventPage/Chat/Chat';
 
 type navbarPropsT = {
   visible: boolean;

@@ -32,23 +32,30 @@ export const Messages = styled.div`
   font-size: 0.9rem;
 `;
 
+export const Day = styled.div`
+  text-align: center;
+  margin: 15px 0;
+  color: ${(props) => props.theme.colors.lighterGrey};
+  font-weight: 300;
+  font-size: 0.8rem;
+`;
+
 export const Message = styled.div`
   display: grid;
   column-gap: 10px;
   grid-template-columns: auto 1fr;
-  grid-template-areas:
-    'avatar name'
-    'avatar message';
   padding: 5px 0;
 `;
 
 export const Avatar = styled.img`
-  grid-area: avatar;
+  grid-column: 1 / span 1;
+  grid-row: 1 / span 2;
   border-radius: 50%;
 `;
 
 export const UserName = styled.div`
-  grid-area: name;
+  grid-column: 2 / span 1;
+  grid-row: 1 / span 1;
   color: ${(props) => props.theme.colors.secondary};
   letter-spacing: 0.03rem;
   font-weight: 400;
@@ -62,7 +69,7 @@ export const TimeStamp = styled.span`
 `;
 
 export const MessageText = styled.div`
-  grid-area: message;
+  grid-column: 2 / span 1;
   color: ${(props) => props.theme.colors.mineShaft};
   font-size: 1rem;
 `;
