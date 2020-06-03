@@ -13,6 +13,7 @@ const theme: DefaultTheme = {
     tundora: '#444444',
     darkerGrey: '#555',
     lighterGrey: '#929292',
+    lightestGrey: '#eeeeee',
     milanoRed: '#AD1F00',
   },
 };

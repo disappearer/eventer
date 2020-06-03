@@ -70,8 +70,17 @@ export const TimeStamp = styled.span`
 
 export const MessageText = styled.div`
   grid-column: 2 / span 1;
-  color: ${(props) => props.theme.colors.mineShaft};
+  color: ${({ theme }) => theme.colors.mineShaft};
   font-size: 1rem;
+  padding: 3px 0;
+  &:hover {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0%,
+      ${({theme}) => theme.colors.lightestGrey} 10%,
+      rgba(0, 0, 0, 0) 90%
+    );
+  }
 `;
 
 export const BotMessage = styled.div`
