@@ -26,6 +26,7 @@ const OptionText = styled.div`
 const Voters = styled.div`
   font-size: 0.8rem;
   color: ${props => props.theme.colors.darkerGrey};
+  max-width: 269px;
 `;
 
 type pollResultsT = {
@@ -57,7 +58,7 @@ const getVoters: getVotersT = (option, event) => {
     const voters = option.votes.reduce((voters, voterId) => {
       const voter = participants[voterId] || exParticipants[voterId];
       return `${voters} ${voter.name},`;
-    }, '');
+    }, 'Voted by: ');
     return voters.slice(0, -1);
   }
 };

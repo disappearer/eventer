@@ -14,10 +14,11 @@ import {
   StatusArea,
   TitleLine,
   Wrapper,
+  RemovePollButton,
 } from './DecisionDetails.styles';
 import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
-import DiscardResolutionConfirmation from './DiscardResolutionConfirmation';
+import Confirmation from './DiscardResolutionConfirmation';
 import EventContext from './EventContext';
 import useParticipation from './hooks/useParticipation';
 import Poll from './Poll';
@@ -28,6 +29,7 @@ import {
   resolveDecisionT,
   updateDecisionT,
   voteT,
+  discardPollT,
 } from './types';
 
 type decisionDetailsPropsT = {
@@ -35,6 +37,7 @@ type decisionDetailsPropsT = {
   onDecisionResolve: resolveDecisionT;
   onDecisionUpdate: updateDecisionT;
   onResolutionDiscard: discardResolutionT;
+  onPollDiscard: discardPollT;
   onAddPoll: addPollT;
   onVote: voteT;
 };
@@ -44,6 +47,7 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
   onDecisionResolve,
   onDecisionUpdate,
   onResolutionDiscard,
+  onPollDiscard,
   onAddPoll,
   onVote,
 }) => {
@@ -55,12 +59,14 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
   const {
     decisionAction,
     showEditForm,
-    showDiscardConfirmation,
+    showDiscardResolutionConfirmation,
+    showDiscardPollConfirmation,
     showAddPollForm,
     showResolveForm,
     resetDecisionModal,
     discardResolution,
-  } = useDecisionActions(id, onResolutionDiscard);
+    discardPoll
+  } = useDecisionActions(id, onResolutionDiscard, onPollDiscard);
 
   if (!event.decisions[id]) {
     return (
@@ -100,7 +106,7 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
               <TitleLine>
                 <ResolutionLabel>Resolution</ResolutionLabel>
                 {isCurrentUserParticipating && objective === 'general' && (
-                  <Button onClick={showDiscardConfirmation}>
+                  <Button onClick={showDiscardResolutionConfirmation}>
                     Discard resolution
                   </Button>
                 )}
@@ -115,7 +121,12 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
               <PollArea>
                 {poll ? (
                   <>
-                    <Label>Poll</Label>
+                    <Label>
+                      Poll
+                      <RemovePollButton onClick={showDiscardPollConfirmation}>
+                        Remove poll
+                      </RemovePollButton>
+                    </Label>
                     <Poll
                       poll={poll}
                       onVote={onVote}
@@ -156,9 +167,9 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
         />
       )}
       {decisionAction === 'discard_resolution' && (
-        <DiscardResolutionConfirmation
-          id={id}
-          resolution={resolution}
+        <Confirmation
+          title="Discard resolution"
+          question={`Are you sure you want to discard resolution "${resolution}"?`}
           onConfirm={discardResolution}
           onSuccess={resetDecisionModal}
         />
@@ -167,6 +178,14 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
         <PollForm
           decisionId={id}
           onSubmit={onAddPoll}
+          onSuccess={resetDecisionModal}
+        />
+      )}
+      {decisionAction === 'discard_poll' && (
+        <Confirmation
+          title="Remove poll"
+          question={`Are you sure you want to remove the "${title}" decision poll?`}
+          onConfirm={discardPoll}
           onSuccess={resetDecisionModal}
         />
       )}

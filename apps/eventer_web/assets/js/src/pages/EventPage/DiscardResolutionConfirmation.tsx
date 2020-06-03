@@ -1,31 +1,28 @@
 import React from 'react';
 import Button from '../../components/Button';
-import { ButtonsGrid, FormTitle, FormGrid } from './Form.styles';
-import { discardResolutionT } from './types';
+import { ButtonsGrid, FormTitle } from './Form.styles';
 
 type discardResolutionConfirmationPropsT = {
-  id: number;
-  resolution: string | null;
-  onConfirm: discardResolutionT;
+  title: string;
+  question: string;
+  onConfirm: () => void;
   onSuccess: () => void;
 };
 
-const DiscardResolutionConfirmation: React.FC<discardResolutionConfirmationPropsT> = ({
-  id,
-  resolution,
+const Confirmation: React.FC<discardResolutionConfirmationPropsT> = ({
+  title,
+  question,
   onConfirm,
   onSuccess,
 }) => {
   const handleConfirmClick = () => {
-    onConfirm(id);
+    onConfirm();
     onSuccess();
   };
   return (
     <div>
-      <FormTitle>Discard resolution</FormTitle>
-      <p>
-        Are you sure you want to discard resolution "{resolution}"?
-      </p>
+      <FormTitle>{title}</FormTitle>
+      <p>{question}</p>
       <ButtonsGrid>
         <Button onClick={handleConfirmClick}>Yes</Button>
         <Button onClick={onSuccess}>Cancel</Button>
@@ -34,4 +31,4 @@ const DiscardResolutionConfirmation: React.FC<discardResolutionConfirmationProps
   );
 };
 
-export default DiscardResolutionConfirmation;
+export default Confirmation;

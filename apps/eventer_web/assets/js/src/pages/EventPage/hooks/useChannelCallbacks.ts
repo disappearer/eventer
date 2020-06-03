@@ -11,6 +11,7 @@ import {
   updateDecisionT,
   updateEventT,
   voteT,
+  discardPollT,
 } from '../types';
 
 type useChannelCallbacksT = (
@@ -24,6 +25,7 @@ type useChannelCallbacksT = (
   openDiscussion: openDiscussionT;
   resolveDecision: resolveDecisionT;
   discardResolution: discardResolutionT;
+  discardPoll: discardPollT;
   removeDecision: removeDecisionT;
   addPoll: addPollT;
   vote: voteT;
@@ -103,6 +105,13 @@ const useChannelCallbacks: useChannelCallbacksT = (channel) => {
     [channel],
   );
 
+  const discardPoll = useCallback<discardPollT>(
+    (id) => {
+      channel.get().push('remove_poll', { decision_id: id });
+    },
+    [channel],
+  );
+
   const removeDecision = useCallback<removeDecisionT>(
     (id, onSuccess, onError) => {
       channel
@@ -152,6 +161,7 @@ const useChannelCallbacks: useChannelCallbacksT = (channel) => {
     openDiscussion,
     resolveDecision,
     discardResolution,
+    discardPoll,
     removeDecision,
     addPoll,
     vote,

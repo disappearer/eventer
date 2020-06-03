@@ -47,6 +47,7 @@ const EventPage: React.FC = () => {
     openDiscussion,
     resolveDecision,
     discardResolution,
+    discardPoll,
     removeDecision,
     addPoll,
     vote,
@@ -138,6 +139,7 @@ const EventPage: React.FC = () => {
                             onDecisionResolve={resolveDecision}
                             onDecisionUpdate={updateDecision}
                             onResolutionDiscard={discardResolution}
+                            onPollDiscard={discardPoll}
                             onAddPoll={addPoll}
                             onVote={vote}
                           />

@@ -1,28 +1,33 @@
 import { useState, useCallback } from 'react';
-import { discardResolutionT } from './types';
+import { discardResolutionT, discardPollT } from './types';
 
 type decisionActionT =
   | 'view'
   | 'edit'
   | 'resolve'
   | 'discard_resolution'
-  | 'add_poll';
+  | 'add_poll'
+  | 'discard_poll';
 
 type useDecisionActionsT = (
   decisionId: number,
   onResolutionDiscard: discardResolutionT,
+  onPollDiscard: discardPollT,
 ) => {
   decisionAction: decisionActionT;
   showEditForm: () => void;
   showResolveForm: () => void;
   resetDecisionModal: () => void;
-  showDiscardConfirmation: () => void;
+  showDiscardResolutionConfirmation: () => void;
+  showDiscardPollConfirmation: () => void;
   discardResolution: () => void;
+  discardPoll: () => void;
   showAddPollForm: () => void;
 };
 export const useDecisionActions: useDecisionActionsT = (
   decisionId,
   onResolutionDiscard,
+  onPollDiscard,
 ) => {
   const [decisionAction, setDecisionAction] = useState<decisionActionT>('view');
 
@@ -38,12 +43,21 @@ export const useDecisionActions: useDecisionActionsT = (
     setDecisionAction('view');
   }, [setDecisionAction]);
 
-  const showDiscardConfirmation = useCallback(() => {
+  const showDiscardResolutionConfirmation = useCallback(() => {
     setDecisionAction('discard_resolution');
+  }, [setDecisionAction]);
+
+  const showDiscardPollConfirmation = useCallback(() => {
+    setDecisionAction('discard_poll');
   }, [setDecisionAction]);
 
   const discardResolution = useCallback(() => {
     onResolutionDiscard(decisionId);
+    resetDecisionModal();
+  }, [setDecisionAction]);
+
+  const discardPoll = useCallback(() => {
+    onPollDiscard(decisionId);
     resetDecisionModal();
   }, [setDecisionAction]);
 
@@ -56,8 +70,10 @@ export const useDecisionActions: useDecisionActionsT = (
     showEditForm,
     showResolveForm,
     resetDecisionModal,
-    showDiscardConfirmation,
+    showDiscardResolutionConfirmation,
+    showDiscardPollConfirmation,
     discardResolution,
+    discardPoll,
     showAddPollForm,
   };
 };
