@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Button from '../../components/Button';
 
 export const Wrapper = styled.div`
   display: grid;
@@ -67,6 +68,10 @@ export const ResolutionArea = styled.div`
 export const Label = styled.h4`
   margin: 0;
   margin-bottom: 5px;
+`;
+
+export const RemovePollButton = styled(Button)`
+  margin-left: 10px;
 `;
 
 export const ResolutionLabel = styled.h4`

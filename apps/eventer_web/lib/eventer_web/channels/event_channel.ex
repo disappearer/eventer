@@ -105,7 +105,10 @@ defmodule EventerWeb.EventChannel do
 
         user = Guardian.Phoenix.Socket.current_resource(socket)
 
-        bot_shout("#{user.name} updated event title and/or description.", socket)
+        bot_shout(
+          "#{user.name} updated event title and/or description.",
+          socket
+        )
 
       {:error, changeset} ->
         errors = Eventer.Persistence.Util.get_error_map(changeset)
@@ -287,6 +290,28 @@ defmodule EventerWeb.EventChannel do
 
         bot_shout(
           "#{user.name} has added a poll for the \"#{decision.title}\" decision.",
+          socket
+        )
+
+      {:error, changeset} ->
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
+    end
+  end
+
+  def handle_message(
+        "remove_poll",
+        %{"decision_id" => decision_id},
+        socket
+      ) do
+    case Decisions.get_decision(decision_id) |> Decisions.remove_poll() do
+      {:ok, decision} ->
+        broadcast(socket, "poll_removed", %{decision_id: decision.id})
+
+        user = Guardian.Phoenix.Socket.current_resource(socket)
+
+        bot_shout(
+          "#{user.name} has removed the poll from the \"#{decision.title}\" decision.",
           socket
         )
 

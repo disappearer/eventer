@@ -120,6 +120,7 @@ export type resolveDecisionT = (
 ) => void;
 
 export type discardResolutionT = (id: number) => void;
+export type discardPollT = (id: number) => void;
 
 export type addPollT = (
   data: { decisionId: number; poll: pollValuesT },

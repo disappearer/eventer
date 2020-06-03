@@ -295,6 +295,20 @@ export const addStatePoll: addStatePollT = (currentEvent, decisionId, poll) => {
   };
 };
 
+type removeStatePollT = (e: stateEventT, decisionId: number) => stateEventT;
+export const removeStatePoll: removeStatePollT = (currentEvent, decisionId) => {
+  const { decisions } = currentEvent;
+  const { [decisionId]: decision } = decisions;
+
+  return {
+    ...currentEvent,
+    decisions: {
+      ...decisions,
+      [decisionId]: { ...decision, poll: null },
+    },
+  };
+};
+
 type customOptionT = {
   id: string;
   text: string;

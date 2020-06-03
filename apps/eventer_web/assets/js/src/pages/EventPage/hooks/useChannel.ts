@@ -1,7 +1,10 @@
 import { None, Option, Some } from 'funfix';
 import { Channel, Socket } from 'phoenix';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { Dispatch } from 'redux';
+import { setIsJoined } from '../../../features/event/eventActions';
 import {
   addStateDecision,
   addStatePoll,
@@ -11,6 +14,7 @@ import {
   moveToExParticipants,
   openStateDiscussion,
   removeStateDecision,
+  removeStatePoll,
   resolveStateDecision,
   setPresenceData,
   updatePresenceData,
@@ -19,9 +23,6 @@ import {
   updateStateVote,
 } from '../stateTransformations';
 import { stateEventT } from '../types';
-import { useDispatch } from 'react-redux';
-import { Dispatch } from 'redux';
-import { setIsJoined } from '../../../features/event/eventActions';
 
 type useChannelT = (
   token: string,
@@ -149,6 +150,13 @@ const getNewChannel: getNewChannelT = (hashId, setEvent, socket, dispatch) => {
     setEvent((event) => {
       const e = event.get();
       return Some(addStatePoll(e, decision_id, poll));
+    });
+  });
+
+  channel.on('poll_removed', ({ decision_id }) => {
+    setEvent((event) => {
+      const e = event.get();
+      return Some(removeStatePoll(e, decision_id));
     });
   });
 
