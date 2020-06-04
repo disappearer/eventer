@@ -42,22 +42,13 @@ const initFirebase: initFirebaseT = () => {
           os,
           browser,
         });
-      } else {
-        // Show permission request.
-        console.log(
-          'No Instance ID token available. Request permission to generate one.',
-        );
-        // Show permission UI.
-        // updateUIForPushPermissionRequired();
-        // setTokenSentToServer(false);
       }
     })
-    .catch((err) => {
-      console.log('An error occurred while retrieving token. ', err);
+    .catch(() => {
       const nav = navigator as BraveNavigator;
       if (nav.brave) {
         alert(
-          `Push notifications registration failed.\nSince you are using Brave, please make sure to enable "Use Google Services for Push Messaging" option in the "Privacy and security" section of the browser preferences.`,
+          `Push notifications registration failed.\nSince you are using Brave, it may help if you enable "Use Google Services for Push Messaging" option in the "Privacy and security" section of the browser preferences.`,
         );
       }
     });
@@ -81,6 +72,24 @@ const initFirebase: initFirebaseT = () => {
   return messaging;
 };
 
+type checkPermissionsAndInitFirebaseT = () => Promise<
+  firebase.messaging.Messaging | undefined
+>;
+const checkPermissionsAndInitFirebase: checkPermissionsAndInitFirebaseT = async () => {
+  switch (Notification.permission) {
+    case 'default':
+      const value = await Notification.requestPermission();
+      if (value === 'granted') {
+        return initFirebase();
+      }
+      break;
+    case 'granted':
+      return initFirebase();
+    default:
+      return undefined;
+  }
+};
+
 export const useFirebase = () => {
   const { navigate } = useNavigation();
 
@@ -89,16 +98,13 @@ export const useFirebase = () => {
     ({ notifications: { isTabFocused } }) => isTabFocused,
   );
 
-  const [
-    messaging,
-    setMessaging,
-  ] = useState<firebase.messaging.Messaging | null>(null);
+  const [messaging, setMessaging] = useState<firebase.messaging.Messaging>();
 
   const [firebaseInitialized, setFirebaseInitialized] = useState(false);
 
   useEffect(() => {
     if (!firebaseInitialized && !data.isEmpty()) {
-      setMessaging(initFirebase());
+      checkPermissionsAndInitFirebase().then(setMessaging);
     }
   }, [data, firebaseInitialized, setFirebaseInitialized]);
 
