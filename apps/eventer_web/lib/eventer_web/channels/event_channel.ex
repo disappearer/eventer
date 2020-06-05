@@ -417,6 +417,16 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
+  def handle_message("chat_is_typing", _, socket) do
+    user = Guardian.Phoenix.Socket.current_resource(socket)
+
+    broadcast(socket, "chat_is_typing", %{
+      user_id: user.id
+    })
+
+    {:reply, {:ok, %{}}, socket}
+  end
+
   def handle_message(
         "chat_shout",
         %{"text" => text},

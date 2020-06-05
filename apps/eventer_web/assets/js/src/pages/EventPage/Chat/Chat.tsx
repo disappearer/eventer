@@ -25,6 +25,7 @@ import {
   TimeStamp,
   Title,
   UserName,
+  TypingIndicator,
 } from './styles';
 
 export const CHAT_HIDING_BREAKPOINT = '490';
@@ -50,19 +51,38 @@ const Chat: React.FC<chatPropsT> = ({
   ]);
 
   const messagesRef = useRef<HTMLDivElement>(null);
-  const { groupedMessages, sendMessage, scroll } = useChannelForChat(
-    channelOption,
-    user,
-    visible,
-    messagesRef,
-  );
+  const {
+    groupedMessages,
+    typists,
+    sendMessage,
+    scroll,
+    handleTyping,
+  } = useChannelForChat(channelOption, user, visible, messagesRef);
+
+  const whosTyping = useMemo(() => {
+    if (typists.length === 0) {
+      return '';
+    }
+
+    const userNames = typists.map((userId) => participants[userId].name);
+    switch (userNames.length) {
+      case 1:
+        return `${userNames[0]} is typing`;
+      case 2:
+        return `${userNames[0]} and ${userNames[1]} are typing`;
+      default:
+        const allButLast = userNames.slice(0, -1);
+        const last = userNames[userNames.length - 1];
+        return `${allButLast.join(', ')} and ${last} are typing`;
+    }
+  }, [participants, typists]);
 
   const [messageText, setMessageText] = useState('');
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleTyping();
     e.preventDefault();
     const value = e.target.value;
     setMessageText(() => {
-      console.log('onChange');
       return value;
     });
   };
@@ -210,6 +230,10 @@ const Chat: React.FC<chatPropsT> = ({
           />
         </div>
       )}
+
+      <TypingIndicator visible={whosTyping.length > 0}>
+        {whosTyping}
+      </TypingIndicator>
     </ChatWrapper>
   );
 };
