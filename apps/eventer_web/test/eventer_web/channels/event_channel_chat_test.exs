@@ -316,5 +316,28 @@ defmodule EventerWeb.EventChannelChatTest do
       ref = push(joiner_socket2, "chat_shout", %{text: message})
       assert_reply(ref, :ok, _)
     end
+
+    @tag authorized: 1
+    test "'chat_is_typing' is broadcasted", %{
+      connections: [%{user: user, socket: socket}]
+    } do
+      event = insert_event(%{creator: user})
+      event_id_hash = IdHasher.encode(event.id)
+
+      {:ok, _, socket} =
+        subscribe_and_join(
+          socket,
+          EventChannel,
+          "event:#{event_id_hash}"
+        )
+
+      message = "Hell World!"
+      ref = push(socket, "chat_is_typing", %{})
+      assert_reply(ref, :ok, %{})
+
+      assert_broadcast("chat_is_typing", payload)
+
+      assert payload === %{user_id: user.id}
+    end
   end
 end

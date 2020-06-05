@@ -1,11 +1,20 @@
 import { Option } from 'funfix';
 import { Channel } from 'phoenix';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+} from 'react';
 import { userDataT } from '../../../features/authentication/userReducer';
 import { useParams } from 'react-router-dom';
 import { reduxStateT } from '../../../common/store';
 import { useSelector } from 'react-redux';
 import { groupChatMessages, dayMessagesT } from './util';
+import throttle from 'lodash.throttle';
+
+const TYPING_THROTTLE_DELAY = 2000;
 
 export type messageT = {
   id: number | string;
@@ -17,6 +26,7 @@ export type messageT = {
 
 type sendMessageT = (text: string, timestamp: number) => void;
 type scrollT = (amount: number) => void;
+type handleTypingT = () => void;
 
 type useChannelForChatT = (
   channelOption: Option<Channel>,
@@ -25,8 +35,10 @@ type useChannelForChatT = (
   messagesRef: React.RefObject<HTMLDivElement>,
 ) => {
   groupedMessages: dayMessagesT[];
+  typists: number[];
   sendMessage: sendMessageT;
   scroll: scrollT;
+  handleTyping: handleTypingT;
 };
 export const useChannelForChat: useChannelForChatT = (
   channelOption,
@@ -38,6 +50,7 @@ export const useChannelForChat: useChannelForChatT = (
   const [latestIdHash, setLatestIdHash] = useState('');
   const [previousIsJoined, setPreviousIsJoined] = useState(true);
   const [messages, setMessages] = useState<messageT[]>([]);
+  const [typists, setTypists] = useState<number[]>([]);
   const isJoined = useSelector<reduxStateT, boolean>(
     ({ event: { isJoined } }) => isJoined,
   );
@@ -88,6 +101,27 @@ export const useChannelForChat: useChannelForChatT = (
     }
   }, []);
 
+  const timeoutRef = useRef<number>();
+
+  const handleOthersTyping = useCallback(({ user_id }: { user_id: number }) => {
+    if (user_id !== user.id) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = undefined;
+      }
+      setTypists((currentTypists) =>
+        currentTypists.includes(user_id)
+          ? currentTypists
+          : [...currentTypists, user_id],
+      );
+      timeoutRef.current = setTimeout(() => {
+        setTypists((currentTypists) =>
+          currentTypists.filter((id) => id !== user_id),
+        );
+      }, TYPING_THROTTLE_DELAY + 200);
+    }
+  }, []);
+
   useEffect(() => {
     if (latestIdHash !== id_hash && !channelOption.isEmpty() && visible) {
       const channel = channelOption.get();
@@ -101,6 +135,7 @@ export const useChannelForChat: useChannelForChatT = (
         });
 
       channel.on('chat_shout', handleIncomingMessages);
+      channel.on('chat_is_typing', handleOthersTyping);
     }
   }, [channelOption, visible, id_hash, latestIdHash]);
 
@@ -122,6 +157,7 @@ export const useChannelForChat: useChannelForChatT = (
           });
 
         channel.on('chat_shout', handleIncomingMessages);
+        channel.on('chat_is_typing', handleOthersTyping);
       } else {
         const channel = channelOption.get();
         channel
@@ -171,9 +207,20 @@ export const useChannelForChat: useChannelForChatT = (
     [channelOption],
   );
 
+  const handleTyping = useCallback<handleTypingT>(
+    throttle(
+      () => {
+        channelOption.get().push('chat_is_typing', {});
+      },
+      TYPING_THROTTLE_DELAY,
+      { trailing: false },
+    ),
+    [channelOption],
+  );
+
   const groupedMessages = useMemo(() => groupChatMessages(messages), [
     messages,
   ]);
 
-  return { groupedMessages, sendMessage, scroll };
+  return { groupedMessages, typists, sendMessage, scroll, handleTyping };
 };

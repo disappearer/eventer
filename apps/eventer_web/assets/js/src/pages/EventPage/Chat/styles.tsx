@@ -91,7 +91,6 @@ export const BotMessage = styled.div`
 
 export const Input = styled(TextArea)`
   width: 90%;
-  margin-bottom: 20px;
   line-height: 16px;
   font-size: 1rem;
   font-weight: 300;
@@ -102,4 +101,18 @@ export const Input = styled(TextArea)`
   border: 1px solid ${(props) => props.theme.colors.main};
 
   resize: none;
+`;
+
+export const TypingIndicator = styled.div<{ visible: boolean }>`
+  color: ${(props) => props.theme.colors.lighterGrey};
+  font-weight: 300;
+  font-size: 0.8rem;
+
+  visibility: ${({ visible }) => (visible ? 'visible' : 'hidden')};
+  height: 20px;
+  width: 90%;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
