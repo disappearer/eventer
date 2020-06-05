@@ -56,6 +56,7 @@ export const Decision = styled.div`
 
 export const Description = styled.div`
   margin-top: 5px;
+  white-space: pre-line;
 `;
 
 export const Objective = styled.div`

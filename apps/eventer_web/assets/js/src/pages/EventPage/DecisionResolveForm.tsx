@@ -4,7 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import TimeField from '../../components/TimeField';
-import { ButtonsGrid, FormGrid, FormTitle } from './Form.styles';
+import { ButtonsGrid, FormGrid, FormTitle, Input } from './Form.styles';
 import { objectiveT, resolutionT, resolveDecisionT } from './types';
 
 type valuesT = {
@@ -56,7 +56,7 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
                   disabled={false}
                 />
               ) : (
-                <TextField
+                <Input
                   label="Resolution"
                   name="resolution"
                   onChange={handleChange}

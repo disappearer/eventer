@@ -1,7 +1,14 @@
 import { format, parseISO } from 'date-fns';
 import { Option } from 'funfix';
 import { Channel } from 'phoenix';
-import React, { useContext, useMemo, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from 'react';
 import avatarPlaceholder from '../../../../../static/images/avatar-placeholder.png';
 import { useAuthorizedUser } from '../../../features/authentication/useAuthorizedUser';
 import EventContext from '../EventContext';
@@ -10,6 +17,7 @@ import {
   Avatar,
   BotMessage,
   ChatWrapper,
+  Day,
   Input,
   Message,
   Messages,
@@ -17,7 +25,6 @@ import {
   TimeStamp,
   Title,
   UserName,
-  Day,
 } from './styles';
 
 export const CHAT_HIDING_BREAKPOINT = '490';
@@ -43,7 +50,7 @@ const Chat: React.FC<chatPropsT> = ({
   ]);
 
   const messagesRef = useRef<HTMLDivElement>(null);
-  const { groupedMessages, sendMessage } = useChannelForChat(
+  const { groupedMessages, sendMessage, scroll } = useChannelForChat(
     channelOption,
     user,
     visible,
@@ -51,17 +58,65 @@ const Chat: React.FC<chatPropsT> = ({
   );
 
   const [messageText, setMessageText] = useState('');
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
-    setMessageText(e.target.value);
+    const value = e.target.value;
+    setMessageText(() => {
+      console.log('onChange');
+      return value;
+    });
   };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const submitForm = () => {
     if (messageText.length > 0) {
       sendMessage(messageText, Date.now());
       setMessageText('');
     }
   };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.charCode == 13) {
+      if (!e.shiftKey) {
+        const trimmedInput = messageText.trim();
+        // TODO: remove these hacky timeouts somehow
+        if (trimmedInput.length > 0) {
+          setTimeout(submitForm, 5);
+        } else {
+          setTimeout(() => {
+            setMessageText(() => {
+              console.log('onPress');
+              return '';
+            });
+          }, 5);
+        }
+      }
+    }
+  };
+
+  const inputRef = useRef<HTMLDivElement>(null);
+  const previousInputHeightRef = useRef<number>(0);
+
+  useEffect(() => {
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      const { height } = inputElement.getBoundingClientRect();
+      previousInputHeightRef.current = height;
+    }
+  }, [inputRef.current, previousInputHeightRef]);
+
+  const handleResize = useCallback(
+    (e: Event) => {
+      const inputElement = inputRef.current;
+      if (inputElement) {
+        const { height } = inputElement.getBoundingClientRect();
+        const diff = height - previousInputHeightRef.current;
+        if (diff !== 0) {
+          scroll(diff);
+        }
+        previousInputHeightRef.current = height;
+      }
+    },
+    [previousInputHeightRef, inputRef.current],
+  );
 
   return (
     <ChatWrapper visible={visible} isFullWidthChat={isFullWidthChat}>
@@ -93,9 +148,9 @@ const Chat: React.FC<chatPropsT> = ({
                           {user.name}
                           <TimeStamp>{at}</TimeStamp>
                         </UserName>
-                          {singleMessages.map(({ id, text }) => (
-                            <MessageText key={id}>{text}</MessageText>
-                          ))}
+                        {singleMessages.map(({ id, text }) => (
+                          <MessageText key={id}>{text}</MessageText>
+                        ))}
                       </Message>
                     );
                   } else {
@@ -109,10 +164,7 @@ const Chat: React.FC<chatPropsT> = ({
                     const at =
                       inserted_at === '...'
                         ? inserted_at
-                        : format(
-                            parseISO(inserted_at + 'Z'),
-                            'h:mm b',
-                          );
+                        : format(parseISO(inserted_at + 'Z'), 'h:mm b');
 
                     if (is_bot) {
                       return (
@@ -137,7 +189,7 @@ const Chat: React.FC<chatPropsT> = ({
                           {user.name}
                           <TimeStamp>{at}</TimeStamp>
                         </UserName>
-                          <MessageText>{text}</MessageText>
+                        <MessageText>{text}</MessageText>
                       </Message>
                     );
                   }
@@ -148,9 +200,15 @@ const Chat: React.FC<chatPropsT> = ({
         })}
       </Messages>
       {isParticipant && (
-        <form onSubmit={handleSubmit}>
-          <Input type="text" onChange={handleChange} value={messageText} />
-        </form>
+        <div ref={inputRef}>
+          <Input
+            value={messageText}
+            onKeyPress={handleKeyPress}
+            onChange={handleChange}
+            onResize={handleResize}
+            maxRows={4}
+          />
+        </div>
       )}
     </ChatWrapper>
   );
