@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { CHAT_HIDING_BREAKPOINT } from './Chat';
+import TextArea from 'react-autosize-textarea';
 
 type chatWrapperPropsT = {
   visible: boolean;
@@ -73,11 +74,12 @@ export const MessageText = styled.div`
   color: ${({ theme }) => theme.colors.mineShaft};
   font-size: 1rem;
   padding: 3px 0;
+  white-space: pre-line;
   &:hover {
     background: linear-gradient(
       90deg,
       rgba(0, 0, 0, 0) 0%,
-      ${({theme}) => theme.colors.lightestGrey} 10%,
+      ${({ theme }) => theme.colors.lightestGrey} 10%,
       rgba(0, 0, 0, 0) 90%
     );
   }
@@ -87,15 +89,17 @@ export const BotMessage = styled.div`
   padding: 7px 0;
 `;
 
-export const Input = styled.input`
+export const Input = styled(TextArea)`
   width: 90%;
   margin-bottom: 20px;
-  line-height: 1;
-  height: 24px;
-  font-size: 0.9rem;
+  line-height: 16px;
+  font-size: 1rem;
   font-weight: 300;
-  padding: 0 7px;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  padding: 7px;
   outline: none;
   border-radius: 5px;
   border: 1px solid ${(props) => props.theme.colors.main};
+
+  resize: none;
 `;

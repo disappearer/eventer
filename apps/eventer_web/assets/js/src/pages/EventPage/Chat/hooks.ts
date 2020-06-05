@@ -16,13 +16,18 @@ export type messageT = {
 };
 
 type sendMessageT = (text: string, timestamp: number) => void;
+type scrollT = (amount: number) => void;
 
 type useChannelForChatT = (
   channelOption: Option<Channel>,
   user: userDataT,
   visible: boolean,
   messagesRef: React.RefObject<HTMLDivElement>,
-) => { groupedMessages: dayMessagesT[]; sendMessage: sendMessageT };
+) => {
+  groupedMessages: dayMessagesT[];
+  sendMessage: sendMessageT;
+  scroll: scrollT;
+};
 export const useChannelForChat: useChannelForChatT = (
   channelOption,
   user,
@@ -43,14 +48,30 @@ export const useChannelForChat: useChannelForChatT = (
       messagesDiv.scrollTop =
         messagesDiv.scrollHeight - messagesDiv.clientHeight;
     }
-  }, [messagesRef]);
+  }, [messagesRef.current]);
 
   const scrollABit = useCallback(() => {
     const messagesDiv = messagesRef.current;
     if (messagesDiv) {
       messagesDiv.scrollTop = messagesDiv.scrollTop + 13;
     }
-  }, [messagesRef]);
+  }, [messagesRef.current]);
+
+  const scroll = useCallback<scrollT>(
+    (amount) => {
+      const messagesDiv = messagesRef.current;
+      if (messagesDiv) {
+        const isAtBottom =
+          messagesDiv.scrollTop ===
+          messagesDiv.scrollHeight - messagesDiv.clientHeight;
+        if (amount < 0 && isAtBottom) {
+          return;
+        }
+        messagesDiv.scrollTop = messagesDiv.scrollTop + amount;
+      }
+    },
+    [messagesRef.current],
+  );
 
   const handleIncomingMessages = useCallback((message) => {
     if (message.user_id !== user.id || message.is_bot) {
@@ -150,7 +171,9 @@ export const useChannelForChat: useChannelForChatT = (
     [channelOption],
   );
 
-  const groupedMessages = useMemo(() => groupChatMessages(messages), [messages]);
+  const groupedMessages = useMemo(() => groupChatMessages(messages), [
+    messages,
+  ]);
 
-  return { groupedMessages, sendMessage };
+  return { groupedMessages, sendMessage, scroll };
 };
