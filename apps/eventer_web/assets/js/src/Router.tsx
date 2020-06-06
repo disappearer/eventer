@@ -7,6 +7,7 @@ import EventPage from './pages/EventPage/EventPage';
 import HomePage from './pages/HomePage/HomePage';
 import NewEventPage from './pages/NewEventPage/NewEventPage';
 import GlobalHooks from './GlobalHooks';
+import LoginPage from './pages/LoginPage/LoginPage';
 
 const Router: React.FC = () => {
   return (
@@ -17,6 +18,9 @@ const Router: React.FC = () => {
         <Switch>
           <Route exact path="/">
             <HomePage />
+          </Route>
+          <Route path="/login">
+            <LoginPage />
           </Route>
           <Route path="/about">
             <About />
