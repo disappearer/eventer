@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import Button from '../../components/Button';
-import EventContext from './EventContext';
-import { ButtonsGrid } from './Form.styles';
-import { removeDecisionT } from './types';
+import Button from '../../../components/Button';
+import EventContext from '../EventContext';
+import { ButtonsGrid } from '../Form.styles';
+import { removeDecisionT } from '../types';
 
 const RemovedDecision = styled.h4`
   display: inline;

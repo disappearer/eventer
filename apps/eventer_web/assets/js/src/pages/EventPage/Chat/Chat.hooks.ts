@@ -1,18 +1,18 @@
 import { Option } from 'funfix';
+import throttle from 'lodash.throttle';
 import { Channel } from 'phoenix';
 import React, {
   useCallback,
   useEffect,
-  useState,
   useMemo,
   useRef,
+  useState,
 } from 'react';
-import { userDataT } from '../../../features/authentication/userReducer';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { reduxStateT } from '../../../common/store';
-import { useSelector } from 'react-redux';
-import { groupChatMessages, dayMessagesT } from './util';
-import throttle from 'lodash.throttle';
+import { userDataT } from '../../../features/authentication/userReducer';
+import { dayMessagesT, groupChatMessages } from './Chat.util';
 
 const TYPING_THROTTLE_DELAY = 2000;
 

@@ -1,11 +1,10 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import Button from '../../components/Button';
-import TextField from '../../components/TextField';
-import TimeField from '../../components/TimeField';
-import { ButtonsGrid, FormGrid, FormTitle, Input } from './Form.styles';
-import { objectiveT, resolutionT, resolveDecisionT } from './types';
+import Button from '../../../../components/Button';
+import TimeField from '../../../../components/TimeField';
+import { ButtonsGrid, FormGrid, FormTitle, Input } from '../../Form.styles';
+import { objectiveT, resolutionT, resolveDecisionT } from '../../types';
 
 type valuesT = {
   resolution: resolutionT;

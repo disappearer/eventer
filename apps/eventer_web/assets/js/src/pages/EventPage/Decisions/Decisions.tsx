@@ -1,6 +1,8 @@
 import React from 'react';
-import Button from '../../components/Button';
-import { formatTime } from '../../util/time';
+import Button from '../../../components/Button';
+import { formatTime } from '../../../util/time';
+import useParticipation from '../hooks/useParticipation';
+import { stateDecisionsT } from '../types';
 import {
   Decision,
   DecisionList,
@@ -12,8 +14,6 @@ import {
   Description,
   Objective,
 } from './Decisions.styles';
-import useParticipation from './hooks/useParticipation';
-import { stateDecisionsT } from './types';
 
 type decisionsPropsT = {
   decisions: stateDecisionsT;

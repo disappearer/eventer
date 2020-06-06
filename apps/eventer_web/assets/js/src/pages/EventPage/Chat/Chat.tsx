@@ -2,17 +2,17 @@ import { format, parseISO } from 'date-fns';
 import { Option } from 'funfix';
 import { Channel } from 'phoenix';
 import React, {
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  useCallback,
 } from 'react';
 import avatarPlaceholder from '../../../../../static/images/avatar-placeholder.png';
 import { useAuthorizedUser } from '../../../features/authentication/useAuthorizedUser';
 import EventContext from '../EventContext';
-import { useChannelForChat } from './hooks';
+import { useChannelForChat } from './Chat.hooks';
 import {
   Avatar,
   BotMessage,
@@ -24,9 +24,9 @@ import {
   MessageText,
   TimeStamp,
   Title,
-  UserName,
   TypingIndicator,
-} from './styles';
+  UserName,
+} from './Chat.styles';
 
 export const CHAT_HIDING_BREAKPOINT = '490';
 type chatPropsT = {

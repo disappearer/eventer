@@ -5,11 +5,12 @@ import { reduxStateT } from '../../common/store';
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
 import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
-import AddDecisionForm from './AddDecisionForm';
 import BasicEventInfo from './BasicEventInfo';
 import Chat from './Chat/Chat';
-import DecisionDetails from './DecisionDetails';
-import Decisions from './Decisions';
+import AddDecisionForm from './Decisions/AddDecisionForm';
+import DecisionDetails from './Decisions/DecisionDetails/DecisionDetails';
+import Decisions from './Decisions/Decisions';
+import RemoveDecisionConfirmation from './Decisions/RemoveDecisionConfirmation';
 import EventContext from './EventContext';
 import {
   ChatWrapper,
@@ -27,7 +28,6 @@ import useChatHidingBreakpoint from './hooks/useChatHidingBreakpoint';
 import useModal from './hooks/useModal';
 import usePreviousEvent from './hooks/usePreviousEvent';
 import OpenDiscussionConfirmation from './OpenDiscussionConfirmation';
-import RemoveDecisionConfirmation from './RemoveDecisionConfirmation';
 import { stateEventT } from './types';
 import { hasExistingDecision } from './util';
 

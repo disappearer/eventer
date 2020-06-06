@@ -1,8 +1,8 @@
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import Button from '../../components/Button';
-import TextField from '../../components/TextField';
-import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
+import Button from '../../../../components/Button';
+import TextField from '../../../../components/TextField';
+import { useAuthorizedUser } from '../../../../features/authentication/useAuthorizedUser';
 import {
   CustomOption,
   Description,
@@ -11,7 +11,7 @@ import {
   Question,
 } from './Poll.styles';
 import PollResults from './PollResults';
-import { pollT, voteT } from './types';
+import { pollT, voteT } from '../../types';
 
 type valuesT = {
   customOption: string;

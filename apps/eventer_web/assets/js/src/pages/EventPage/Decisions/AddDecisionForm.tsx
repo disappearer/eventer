@@ -1,9 +1,9 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
-import { addDecisionT } from './types';
-import { FormTitle, FormGrid, ButtonsGrid } from './Form.styles';
-import TextField from '../../components/TextField';
-import Button from '../../components/Button';
+import Button from '../../../components/Button';
+import TextField from '../../../components/TextField';
+import { ButtonsGrid, FormGrid, FormTitle } from '../Form.styles';
+import { addDecisionT } from '../types';
 
 type valuesT = {
   title: string;
