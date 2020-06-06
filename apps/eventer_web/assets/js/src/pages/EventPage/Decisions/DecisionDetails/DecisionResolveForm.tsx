@@ -60,6 +60,8 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
                   name="resolution"
                   onChange={handleChange}
                   value={values.resolution as string}
+                  rows={4}
+                  maxRows={11}
                 />
               )}
               <ButtonsGrid>

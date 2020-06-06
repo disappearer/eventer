@@ -51,7 +51,7 @@ const NewEventForm: React.FC = () => {
             setErrors(response.errors);
             break;
           case true:
-            history.push('/');
+            history.push(`/events/${response.event_id_hash}`);
             break;
         }
       }}
