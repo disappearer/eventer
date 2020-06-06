@@ -1,11 +1,11 @@
-import { messageT } from './hooks';
 import {
-  parseISO,
+  differenceInMinutes,
+  format,
   isToday,
   isYesterday,
-  format,
-  differenceInMinutes,
+  parseISO,
 } from 'date-fns';
+import { messageT } from './Chat.hooks';
 
 type singleMessageT = {
   isGroup: false;

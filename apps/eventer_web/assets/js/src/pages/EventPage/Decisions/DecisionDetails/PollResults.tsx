@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import EventContext from './EventContext';
-import { optionT, stateEventT } from './types';
+import EventContext from '../../EventContext';
+import { optionT, stateEventT } from '../../types';
 
 const Options = styled.div`
   display: grid;

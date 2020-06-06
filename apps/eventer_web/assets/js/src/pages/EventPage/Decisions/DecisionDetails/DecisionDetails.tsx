@@ -1,6 +1,18 @@
 import React, { useContext } from 'react';
-import Button from '../../components/Button';
-import { formatTime } from '../../util/time';
+import Button from '../../../../components/Button';
+import { formatTime } from '../../../../util/time';
+import EventContext from '../../EventContext';
+import useParticipation from '../../hooks/useParticipation';
+import Poll from './Poll';
+import PollForm from './PollForm';
+import {
+  addPollT,
+  discardPollT,
+  discardResolutionT,
+  resolveDecisionT,
+  updateDecisionT,
+  voteT,
+} from '../../types';
 import { useDecisionActions } from './DecisionDetails.hooks';
 import {
   DecisionTitle,
@@ -9,28 +21,16 @@ import {
   ObjectiveArea,
   PollArea,
   RemovedDecision,
+  RemovePollButton,
   ResolutionArea,
   ResolutionLabel,
   StatusArea,
   TitleLine,
   Wrapper,
-  RemovePollButton,
 } from './DecisionDetails.styles';
 import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
 import Confirmation from './DiscardResolutionConfirmation';
-import EventContext from './EventContext';
-import useParticipation from './hooks/useParticipation';
-import Poll from './Poll';
-import PollForm from './PollForm';
-import {
-  addPollT,
-  discardResolutionT,
-  resolveDecisionT,
-  updateDecisionT,
-  voteT,
-  discardPollT,
-} from './types';
 
 type decisionDetailsPropsT = {
   id: number;
@@ -65,7 +65,7 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
     showResolveForm,
     resetDecisionModal,
     discardResolution,
-    discardPoll
+    discardPoll,
   } = useDecisionActions(id, onResolutionDiscard, onPollDiscard);
 
   if (!event.decisions[id]) {

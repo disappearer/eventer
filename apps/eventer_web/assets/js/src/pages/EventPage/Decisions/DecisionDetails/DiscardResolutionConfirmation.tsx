@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from '../../components/Button';
-import { ButtonsGrid, FormTitle } from './Form.styles';
+import Button from '../../../../components/Button';
+import { ButtonsGrid, FormTitle } from '../../Form.styles';
 
 type discardResolutionConfirmationPropsT = {
   title: string;

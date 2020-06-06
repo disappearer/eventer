@@ -1,11 +1,11 @@
 import { FieldArray, Form, Formik } from 'formik';
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import Button from '../../components/Button';
-import CheckboxField from '../../components/CheckboxField';
-import TextField from '../../components/TextField';
-import { ButtonsGrid, FormGrid, FormTitle } from './Form.styles';
-import { addPollT, pollT } from './types';
+import Button from '../../../../components/Button';
+import CheckboxField from '../../../../components/CheckboxField';
+import TextField from '../../../../components/TextField';
+import { ButtonsGrid, FormGrid, FormTitle } from '../../Form.styles';
+import { addPollT, pollT } from '../../types';
 
 const PollOption = styled.div`
   display: grid;

@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { discardResolutionT, discardPollT } from './types';
+import { useCallback, useState } from 'react';
+import { discardPollT, discardResolutionT } from '../../types';
 
 type decisionActionT =
   | 'view'

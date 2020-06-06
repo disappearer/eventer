@@ -1,9 +1,9 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
-import Button from '../../components/Button';
-import TextField from '../../components/TextField';
-import { ButtonsGrid, FormGrid, FormTitle } from './Form.styles';
-import { updateDecisionT } from './types';
+import Button from '../../../../components/Button';
+import TextField from '../../../../components/TextField';
+import { ButtonsGrid, FormGrid, FormTitle } from '../../Form.styles';
+import { updateDecisionT } from '../../types';
 
 type valuesT = {
   title: string;
@@ -33,7 +33,7 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
       initialValues={initialValues}
       onSubmit={(values, { setErrors, setSubmitting }) => {
         onSubmit(
-          {id, ...values},
+          { id, ...values },
           () => {
             setSubmitting(false);
             onSuccess();

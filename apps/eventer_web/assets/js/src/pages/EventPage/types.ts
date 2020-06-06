@@ -1,4 +1,4 @@
-import { pollValuesT } from './PollForm';
+import { pollValuesT } from './Decisions/DecisionDetails/PollForm';
 
 export type stateEventT = eventDataT & {
   decisions: stateDecisionsT;
