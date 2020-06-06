@@ -505,12 +505,16 @@ defmodule EventerWeb.EventChannel do
     absentee_ids = get_absent_participants(event, socket)
 
     if not Enum.empty?(absentee_ids) do
-      @notifier.notify_absent_participants(absentee_ids, event, %{
-        title: "\"#{event.title}\" is active!",
-        body: body
-      })
+      if Application.get_env(:eventer_web, :notifications_enabled) do
+        Task.start_link(fn ->
+          @notifier.notify_absent_participants(absentee_ids, event, %{
+            title: "\"#{event.title}\" is active!",
+            body: body
+          })
 
-      Users.set_notification_pending(absentee_ids, event_id)
+          Users.set_notification_pending(absentee_ids, event_id)
+        end)
+      end
     end
   end
 

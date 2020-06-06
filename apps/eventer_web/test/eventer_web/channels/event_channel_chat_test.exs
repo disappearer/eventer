@@ -11,6 +11,7 @@ defmodule EventerWeb.EventChannelChatTest do
   setup :verify_on_exit!
 
   describe "Event chat" do
+    @tag :notifications_enabled
     @tag authorized: 2
     test "'chat_shout' inserts message into DB", %{
       connections: connections
@@ -52,6 +53,7 @@ defmodule EventerWeb.EventChannelChatTest do
       assert user_id === joiner.user.id
     end
 
+    @tag :notifications_enabled
     @tag authorized: 2
     test "'chat_shout' is broadcasted", %{
       connections: connections
@@ -97,6 +99,7 @@ defmodule EventerWeb.EventChannelChatTest do
              }
     end
 
+    @tag :notifications_enabled
     @tag authorized: 2
     test "'get_chat_messages' gets event chat messages", %{
       connections: connections
@@ -133,6 +136,7 @@ defmodule EventerWeb.EventChannelChatTest do
       assert reply_messages === message_maps ++ [join_shout]
     end
 
+    @tag :notifications_enabled
     @tag authorized: 2
     test "'get_chat_messages' with after field", %{
       connections: connections
@@ -211,7 +215,7 @@ defmodule EventerWeb.EventChannelChatTest do
       assert reply_messages === message_maps
     end
 
-    @tag :wip
+    @tag :notifications_enabled
     @tag authorized: 3
     test "'chat_shout' notifies absent participants only once", %{
       connections: connections
@@ -331,7 +335,6 @@ defmodule EventerWeb.EventChannelChatTest do
           "event:#{event_id_hash}"
         )
 
-      message = "Hell World!"
       ref = push(socket, "chat_is_typing", %{})
       assert_reply(ref, :ok, %{})
 

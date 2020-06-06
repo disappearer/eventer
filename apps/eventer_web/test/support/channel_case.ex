@@ -31,6 +31,14 @@ defmodule EventerWeb.ChannelCase do
       @endpoint EventerWeb.Endpoint
 
       setup tags do
+        if tags[:notifications_enabled] do
+          Application.put_env(:eventer_web, :notifications_enabled, true)
+
+          on_exit(fn ->
+            Application.put_env(:eventer_web, :notifications_enabled, false)
+          end)
+        end
+
         case tags[:authorized] do
           nil ->
             :ok
