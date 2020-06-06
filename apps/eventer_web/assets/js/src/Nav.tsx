@@ -141,9 +141,7 @@ const Nav: React.FC = () => {
           {user.data.fold(
             () => (
               <NavListItem>
-                <Link external={true} asButton={true} to="/auth/google">
-                  Google Login
-                </Link>
+                <Link to="/login">Login</Link>
               </NavListItem>
             ),
             ({ name }) => (
