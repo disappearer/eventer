@@ -33,12 +33,10 @@ defmodule EventerWeb.FirebaseNotifier do
               },
               notification: %{
                 body: notification.body,
-                requireInteraction: "true",
                 badge: "/badge-icon.png"
               },
               fcm_options: %{
-                link:
-                  "#{@domain_url}/events/#{event_id_hash}"
+                link: "#{@domain_url}/events/#{event_id_hash}"
               }
             },
             token: firebase_token
