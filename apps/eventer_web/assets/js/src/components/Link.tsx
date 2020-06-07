@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const StyledLink = styled(RouterLink)`
-  text-decoration: none;
+  // text-decoration: none;
 
   color: ${(props) => props.theme.colors.main};
 

@@ -82,3 +82,7 @@ export const RemovedDecision = styled.h4`
   display: inline;
   margin: 0;
 `;
+
+export const Resolution = styled.div`
+  white-space: pre-line;
+`;

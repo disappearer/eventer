@@ -1,5 +1,6 @@
 import { format, parseISO } from 'date-fns';
 import { Option } from 'funfix';
+import Markdown from 'markdown-to-jsx';
 import { Channel } from 'phoenix';
 import React, {
   useCallback,
@@ -88,7 +89,7 @@ const Chat: React.FC<chatPropsT> = ({
   };
   const submitForm = () => {
     if (messageText.length > 0) {
-      sendMessage(messageText, Date.now());
+      sendMessage(messageText.trim(), Date.now());
       setMessageText('');
     }
   };
@@ -169,7 +170,9 @@ const Chat: React.FC<chatPropsT> = ({
                           <TimeStamp>{at}</TimeStamp>
                         </UserName>
                         {singleMessages.map(({ id, text }) => (
-                          <MessageText key={id}>{text}</MessageText>
+                          <MessageText key={id}>
+                            <Markdown>{text}</Markdown>
+                          </MessageText>
                         ))}
                       </Message>
                     );
@@ -209,7 +212,9 @@ const Chat: React.FC<chatPropsT> = ({
                           {user.name}
                           <TimeStamp>{at}</TimeStamp>
                         </UserName>
-                        <MessageText>{text}</MessageText>
+                        <MessageText>
+                          <Markdown>{text}</Markdown>
+                        </MessageText>
                       </Message>
                     );
                   }
