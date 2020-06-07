@@ -3,6 +3,7 @@ defmodule EventerWeb.EventChannelResolveTest do
 
   alias EventerWeb.{IdHasher, EventChannel}
   alias Eventer.{Decision, Event, Repo}
+  alias Eventer.Persistence.Events
 
   describe "Decision resolving" do
     @tag authorized: 1
@@ -42,6 +43,11 @@ defmodule EventerWeb.EventChannelResolveTest do
                {[:pending], true, false},
                {[:resolution], nil, resolution}
              ]
+
+      # assert event time/place unchanged
+      db_event = Events.get_event(event.id)
+      assert db_event.time === event.time
+      assert db_event.place === event.place
     end
 
     @tag authorized: 1

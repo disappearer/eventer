@@ -38,6 +38,14 @@ h6 {
   color: #00647b;
 }
 
+a {
+  word-break: break-all;
+}
+
+p {
+  margin: 0;
+}
+
 /* 
 h1 {
   font-size: 4.6rem;

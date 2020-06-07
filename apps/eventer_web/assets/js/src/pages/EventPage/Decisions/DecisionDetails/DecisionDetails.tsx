@@ -1,36 +1,17 @@
+import Markdown from 'markdown-to-jsx';
 import React, { useContext } from 'react';
 import Button from '../../../../components/Button';
 import { formatTime } from '../../../../util/time';
 import EventContext from '../../EventContext';
 import useParticipation from '../../hooks/useParticipation';
-import Poll from './Poll';
-import PollForm from './PollForm';
-import {
-  addPollT,
-  discardPollT,
-  discardResolutionT,
-  resolveDecisionT,
-  updateDecisionT,
-  voteT,
-} from '../../types';
+import { addPollT, discardPollT, discardResolutionT, resolveDecisionT, updateDecisionT, voteT } from '../../types';
 import { useDecisionActions } from './DecisionDetails.hooks';
-import {
-  DecisionTitle,
-  InfoArea,
-  Label,
-  ObjectiveArea,
-  PollArea,
-  RemovedDecision,
-  RemovePollButton,
-  ResolutionArea,
-  ResolutionLabel,
-  StatusArea,
-  TitleLine,
-  Wrapper,
-} from './DecisionDetails.styles';
+import { DecisionTitle, InfoArea, Label, ObjectiveArea, PollArea, RemovedDecision, RemovePollButton, Resolution, ResolutionArea, ResolutionLabel, StatusArea, TitleLine, Wrapper } from './DecisionDetails.styles';
 import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
 import Confirmation from './DiscardResolutionConfirmation';
+import Poll from './Poll';
+import PollForm from './PollForm';
 
 type decisionDetailsPropsT = {
   id: number;
@@ -111,9 +92,13 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
                   </Button>
                 )}
               </TitleLine>
-              <div>
-                {objective === 'time' ? formatTime(resolution) : resolution}
-              </div>
+              <Resolution>
+                {objective === 'time' ? (
+                  formatTime(resolution)
+                ) : (
+                  <Markdown>{resolution}</Markdown>
+                )}
+              </Resolution>
             </ResolutionArea>
           )}
           {isCurrentUserParticipating && (

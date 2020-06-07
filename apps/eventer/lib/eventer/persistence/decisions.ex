@@ -54,18 +54,19 @@ defmodule Eventer.Persistence.Decisions do
   end
 
   defp update_event(decision, resolution) do
-    data =
-      if decision.objective === "time" do
-        {:ok, time, _} = DateTime.from_iso8601(resolution)
-        %{time: time}
-      else
-        %{place: resolution}
-      end
+    event = Events.get_event(decision.event_id)
 
-    decision
-    |> Repo.preload(:event)
-    |> Map.get(:event)
-    |> Events.update_event(data)
+    case decision.objective do
+      "time" ->
+        {:ok, time, _} = DateTime.from_iso8601(resolution)
+        Events.update_event(event, %{time: time})
+
+      "place" ->
+        Events.update_event(event, %{place: resolution})
+
+      _ ->
+        {:ok, event}
+    end
   end
 
   defp update_event_place(decision, place) do

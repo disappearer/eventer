@@ -133,6 +133,13 @@ export const TimeData = styled.div`
 `;
 
 export const PlaceData = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  a {
+    word-break: normal;
+  }
+
   margin-right: 10px;
   grid-row: 2/3;
 
@@ -208,5 +215,6 @@ export const PresenceIndicator = styled.div<{ isOnline?: boolean }>`
   border: 1px solid ${({ isOnline, theme }) =>
     isOnline ? theme.colors.main : theme.colors.lighterGrey};
 }
-  background: ${({isOnline, theme}) => isOnline ? theme.colors.main : 'transparent'}
+  background: ${({ isOnline, theme }) =>
+    isOnline ? theme.colors.main : 'transparent'}
 `;

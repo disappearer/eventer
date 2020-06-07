@@ -1,3 +1,4 @@
+import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import Button from '../../components/Button';
 import Description from '../../components/Description';
@@ -11,18 +12,18 @@ import {
   Grid,
   Info,
   Label,
+  Participant,
   Participants,
   ParticipantsGrid,
   PlaceData,
   PlaceDiscussButton,
   PlaceLabel,
+  PresenceIndicator,
   TimeData,
   TimePlace,
-  PresenceIndicator,
-  Participant,
 } from './BasicEventInfo.styles';
-import { stateEventT } from './types';
 import useParticipation from './hooks/useParticipation';
+import { stateEventT } from './types';
 
 type basicEventInfoPropsT = {
   event: stateEventT;
@@ -55,7 +56,11 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
             </EditEventButton>
           )}
         </EventTitleLine>
-        <Description>{description}</Description>
+        {description && (
+          <Description>
+            <Markdown>{description}</Markdown>
+          </Description>
+        )}
         <CreatedBy>Created by {participants[creatorId].name}</CreatedBy>
       </Info>
       <TimePlace>
@@ -72,7 +77,9 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
           <DiscussButton onClick={onDiscussTimeClick}>Discuss</DiscussButton>
         )}
         <PlaceLabel>Place</PlaceLabel>
-        <PlaceData>{place || 'TBD'}</PlaceData>
+        <PlaceData>
+          {(place && <Markdown>{place}</Markdown>) || 'TBD'}
+        </PlaceData>
         {isCurrentUserParticipating && place && (
           <PlaceDiscussButton onClick={onDiscussPlaceClick}>
             Discuss

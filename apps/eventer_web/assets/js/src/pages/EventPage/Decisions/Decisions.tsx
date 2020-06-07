@@ -1,3 +1,4 @@
+import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import Button from '../../../components/Button';
 import { formatTime } from '../../../util/time';
@@ -61,7 +62,11 @@ const Decisions: React.FC<decisionsPropsT> = ({
                 )}
               </DecisionTitleLine>
               <Description>
-                {pending ? description : formattedResolution}
+                {pending
+                  ? description && <Markdown>{description}</Markdown>
+                  : formattedResolution && (
+                      <Markdown>{formattedResolution}</Markdown>
+                    )}
               </Description>
               <Objective>Objective: {objective}</Objective>
             </Decision>

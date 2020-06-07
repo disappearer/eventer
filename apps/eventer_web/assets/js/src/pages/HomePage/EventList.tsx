@@ -18,10 +18,11 @@ const Event = styled.div`
   padding: 15px 0px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-column-gap: 20px;
 `;
 
 const EventTitle = styled.h2`
-  justify-self: center;
+  justify-self: end;
 `;
 
 const TimePlace = styled.div`
