@@ -1,5 +1,5 @@
 import { None, Option } from 'funfix';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { reduxStateT } from '../../common/store';
 import Loader from '../../components/Loader';
@@ -13,7 +13,6 @@ import Decisions from './Decisions/Decisions';
 import RemoveDecisionConfirmation from './Decisions/RemoveDecisionConfirmation';
 import EventContext from './EventContext';
 import {
-  ChatWrapper,
   DecisionsAndChat,
   EventPageWrapper,
   EventPanel,
@@ -64,6 +63,12 @@ const EventPage: React.FC = () => {
     hideModal,
   } = useModal();
 
+  useEffect(() => {
+    if (!event.isEmpty()) {
+      document.title = event.get().title;
+    }
+  }, [event]);
+
   const isScreenWide = useChatHidingBreakpoint();
 
   const isChatVisible = useSelector<reduxStateT, boolean>(
@@ -82,101 +87,91 @@ const EventPage: React.FC = () => {
         <EventContext.Provider value={{ event, previousEvent }}>
           <EventPageWrapper>
             <HorizontalSeparator />
-            <ChatWrapper visible={isChatVisible}>
-              <Chat
-                visible={!isScreenWide && isChatVisible}
-                isFullWidthChat={false}
-                channel={channel}
-              />
-            </ChatWrapper>
-            <EventPanel visible={!isChatVisible}>
-              <BasicEventInfo
-                event={event}
-                currentUserId={currentUserId}
-                onEditEventClick={showEditModal}
-                onDiscussTimeClick={() => showOpenDiscussionModal('time')}
-                onDiscussPlaceClick={() => showOpenDiscussionModal('place')}
-                joinEvent={joinEvent}
-                leaveEvent={leaveEvent}
-              />
-              <HorizontalSeparator />
-              <DecisionsAndChat>
+            <DecisionsAndChat>
+              <EventPanel visible={!isChatVisible}>
+                <BasicEventInfo
+                  event={event}
+                  currentUserId={currentUserId}
+                  onEditEventClick={showEditModal}
+                  onDiscussTimeClick={() => showOpenDiscussionModal('time')}
+                  onDiscussPlaceClick={() => showOpenDiscussionModal('place')}
+                  joinEvent={joinEvent}
+                  leaveEvent={leaveEvent}
+                />
+                <HorizontalSeparator />
+
                 <Decisions
                   decisions={decisions}
                   onDecisionClick={showDecisionModal}
                   onAddDecisionClick={showAddDecisionModal}
                   onRemoveDecisionClick={showRemoveDecisionModal}
                 />
-                <VerticalSeparator />
-                <Chat
-                  isFullWidthChat={true}
-                  visible={isScreenWide}
-                  channel={channel}
-                />
-              </DecisionsAndChat>
+              </EventPanel>
+              <VerticalSeparator />
+              <Chat visible={isScreenWide || isChatVisible} channel={channel} />
+            </DecisionsAndChat>
 
-              <Modal shouldShowModal={shouldShowModal} hideModal={hideModal}>
-                {modalChild.fold(
-                  () => null,
-                  (child) => {
-                    switch (child.component) {
-                      case 'EventUpdateForm':
-                        return (
-                          <EventUpdateForm
-                            initialValues={{
-                              title,
-                              description: description || '',
-                            }}
-                            onSuccess={hideModal}
-                            onSubmit={updateEvent}
-                            formTitle={`Edit ${event.title}`}
-                          />
-                        );
-                      case 'DecisionDetails':
-                        return (
-                          <DecisionDetails
-                            id={child.id}
-                            onDecisionResolve={resolveDecision}
-                            onDecisionUpdate={updateDecision}
-                            onResolutionDiscard={discardResolution}
-                            onPollDiscard={discardPoll}
-                            onAddPoll={addPoll}
-                            onVote={vote}
-                          />
-                        );
-                      case 'AddDecisionForm':
-                        return (
-                          <AddDecisionForm
-                            onSuccess={hideModal}
-                            onSubmit={addDecision}
-                          />
-                        );
-                      case 'RemoveDecisionConfirmation':
-                        return (
-                          <RemoveDecisionConfirmation
-                            id={child.id}
-                            onConfirm={removeDecision}
-                            closeModal={hideModal}
-                          />
-                        );
-                      case 'OpenDiscussionConfirmation':
-                        const decisionExists = hasExistingDecision(
-                          decisions,
-                          child.objective,
-                        );
-                        return (
-                          <OpenDiscussionConfirmation
-                            objective={child.objective}
-                            hasCorrespondingDecision={decisionExists}
-                            onConfirm={openDiscussion}
-                            closeModal={hideModal}
-                          />
-                        );
-                    }
-                  },
-                )}
-              </Modal>
-            </EventPanel>
+            <Modal shouldShowModal={shouldShowModal} hideModal={hideModal}>
+              {modalChild.fold(
+                () => null,
+                (child) => {
+                  switch (child.component) {
+                    case 'EventUpdateForm':
+                      return (
+                        <EventUpdateForm
+                          initialValues={{
+                            title,
+                            description: description || '',
+                          }}
+                          onSuccess={hideModal}
+                          onSubmit={updateEvent}
+                          formTitle={`Edit ${event.title}`}
+                        />
+                      );
+                    case 'DecisionDetails':
+                      return (
+                        <DecisionDetails
+                          id={child.id}
+                          onDecisionResolve={resolveDecision}
+                          onDecisionUpdate={updateDecision}
+                          onResolutionDiscard={discardResolution}
+                          onPollDiscard={discardPoll}
+                          onAddPoll={addPoll}
+                          onVote={vote}
+                        />
+                      );
+                    case 'AddDecisionForm':
+                      return (
+                        <AddDecisionForm
+                          onSuccess={hideModal}
+                          onSubmit={addDecision}
+                        />
+                      );
+                    case 'RemoveDecisionConfirmation':
+                      return (
+                        <RemoveDecisionConfirmation
+                          id={child.id}
+                          onConfirm={removeDecision}
+                          closeModal={hideModal}
+                        />
+                      );
+                    case 'OpenDiscussionConfirmation':
+                      const decisionExists = hasExistingDecision(
+                        decisions,
+                        child.objective,
+                      );
+                      return (
+                        <OpenDiscussionConfirmation
+                          objective={child.objective}
+                          hasCorrespondingDecision={decisionExists}
+                          onConfirm={openDiscussion}
+                          closeModal={hideModal}
+                        />
+                      );
+                  }
+                },
+              )}
+            </Modal>
           </EventPageWrapper>
         </EventContext.Provider>
       );

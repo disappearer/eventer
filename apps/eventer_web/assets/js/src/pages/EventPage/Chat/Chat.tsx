@@ -1,6 +1,5 @@
 import { format, parseISO } from 'date-fns';
 import { Option } from 'funfix';
-import Markdown from 'markdown-to-jsx';
 import { Channel } from 'phoenix';
 import React, {
   useCallback,
@@ -28,19 +27,15 @@ import {
   TypingIndicator,
   UserName,
 } from './Chat.styles';
+import Markdown from '../../../components/Markdown';
 
-export const CHAT_HIDING_BREAKPOINT = '490';
 type chatPropsT = {
-  visible?: boolean;
-  isFullWidthChat: boolean;
+  visible: boolean;
   channel: Option<Channel>;
 };
 
-const Chat: React.FC<chatPropsT> = ({
-  visible = true,
-  isFullWidthChat,
-  channel: channelOption,
-}) => {
+const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
+  console.log('visible', visible);
   const {
     event: { participants, exParticipants },
   } = useContext(EventContext);
@@ -140,7 +135,7 @@ const Chat: React.FC<chatPropsT> = ({
   );
 
   return (
-    <ChatWrapper visible={visible} isFullWidthChat={isFullWidthChat}>
+    <ChatWrapper visible={visible}>
       <Title>Chat and updates</Title>
       <Messages ref={messagesRef}>
         {groupedMessages.map(({ day, messages }) => {

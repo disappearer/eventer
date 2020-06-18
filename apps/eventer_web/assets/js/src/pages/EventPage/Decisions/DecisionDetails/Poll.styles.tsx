@@ -13,7 +13,7 @@ export const Options = styled.div`
 
 export const Description = styled.div`
   font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: ${({ theme }) => theme.colors.emperor};
   max-width: 273px;
 `;
 
@@ -28,12 +28,12 @@ export const Option = styled.div<optionPropsT>`
   ${(props) =>
     props.selected
       ? `border: 1px solid ${props.theme.colors.pale};
-          background: ${props.theme.colors.paler};`
-      : `border: 1px solid ${props.theme.colors.lighterGrey};`}
+          background: ${props.theme.colors.jaggedIce};`
+      : `border: 1px solid ${props.theme.colors.grey};`}
 
   &:hover {
     cursor: pointer;
-    box-shadow: 0 0 3px ${(props) => props.theme.colors.main};
+    box-shadow: 0 0 3px ${({ theme }) => theme.colors.main};
   }
 `;
 

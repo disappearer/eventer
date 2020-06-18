@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { CHAT_HIDING_BREAKPOINT } from '../Chat/Chat';
+import { CHAT_HIDING_BREAKPOINT } from '../Chat/Chat.util';
 
 const chatHidingBreakpoint = parseInt(CHAT_HIDING_BREAKPOINT, 10);
 
+// TODOR: EMOVE? DO EYE NEAD DIS?
 type useChatHiddingBreakpointT = () => boolean;
 const useChatHiddingBreakpoint: useChatHiddingBreakpointT = () => {
   const [isWide, setIsWide] = useState(false);

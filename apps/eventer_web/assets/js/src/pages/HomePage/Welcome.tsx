@@ -14,7 +14,7 @@ const Title = styled(CommonTitle)`
 const SubTitle = styled.h3`
   justify-self: center;
   letter-spacing: 0.2rem;
-  color: ${(props) => props.theme.colors.pale};
+  color: ${({ theme }) => theme.colors.pale};
   align-self: start;
   margin: 0;
   text-align: center;
@@ -23,7 +23,7 @@ const SubTitle = styled.h3`
 const Description = styled.div`
   margin-top: 53px;
   max-width: 700px;
-  color: ${(props) => props.theme.colors.tundora};
+  color: ${({ theme }) => theme.colors.tundora};
 `;
 
 const Paragraph = styled.p`

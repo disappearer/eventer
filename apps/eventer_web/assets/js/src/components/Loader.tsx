@@ -1,6 +1,12 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
+type loaderPropsT = {
+  height?: string;
+  circleSize?: circleSizeT;
+  color?: string;
+};
+
 const animation = keyframes`
   0%, 80%, 100% { 
     transform: scale(0);
@@ -11,7 +17,7 @@ const animation = keyframes`
 
 const Wrapper = styled.div<loaderPropsT>`
   margin: 0 auto;
-  height: ${(props) => props.height || 'auto'};
+  height: ${({ height }) => height || 'auto'};
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
@@ -22,12 +28,13 @@ const Wrapper = styled.div<loaderPropsT>`
 type circleSizeT = 'normal' | 'small';
 type circlePropsT = {
   size: circleSizeT;
+  color?: string;
 };
 const Circle = styled.div<circlePropsT>`
-  width: ${(props) => (props.size === 'normal' ? '7' : '4')}px;
-  height: ${(props) => (props.size === 'normal' ? '7' : '4')}px;
+  width: ${({ size }) => (size === 'normal' ? '7' : '4')}px;
+  height: ${({ size }) => (size === 'normal' ? '7' : '4')}px;
   margin: 0 5px;
-  background-color: ${(props) => props.theme.colors.main};
+  background-color: ${({ theme, color }) => color || theme.colors.main};
 
   border-radius: 100%;
   display: inline-block;
@@ -42,15 +49,15 @@ const SecondCircle = styled(Circle)`
   animation-delay: -0.16s;
 `;
 
-type loaderPropsT = {
-  height?: string;
-  circleSize?: circleSizeT;
-};
-const Loader: React.FC<loaderPropsT> = ({ height, circleSize = 'normal' }) => (
+const Loader: React.FC<loaderPropsT> = ({
+  height,
+  circleSize = 'normal',
+  color,
+}) => (
   <Wrapper height={height}>
-    <FirstCircle size={circleSize} />
-    <SecondCircle size={circleSize} />
-    <Circle size={circleSize} />
+    <FirstCircle size={circleSize} color={color} />
+    <SecondCircle size={circleSize} color={color} />
+    <Circle size={circleSize} color={color} />
   </Wrapper>
 );
 

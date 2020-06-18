@@ -1,6 +1,4 @@
-import Markdown from 'markdown-to-jsx';
 import React from 'react';
-import Button from '../../components/Button';
 import Description from '../../components/Description';
 import { getDateString, getTimeString } from '../../util/time';
 import {
@@ -9,7 +7,7 @@ import {
   EditEventButton,
   EventTitle,
   EventTitleLine,
-  Grid,
+  BasicEventInfoWrapper,
   Info,
   Label,
   Participant,
@@ -21,9 +19,15 @@ import {
   PresenceIndicator,
   TimeData,
   TimePlace,
+  CreatedByAndParticipationButton,
+  ParticipationButton,
 } from './BasicEventInfo.styles';
 import useParticipation from './hooks/useParticipation';
 import { stateEventT } from './types';
+import { HorizontalSeparator } from './EventPage.styles';
+import Link from '../../components/Link';
+import Markdown from '../../components/Markdown';
+import ReactTooltip from 'react-tooltip';
 
 type basicEventInfoPropsT = {
   event: stateEventT;
@@ -46,23 +50,39 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
   const { title, description, time, place, creatorId, participants } = event;
   const isCurrentUserParticipating = useParticipation();
   return (
-    <Grid>
+    <BasicEventInfoWrapper>
+      <ReactTooltip />
       <Info>
         <EventTitleLine>
-          <EventTitle>{title}</EventTitle>
-          {isCurrentUserParticipating && (
-            <EditEventButton onClick={onEditEventClick}>
-              Edit basic info
-            </EditEventButton>
-          )}
+          <EventTitle>
+            {title}
+            {isCurrentUserParticipating && (
+              <EditEventButton
+                onClick={onEditEventClick}
+                data-tip="Edit event data"
+                data-place="bottom"
+              />
+            )}
+          </EventTitle>
         </EventTitleLine>
         {description && (
           <Description>
             <Markdown>{description}</Markdown>
           </Description>
         )}
-        <CreatedBy>Created by {participants[creatorId].name}</CreatedBy>
+        <CreatedByAndParticipationButton>
+          <CreatedBy>Created by {participants[creatorId].name}</CreatedBy>
+          {creatorId !== currentUserId && (
+            <ParticipationButton
+              onClick={participants[currentUserId] ? leaveEvent : joinEvent}
+              action={participants[currentUserId] ? 'leave' : 'join'}
+            >
+              {participants[currentUserId] ? 'leave' : 'join'}
+            </ParticipationButton>
+          )}
+        </CreatedByAndParticipationButton>
       </Info>
+      <HorizontalSeparator />
       <TimePlace>
         <Label>Time</Label>
         {time ? (
@@ -86,6 +106,7 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
           </PlaceDiscussButton>
         )}
       </TimePlace>
+      <HorizontalSeparator />
       <Participants>
         <Label>Participants</Label>
         <ParticipantsGrid>
@@ -99,16 +120,9 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
               </Participant>
             ),
           )}
-          {creatorId !== currentUserId && (
-            <Button
-              onClick={participants[currentUserId] ? leaveEvent : joinEvent}
-            >
-              {participants[currentUserId] ? 'Leave' : 'Join'}
-            </Button>
-          )}
         </ParticipantsGrid>
       </Participants>
-    </Grid>
+    </BasicEventInfoWrapper>
   );
 };
 

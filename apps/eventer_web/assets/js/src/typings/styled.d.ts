@@ -7,17 +7,27 @@ declare module 'styled-components' {
     borderRadius: string;
 
     colors: {
+      background: string;
       main: string;
       secondary: string;
       bright: string;
       pale: string;
-      paler: string;
+      jaggedIce: string;
+      palest: string;
       mineShaft: string;
       tundora: string;
-      darkerGrey: string;
-      lighterGrey: string;
-      lightestGrey: string;
+      emperor: string;
+      grey: string;
+      silver: string;
+      gallery: string;
+      concrete: string;
       milanoRed: string;
+      milanoRedTransparent: string;
+      milanoRedTransparenter: string;
+      limeade: string;
+      limeadePale: string;
+      roseOfSharon: string;
+      roseOfSharonDark: string;
     };
   }
 }

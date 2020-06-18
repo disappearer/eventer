@@ -3,40 +3,42 @@ import { Link as RouterLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const StyledLink = styled(RouterLink)`
-  // text-decoration: none;
+  text-decoration: none;
 
-  color: ${(props) => props.theme.colors.main};
+  color: ${({ theme }) => theme.colors.secondary};
 
   &:visited {
-    color: ${(props) => props.theme.colors.main};
+    color: ${({ theme }) => theme.colors.secondary};
   }
 `;
 
 const StyledLinkButton = styled(RouterLink)`
-  border: 1px solid ${(props) => props.theme.colors.main};
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+  border: 1px solid ${({ theme }) => theme.colors.roseOfSharon};
   border-radius: 5px;
   padding: 7px;
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.main};
+    box-shadow: 0 0 5px ${({ theme }) => theme.colors.milanoRedTransparenter};
     color: white;
   }
 `;
 
 const StyledAnchor = styled.a`
-  text-decoration: none;
+  // text-decoration: none;
 
-  color: ${(props) => props.theme.colors.main};
+  color: ${({ theme }) => theme.colors.secondary};
 `;
 
 const StyledAnchorButton = styled(StyledAnchor)`
-  border: 1px solid ${(props) => props.theme.colors.main};
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+  border: 1px solid ${({ theme }) => theme.colors.roseOfSharon};
   border-radius: 5px;
-  padding: 7px;
+  padding: 5px;
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.main};
-    color: white;
+    box-shadow: 0 0 5px ${({ theme }) => theme.colors.milanoRedTransparenter};
+    cursor: pointer;
   }
 `;
 
@@ -50,12 +52,17 @@ const Link: React.FC<linkPropsT> = ({
   asButton = false,
   to,
   children,
+  ...props
 }) => {
   return external ? (
     asButton ? (
-      <StyledAnchorButton href={to}>{children}</StyledAnchorButton>
+      <StyledAnchorButton target="_blank" {...props}>
+        {children}
+      </StyledAnchorButton>
     ) : (
-      <StyledAnchor href={to}>{children}</StyledAnchor>
+      <StyledAnchor target="_blank" {...props}>
+        {children}
+      </StyledAnchor>
     )
   ) : asButton ? (
     <StyledLinkButton to={to}>{children}</StyledLinkButton>

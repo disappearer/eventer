@@ -20,12 +20,12 @@ const OptionText = styled.div`
   text-align: center;
   border-radius: 27px;
   border: 1px solid ${props => props.theme.colors.pale};
-  color: ${props => props.theme.colors.darkerGrey};
+  color: ${props => props.theme.colors.emperor};
 `;
 
 const Voters = styled.div`
   font-size: 0.8rem;
-  color: ${props => props.theme.colors.darkerGrey};
+  color: ${props => props.theme.colors.emperor};
   max-width: 269px;
 `;
 

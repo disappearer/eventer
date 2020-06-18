@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Loader from './Loader';
+import theme from '../common/theme';
 
 type styledButtonPropsT = {
   primary?: boolean;
@@ -9,29 +10,26 @@ type styledButtonPropsT = {
 
 const StyledButton = styled.button<styledButtonPropsT>`
   background-color: transparent;
-  border: 1px solid ${(props) => props.theme.colors.main};
+  border: 1px solid ${({ theme }) => theme.colors.roseOfSharon};
   border-radius: 5px;
   padding: ${(props) => (props.primary ? '7px' : '5px')};
   font-size: ${(props) => (props.primary ? '1rem' : '0.8rem')};
   font-weight: 300;
-  line-height: 1;
-  color: ${(props) => props.theme.colors.main};
-  // min-width: 80px;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.main};
-    color: white;
+    box-shadow: 0 0 5px ${({ theme }) => theme.colors.milanoRedTransparenter};
     cursor: pointer;
   }
 
   &: disabled {
-    color: ${(props) => props.theme.colors.lighterGrey};
+    color: ${({ theme }) => theme.colors.grey};
     background-color: transparent;
     border: 1px solid
       ${(props) =>
         props.isSubmitting
-          ? props.theme.colors.main
-          : props.theme.colors.lighterGrey};
+          ? props.theme.colors.roseOfSharon
+          : props.theme.colors.grey};
     cursor: default;
   }
 `;
@@ -54,7 +52,11 @@ const Button: React.FC<buttonPropsT> = ({
       disabled={disabled || isSubmitting}
     >
       {isSubmitting ? (
-        <Loader height={loaderHeight} circleSize="small" />
+        <Loader
+          height={loaderHeight}
+          circleSize="small"
+          color={theme.colors.roseOfSharon}
+        />
       ) : (
         children
       )}

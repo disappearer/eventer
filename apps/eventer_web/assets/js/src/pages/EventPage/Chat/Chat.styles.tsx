@@ -1,27 +1,24 @@
 import styled from 'styled-components';
-import { CHAT_HIDING_BREAKPOINT } from './Chat';
 import TextArea from 'react-autosize-textarea';
+import { CHAT_HIDING_BREAKPOINT } from './Chat.util';
 
 type chatWrapperPropsT = {
   visible: boolean;
-  isFullWidthChat: boolean;
 };
 export const ChatWrapper = styled.div<chatWrapperPropsT>`
-  flex: 2;
-  display: ${({ isFullWidthChat, visible }) =>
-    isFullWidthChat || visible ? 'flex' : 'none'};
+  flex: 3;
+  display: flex;
   flex-direction: column;
+  min-height: 0;
 
-  ${({ isFullWidthChat }) =>
-    isFullWidthChat
-      ? `
   @media (max-width: ${CHAT_HIDING_BREAKPOINT}px) {
-    display: none;
-  }`
-      : ''}
+    display: ${({ visible }) => (visible ? 'flex' : 'none')};
+    flex: 1;
+  }
+  overflow: hidden;
 `;
 
-export const Title = styled.h3`
+export const Title = styled.h5`
   margin: 0;
   margin-bottom: 14px;
 `;
@@ -35,8 +32,8 @@ export const Messages = styled.div`
 
 export const Day = styled.div`
   text-align: center;
-  margin: 15px 0;
-  color: ${(props) => props.theme.colors.lighterGrey};
+  margin: 11px 0;
+  color: ${({ theme }) => theme.colors.grey};
   font-weight: 300;
   font-size: 0.8rem;
 `;
@@ -57,14 +54,14 @@ export const Avatar = styled.img`
 export const UserName = styled.div`
   grid-column: 2 / span 1;
   grid-row: 1 / span 1;
-  color: ${(props) => props.theme.colors.secondary};
+  color: ${({ theme }) => theme.colors.secondary};
   letter-spacing: 0.03rem;
   font-weight: 400;
 `;
 
 export const TimeStamp = styled.span`
   margin-left: 5px;
-  color: ${(props) => props.theme.colors.lighterGrey};
+  color: ${({ theme }) => theme.colors.grey};
   font-weight: 300;
   font-size: 0.8rem;
 `;
@@ -79,7 +76,7 @@ export const MessageText = styled.div`
     background: linear-gradient(
       90deg,
       rgba(0, 0, 0, 0) 0%,
-      ${({ theme }) => theme.colors.lightestGrey} 10%,
+      ${({ theme }) => theme.colors.roseOfSharon}0f 10%,
       rgba(0, 0, 0, 0) 90%
     );
   }
@@ -98,13 +95,13 @@ export const Input = styled(TextArea)`
   padding: 7px;
   outline: none;
   border-radius: 5px;
-  border: 1px solid ${(props) => props.theme.colors.main};
+  border: 1px solid ${({ theme }) => theme.colors.main};
 
   resize: none;
 `;
 
 export const TypingIndicator = styled.div<{ visible: boolean }>`
-  color: ${(props) => props.theme.colors.lighterGrey};
+  color: ${({ theme }) => theme.colors.grey};
   font-weight: 300;
   font-size: 0.8rem;
 

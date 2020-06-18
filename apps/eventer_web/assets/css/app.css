@@ -3,7 +3,8 @@
 /* @import './phoenix.css'; */
 
 * {
-  outline-color: #008eae;
+  outline: none;
+  box-sizing: border-box;
 }
 
 html {
@@ -16,12 +17,6 @@ body {
   font-weight: 300;
   line-height: 1.4;
   background: #fafaf7;
-}
-
-@media (max-width: 620px) {
-  body {
-    line-height: 1.1;
-  }
 }
 
 #root {
