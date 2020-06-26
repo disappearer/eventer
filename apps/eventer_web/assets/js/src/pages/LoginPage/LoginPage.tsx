@@ -15,7 +15,7 @@ const Title = styled(CommonTitle)`
 const SubTitle = styled.h4`
   justify-self: center;
   letter-spacing: 0.05rem;
-  color: ${(props) => props.theme.colors.pale};
+  color: ${({ theme }) => theme.colors.pale};
   align-self: start;
   margin: 0;
   margin-top: 5px;
@@ -27,7 +27,7 @@ const Description = styled.div`
   justify-content: center;
   margin-top: 53px;
   max-width: 700px;
-  color: ${(props) => props.theme.colors.tundora};
+  color: ${({ theme }) => theme.colors.tundora};
 `;
 
 const LoginPage: React.FC = () => {

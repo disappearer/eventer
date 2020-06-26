@@ -5,7 +5,7 @@ const AppWrapper = styled.div`
   height: 100%;
 
   margin: 0 auto;
-  max-width: 800px;
+  max-width: 900px;
   position: relative;
 `;
 

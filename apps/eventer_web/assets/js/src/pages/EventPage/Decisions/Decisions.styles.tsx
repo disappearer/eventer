@@ -1,47 +1,63 @@
+import { AddCircleOutline } from '@styled-icons/material';
+import { Delete } from '@styled-icons/material';
 import styled from 'styled-components';
+import { CHAT_HIDING_BREAKPOINT } from '../Chat/Chat.util';
 
 export const DecisionsWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 490px) {
+  @media (max-width: ${CHAT_HIDING_BREAKPOINT}px) {
     padding-right: 0;
   }
+
+  overflow: hidden;
 `;
 
 export const DecisionListTitleLine = styled.div`
   flex: none;
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-gap: 20px;
-  justify-content: start;
-  justify-items: start;
+  margin-bottom: 5px;
+  display: flex;
   align-items: center;
-  margin-bottom: 14px;
 `;
 
-export const DecisionListTitle = styled.h3`
+export const DecisionListTitle = styled.h5`
   display: inline-block;
   margin: 0;
 `;
 
 export const DecisionTitleLine = styled.div`
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-gap: 10px;
-  justify-content: start;
-  justify-items: start;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
 `;
 
 export const DecisionTitle = styled.h4`
   margin: 0;
   display: inline-block;
-  text-decoration: underline;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+`;
+
+export const AddButton = styled(AddCircleOutline)`
+  margin-left: 7px;
+  width: 20px;
+  height: 20px;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
 
   &:hover {
+    color: ${({ theme }) => theme.colors.roseOfSharonDark};
     cursor: pointer;
+  }
+
+  &:hover::after {
+    content: 'Your tooltip';
+    display: block;
+    position: relative;
+    top: -16px;
+    right: -16px;
+    width: 100px;
+    background: lightblue;
   }
 `;
 
@@ -50,17 +66,37 @@ export const DecisionList = styled.div`
   overflow-y: auto;
 `;
 
-export const Decision = styled.div`
-  margin-bottom: 19px;
+export const RemoveButton = styled(Delete)`
+  margin-left: 7px;
+  width: 20px;
+  height: 20px;
+  visibility: hidden;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.roseOfSharonDark};
+    cursor: pointer;
+  }
 `;
 
+export const Decision = styled.div`
+  padding: 13px 5px;
+
+  &:hover {
+    cursor: pointer;
+    background: ${({ theme }) => theme.colors.roseOfSharon}0f;
+    border-radius: 5px;
+    ${RemoveButton} {
+      visibility: visible;
+    }
+  }
+`;
 export const Description = styled.div`
-  margin-top: 5px;
   white-space: pre-line;
 `;
 
 export const Objective = styled.div`
   margin-top: 5px;
   font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: ${({ theme }) => theme.colors.emperor};
 `;

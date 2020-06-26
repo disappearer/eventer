@@ -22,7 +22,7 @@ const Event = styled.div`
 `;
 
 const EventTitle = styled.h2`
-  justify-self: end;
+  justify-self: center;
 `;
 
 const TimePlace = styled.div`
@@ -37,7 +37,7 @@ const Label = styled.span`
   font-size: 1.2rem;
   letter-spacing: 0.05rem;
   font-variant: small-caps;
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: ${({ theme }) => theme.colors.emperor};
 `;
 
 const TimePlaceItem = styled.div``;

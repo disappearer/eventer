@@ -1,10 +1,10 @@
-import Markdown from 'markdown-to-jsx';
-import React from 'react';
-import Button from '../../../components/Button';
+import React, { useCallback } from 'react';
+import Markdown from '../../../components/Markdown';
 import { formatTime } from '../../../util/time';
 import useParticipation from '../hooks/useParticipation';
 import { stateDecisionsT } from '../types';
 import {
+  AddButton,
   Decision,
   DecisionList,
   DecisionListTitle,
@@ -13,8 +13,9 @@ import {
   DecisionTitle,
   DecisionTitleLine,
   Description,
-  Objective,
+  RemoveButton,
 } from './Decisions.styles';
+import ReactTooltip from 'react-tooltip';
 
 type decisionsPropsT = {
   decisions: stateDecisionsT;
@@ -29,12 +30,27 @@ const Decisions: React.FC<decisionsPropsT> = ({
   onRemoveDecisionClick,
 }) => {
   const isCurrentUserParticipating = useParticipation();
+
+  const handleRemoveClick = useCallback(
+    (id: number) => (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+      e.stopPropagation();
+      onRemoveDecisionClick(id);
+    },
+    [],
+  );
+
   return (
     <DecisionsWrapper>
+      <ReactTooltip />
       <DecisionListTitleLine>
         <DecisionListTitle>Decisions</DecisionListTitle>
         {isCurrentUserParticipating && (
-          <Button onClick={onAddDecisionClick}>Add</Button>
+          <>
+            <AddButton
+              onClick={onAddDecisionClick}
+              data-tip="Create a decision"
+            />
+          </>
         )}
       </DecisionListTitleLine>
       <DecisionList>
@@ -45,20 +61,21 @@ const Decisions: React.FC<decisionsPropsT> = ({
               ? formatTime(resolution)
               : resolution;
           return (
-            <Decision key={id}>
+            <Decision
+              key={id}
+              onClick={() => onDecisionClick(parseInt(id, 10))}
+            >
               <DecisionTitleLine>
-                <DecisionTitle
-                  onClick={() => onDecisionClick(parseInt(id, 10))}
-                >
+                <DecisionTitle>
                   {title}
                   {pending && ' (pending)'}
                 </DecisionTitle>
                 {isCurrentUserParticipating && objective === 'general' && (
-                  <Button
-                    onClick={() => onRemoveDecisionClick(parseInt(id, 10))}
-                  >
-                    Remove
-                  </Button>
+                  <RemoveButton
+                    onClick={handleRemoveClick(parseInt(id, 10))}
+                    fontSize="small"
+                    data-tip="Remove decision"
+                  />
                 )}
               </DecisionTitleLine>
               <Description>
@@ -68,7 +85,6 @@ const Decisions: React.FC<decisionsPropsT> = ({
                       <Markdown>{formattedResolution}</Markdown>
                     )}
               </Description>
-              <Objective>Objective: {objective}</Objective>
             </Decision>
           );
         })}

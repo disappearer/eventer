@@ -14,7 +14,7 @@ const Error = styled.div`
   margin-top: 3px;
   margin-bottom: 10px;
   font-size: 0.8rem;
-  color: ${(props) => props.theme.colors.milanoRed};
+  color: ${({ theme }) => theme.colors.milanoRed};
 `;
 
 type removeDecisionConfirmationPropsT = {

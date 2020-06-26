@@ -28,7 +28,7 @@ export const Input = styled(TextArea)`
   padding: 7px;
   outline: none;
   border-radius: 5px;
-  border: 1px solid ${(props) => props.theme.colors.main};
+  border: 1px solid ${({ theme }) => theme.colors.main};
 
   resize: none;
 `;

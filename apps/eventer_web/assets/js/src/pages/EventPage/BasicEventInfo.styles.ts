@@ -1,46 +1,15 @@
 import styled from 'styled-components';
 import Button from '../../components/Button';
+import { Edit } from '@styled-icons/material';
+import { CHAT_HIDING_BREAKPOINT } from './Chat/Chat.util';
 
 export const BREAKPOINT_1 = '380';
 export const BREAKPOINT_2 = '540';
 export const BREAKPOINT_3 = '670';
 
-export const Grid = styled.div`
-  flex: none;
-  display: grid;
-  grid-template-columns: minmax(1fr, 200px) minmax(max-content, auto) auto;
-  // grid-template-rows: minmax(auto, 70px) auto;
-  grid-template-areas:
-    'info timeplace participants'
-    'info timeplace participants'
-    'info timeplace participants';
-
-  justify-content: space-between;
-
-  grid-gap: 30px;
-
-  @media (max-width: ${BREAKPOINT_2}px) {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    grid-template-areas:
-      'info participants'
-      'timeplace timeplace';
-
-    grid-gap: 20px;
-
-    justify-content: stretch;
-  }
-
-  @media (max-width: ${BREAKPOINT_1}px) {
-    grid-template-columns: auto;
-    grid-template-areas:
-      'info'
-      'timeplace'
-      'timeplace'
-      'participants';
-
-    justify-content: stretch;
-  }
+export const BasicEventInfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 export const Info = styled.div`
@@ -49,20 +18,83 @@ export const Info = styled.div`
 
 export const EventTitleLine = styled.div``;
 
-export const EventTitle = styled.h1`
+export const EventTitle = styled.h2`
   margin: 0;
 `;
 
-export const EditEventButton = styled(Button)`
-  margin-top: 5px;
+export const EditEventButton = styled(Edit)`
+  margin-left: 7px;
+  margin-bottom: 3px;
+  width: 21px;
+  height: 21px;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.roseOfSharonDark};
+    cursor: pointer;
+  }
 `;
 
 export const Description = styled.div``;
 
+export const CreatedByAndParticipationButton = styled.div`
+  margin-top: 9px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: ${CHAT_HIDING_BREAKPOINT}px) {
+    margin-top: 5px;
+  }
+`;
 export const CreatedBy = styled.div`
-  margin-top: 5px;
   font-size: 0.8rem;
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: ${({ theme }) => theme.colors.emperor};
+`;
+
+export const ParticipationButton = styled(Button)<{ action: 'join' | 'leave' }>`
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  font-size: 0.75rem;
+
+  ${({ theme, action }) =>
+    action === 'leave'
+      ? `
+  color: ${theme.colors.grey};
+  border: 1px solid ${theme.colors.grey};
+  outline: 0;
+  padding: 5px 9px;
+
+  margin-right: 5px;
+
+  &:hover {
+    color: ${theme.colors.grey};
+    background: transparent;
+    border: 1px solid ${theme.colors.grey};
+  }
+
+  &:hover {
+    box-shadow: 0 0 5px ${theme.colors.silver};
+  }
+  `
+      : `
+      padding: 5px 9px;
+      box-sizing: border-box;
+      color: ${theme.colors.roseOfSharon};
+      background: transparent;
+      font-weight: bold;
+      border: 1px solid ${theme.colors.milanoRed};
+      outline: 0;
+      transition: box-shadow 0.2s ease-in-out;
+      margin-right: 5px;
+
+      &:hover {
+        overflow: visible; 
+        color: ${theme.colors.roseOfSharon};
+        box-shadow: 0 0 5px ${theme.colors.milanoRedTransparenter};
+        background: transparent;
+      }
+    `}
 `;
 
 export const TimePlace = styled.div`
@@ -91,7 +123,7 @@ export const TimePlace = styled.div`
   }
 `;
 
-export const Label = styled.h4`
+export const Label = styled.h5`
   margin: 0;
 `;
 
@@ -130,6 +162,15 @@ export const TimeData = styled.div`
     grid-column: auto;
     grid-row: auto;
   }
+
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-column-gap: 10px;
+
+  @media (max-width: 850px) {
+    grid-template-columns: none;
+    column-gap: normal;
+  }
 `;
 
 export const PlaceData = styled.span`
@@ -161,6 +202,8 @@ export const PlaceData = styled.span`
 
 export const DiscussButton = styled(Button)`
   justify-self: end;
+  letter-spacing: 0.05rem;
+  margin-right: 5px;
 
   @media (max-width: ${BREAKPOINT_2}px) {
     justify-self: start;
@@ -213,7 +256,7 @@ export const PresenceIndicator = styled.div<{ isOnline?: boolean }>`
   height: 6px;
   border-radius: 50%;
   border: 1px solid ${({ isOnline, theme }) =>
-    isOnline ? theme.colors.main : theme.colors.lighterGrey};
+    isOnline ? theme.colors.main : theme.colors.grey};
 }
   background: ${({ isOnline, theme }) =>
     isOnline ? theme.colors.main : 'transparent'}

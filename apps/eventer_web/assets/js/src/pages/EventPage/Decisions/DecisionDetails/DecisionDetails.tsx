@@ -1,17 +1,38 @@
-import Markdown from 'markdown-to-jsx';
 import React, { useContext } from 'react';
 import Button from '../../../../components/Button';
 import { formatTime } from '../../../../util/time';
 import EventContext from '../../EventContext';
 import useParticipation from '../../hooks/useParticipation';
-import { addPollT, discardPollT, discardResolutionT, resolveDecisionT, updateDecisionT, voteT } from '../../types';
+import {
+  addPollT,
+  discardPollT,
+  discardResolutionT,
+  resolveDecisionT,
+  updateDecisionT,
+  voteT,
+} from '../../types';
 import { useDecisionActions } from './DecisionDetails.hooks';
-import { DecisionTitle, InfoArea, Label, ObjectiveArea, PollArea, RemovedDecision, RemovePollButton, Resolution, ResolutionArea, ResolutionLabel, StatusArea, TitleLine, Wrapper } from './DecisionDetails.styles';
+import {
+  DecisionTitle,
+  InfoArea,
+  Label,
+  ObjectiveArea,
+  PollArea,
+  RemovedDecision,
+  RemovePollButton,
+  Resolution,
+  ResolutionArea,
+  ResolutionLabel,
+  StatusArea,
+  TitleLine,
+  Wrapper,
+} from './DecisionDetails.styles';
 import ResolveForm from './DecisionResolveForm';
 import DecisionUpdateForm from './DecisionUpdateForm';
 import Confirmation from './DiscardResolutionConfirmation';
 import Poll from './Poll';
 import PollForm from './PollForm';
+import Markdown from '../../../../components/Markdown';
 
 type decisionDetailsPropsT = {
   id: number;

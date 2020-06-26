@@ -7,6 +7,8 @@ import {
 } from 'date-fns';
 import { messageT } from './Chat.hooks';
 
+export const CHAT_HIDING_BREAKPOINT = '490';
+
 type singleMessageT = {
   isGroup: false;
   message: messageT;

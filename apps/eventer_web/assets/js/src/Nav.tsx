@@ -8,7 +8,7 @@ import Button from './components/Button';
 import Link from './components/Link';
 import { userT } from './features/authentication/userReducer';
 import { setIsChatVisible, toggleChat } from './features/event/eventActions';
-import { CHAT_HIDING_BREAKPOINT } from './pages/EventPage/Chat/Chat';
+import { CHAT_HIDING_BREAKPOINT } from './pages/EventPage/Chat/Chat.util';
 
 type navbarPropsT = {
   visible: boolean;
@@ -16,8 +16,7 @@ type navbarPropsT = {
 const Navbar = styled.nav<navbarPropsT>`
   flex: none;
   display: grid;
-  padding-top: 10px;
-  grid-row-gap: 20px;
+  grid-row-gap: 15px;
   grid-template-columns: repeat(2, minmax(auto, 350px));
   justify-content: center;
   align-items: center;
@@ -29,6 +28,9 @@ const Navbar = styled.nav<navbarPropsT>`
   @media (max-width: ${CHAT_HIDING_BREAKPOINT}px) {
     display: ${(props) => (props.visible ? 'grid' : 'none')};
   }
+
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
 `;
 
 const NavList = styled.div`
@@ -48,6 +50,11 @@ const User = styled(NavListItem)`
   @media (max-width: 620px) {
     order: -1;
   }
+`;
+
+const UserName = styled(NavListItem)`
+  font-weight: 300;
+  letter-spacing: 0.05rem;
 `;
 
 const NavbarNarrow = styled.nav<navbarPropsT>`
@@ -76,6 +83,7 @@ const ChatToggleButton = styled(Button)`
   line-height: 1.1;
   padding: 7px;
   font-size: 0.9rem;
+  outline: 0;
 `;
 
 const Nav: React.FC = () => {
@@ -115,7 +123,7 @@ const Nav: React.FC = () => {
         <Harbungen>
           <HamburgerMenu
             isOpen={isMenuOpen}
-            color={theme.colors.main}
+            color={theme.colors.roseOfSharon}
             menuClicked={toggleMenu}
             width={30}
             height={19}
@@ -128,14 +136,14 @@ const Nav: React.FC = () => {
           <NavListItem>
             <Link to="/">Home</Link>
           </NavListItem>
-          <NavListItem>
-            <Link to="/about">About</Link>
-          </NavListItem>
           {!user.data.isEmpty() && (
             <NavListItem>
               <Link to="/events/new">New Event</Link>
             </NavListItem>
           )}
+          <NavListItem>
+            <Link to="/about">About</Link>
+          </NavListItem>
         </NavList>
         <User>
           {user.data.fold(
@@ -146,7 +154,7 @@ const Nav: React.FC = () => {
             ),
             ({ name }) => (
               <>
-                <NavListItem id="display-name">{name}</NavListItem>
+                <UserName id="display-name">{name}</UserName>
                 <NavListItem>
                   <Link external={true} asButton={true} to="/auth/logout">
                     Logout
