@@ -25,7 +25,6 @@ import {
 import useParticipation from './hooks/useParticipation';
 import { stateEventT } from './types';
 import { HorizontalSeparator } from './EventPage.styles';
-import Link from '../../components/Link';
 import Markdown from '../../components/Markdown';
 import ReactTooltip from 'react-tooltip';
 
@@ -59,7 +58,7 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
             {isCurrentUserParticipating && (
               <EditEventButton
                 onClick={onEditEventClick}
-                data-tip="Edit event data"
+                data-tip="Edit event title or description"
                 data-place="bottom"
               />
             )}

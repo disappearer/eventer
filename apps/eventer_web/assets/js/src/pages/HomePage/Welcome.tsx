@@ -22,12 +22,14 @@ const SubTitle = styled.h3`
 
 const Description = styled.div`
   margin-top: 53px;
+  align-self: center;
   max-width: 700px;
   color: ${({ theme }) => theme.colors.tundora};
 `;
 
 const Paragraph = styled.p`
   letter-spacing: 0;
+  text-align: justify;
 `;
 
 const DoIt = styled(Paragraph)`

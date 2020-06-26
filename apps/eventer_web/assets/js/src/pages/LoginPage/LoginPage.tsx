@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import CommonTop from '../../components/Top';
 import CommonTitle from '../../components/Title';
 import Link from '../../components/Link';
+import ExternalLink from '../../components/ExternalLink';
 
 const Top = styled(CommonTop)`
   align-content: center;
@@ -28,6 +29,7 @@ const Description = styled.div`
   margin-top: 53px;
   max-width: 700px;
   color: ${({ theme }) => theme.colors.tundora};
+  align-self: center;
 `;
 
 const LoginPage: React.FC = () => {
@@ -41,9 +43,9 @@ const LoginPage: React.FC = () => {
         </SubTitle>
       </Top>
       <Description>
-        <Link external={true} asButton={true} to="/auth/google">
+        <ExternalLink asButton={true} href="/auth/google">
           Google Login
-        </Link>
+        </ExternalLink>
       </Description>
     </>
   );
