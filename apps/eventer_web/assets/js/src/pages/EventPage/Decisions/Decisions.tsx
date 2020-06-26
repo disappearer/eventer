@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Markdown from '../../../components/Markdown';
 import { formatTime } from '../../../util/time';
 import useParticipation from '../hooks/useParticipation';
@@ -18,6 +18,7 @@ import {
   ResolvedIcon,
 } from './Decisions.styles';
 import ReactTooltip from 'react-tooltip';
+import { getOSAndBrowser } from '../../../util/deviceInfo';
 
 type decisionsPropsT = {
   decisions: stateDecisionsT;
@@ -41,17 +42,19 @@ const Decisions: React.FC<decisionsPropsT> = ({
     [],
   );
 
+  const isMobile = useMemo(() => {
+    const { os } = getOSAndBrowser();
+    return os === 'Android' || os === 'iOS';
+  }, []);
+
   return (
     <DecisionsWrapper>
-      <ReactTooltip />
+      {!isMobile && <ReactTooltip />}
       <DecisionListTitleLine>
         <DecisionListTitle>Decisions</DecisionListTitle>
         {isCurrentUserParticipating && (
           <>
-            <AddButton
-              onClick={onAddDecisionClick}
-              data-tip="Add a decision"
-            />
+            <AddButton onClick={onAddDecisionClick} data-tip="Add a decision" />
           </>
         )}
       </DecisionListTitleLine>

@@ -35,7 +35,6 @@ type chatPropsT = {
 };
 
 const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
-  console.log('visible', visible);
   const {
     event: { participants, exParticipants },
   } = useContext(EventContext);
@@ -99,7 +98,6 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
         } else {
           setTimeout(() => {
             setMessageText(() => {
-              console.log('onPress');
               return '';
             });
           }, 5);

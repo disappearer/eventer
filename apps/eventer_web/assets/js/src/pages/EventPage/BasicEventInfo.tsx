@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Description from '../../components/Description';
 import { getDateString, getTimeString } from '../../util/time';
 import {
@@ -27,6 +27,7 @@ import { stateEventT } from './types';
 import { HorizontalSeparator } from './EventPage.styles';
 import Markdown from '../../components/Markdown';
 import ReactTooltip from 'react-tooltip';
+import { getOSAndBrowser } from '../../util/deviceInfo';
 
 type basicEventInfoPropsT = {
   event: stateEventT;
@@ -48,9 +49,15 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
 }) => {
   const { title, description, time, place, creatorId, participants } = event;
   const isCurrentUserParticipating = useParticipation();
+
+  const isMobile = useMemo(() => {
+    const { os } = getOSAndBrowser();
+    return os === 'Android' || os === 'iOS';
+  }, []);
+
   return (
     <BasicEventInfoWrapper>
-      <ReactTooltip />
+      {!isMobile && <ReactTooltip />}
       <Info>
         <EventTitleLine>
           <EventTitle>
