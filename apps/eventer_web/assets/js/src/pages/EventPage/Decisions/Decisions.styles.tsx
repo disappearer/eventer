@@ -1,8 +1,8 @@
-import { AddCircleOutline } from '@styled-icons/material';
+import { PlaylistAdd } from '@styled-icons/material';
 import { Delete } from '@styled-icons/material';
 import styled from 'styled-components';
 import { CHAT_HIDING_BREAKPOINT } from '../Chat/Chat.util';
-
+import { Question, Check } from '@styled-icons/evil';
 export const DecisionsWrapper = styled.div`
   flex: 1;
   display: flex;
@@ -35,29 +35,42 @@ export const DecisionTitleLine = styled.div`
 
 export const DecisionTitle = styled.h4`
   margin: 0;
-  display: inline-block;
+  display: flex;
+  align-items: center;
   color: ${({ theme }) => theme.colors.roseOfSharon};
 `;
 
-export const AddButton = styled(AddCircleOutline)`
+export const PendingIcon = styled(Question)`
+  margin-right: 2px;
+  width: 25px;
+  height: 25px;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.roseOfSharonDark};
+  }
+`;
+
+export const ResolvedIcon = styled(Check)`
+  margin-right: 2px;
+  width: 25px;
+  height: 25px;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.roseOfSharonDark};
+  }
+`;
+
+export const AddButton = styled(PlaylistAdd)`
   margin-left: 7px;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   color: ${({ theme }) => theme.colors.roseOfSharon};
 
   &:hover {
     color: ${({ theme }) => theme.colors.roseOfSharonDark};
     cursor: pointer;
-  }
-
-  &:hover::after {
-    content: 'Your tooltip';
-    display: block;
-    position: relative;
-    top: -16px;
-    right: -16px;
-    width: 100px;
-    background: lightblue;
   }
 `;
 
@@ -92,6 +105,7 @@ export const Decision = styled.div`
   }
 `;
 export const Description = styled.div`
+  padding-left: 5px;
   white-space: pre-line;
 `;
 

@@ -9,6 +9,7 @@ import Link from './components/Link';
 import { userT } from './features/authentication/userReducer';
 import { setIsChatVisible, toggleChat } from './features/event/eventActions';
 import { CHAT_HIDING_BREAKPOINT } from './pages/EventPage/Chat/Chat.util';
+import ExternalLink from './components/ExternalLink';
 
 type navbarPropsT = {
   visible: boolean;
@@ -156,9 +157,9 @@ const Nav: React.FC = () => {
               <>
                 <UserName id="display-name">{name}</UserName>
                 <NavListItem>
-                  <Link external={true} asButton={true} to="/auth/logout">
+                  <ExternalLink asButton={true} href="/auth/logout">
                     Logout
-                  </Link>
+                  </ExternalLink>
                 </NavListItem>
               </>
             ),

@@ -63,13 +63,13 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
     const userNames = typists.map((userId) => participants[userId].name);
     switch (userNames.length) {
       case 1:
-        return `${userNames[0]} is typing`;
+        return `${userNames[0]} is typing...`;
       case 2:
-        return `${userNames[0]} and ${userNames[1]} are typing`;
+        return `${userNames[0]} and ${userNames[1]} are typing...`;
       default:
         const allButLast = userNames.slice(0, -1);
         const last = userNames[userNames.length - 1];
-        return `${allButLast.join(', ')} and ${last} are typing`;
+        return `${allButLast.join(', ')} and ${last} are typing...`;
     }
   }, [participants, typists]);
 

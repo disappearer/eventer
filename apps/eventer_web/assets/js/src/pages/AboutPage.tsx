@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import CommonTitle from '../components/Title';
 
 const Title = styled(CommonTitle)`
-  margin-bottom: 0;
+  margin-bottom: 24px;
 `;
 
 const AboutPage: React.FC = () => {

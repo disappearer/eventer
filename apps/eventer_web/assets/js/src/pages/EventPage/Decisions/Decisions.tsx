@@ -14,6 +14,8 @@ import {
   DecisionTitleLine,
   Description,
   RemoveButton,
+  PendingIcon,
+  ResolvedIcon,
 } from './Decisions.styles';
 import ReactTooltip from 'react-tooltip';
 
@@ -48,7 +50,7 @@ const Decisions: React.FC<decisionsPropsT> = ({
           <>
             <AddButton
               onClick={onAddDecisionClick}
-              data-tip="Create a decision"
+              data-tip="Add a decision"
             />
           </>
         )}
@@ -67,8 +69,12 @@ const Decisions: React.FC<decisionsPropsT> = ({
             >
               <DecisionTitleLine>
                 <DecisionTitle>
+                  {pending ? (
+                    <PendingIcon data-tip="Pending" />
+                  ) : (
+                    <ResolvedIcon data-tip="Resolved" />
+                  )}
                   {title}
-                  {pending && ' (pending)'}
                 </DecisionTitle>
                 {isCurrentUserParticipating && objective === 'general' && (
                   <RemoveButton
