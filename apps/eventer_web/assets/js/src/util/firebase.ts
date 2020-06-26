@@ -3,27 +3,12 @@ import * as firebase from 'firebase/app';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { UAParser } from 'ua-parser-js';
 import { firebaseConfig, vapidKey } from '../../../firebaseData';
 import { reduxStateT } from '../common/store';
 import { userT } from '../features/authentication/userReducer';
+import { BraveNavigator, getOSAndBrowser } from './deviceInfo';
 import { useNavigation } from './navigation';
 import { addFirebaseToken } from './userService';
-
-type BraveNavigator = Navigator & {
-  brave: boolean;
-};
-
-const uaParser = new UAParser();
-
-type getOSAndBrowserT = () => { os: string; browser: string };
-const getOSAndBrowser: getOSAndBrowserT = () => {
-  const nav = navigator as BraveNavigator;
-  return {
-    os: uaParser.getOS().name || 'unknown',
-    browser: (nav.brave && 'Brave') || uaParser.getBrowser().name || 'unknown',
-  };
-};
 
 type initFirebaseT = () => firebase.messaging.Messaging;
 const initFirebase: initFirebaseT = () => {
