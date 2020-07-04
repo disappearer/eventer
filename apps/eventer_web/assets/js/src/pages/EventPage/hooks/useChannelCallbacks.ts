@@ -99,15 +99,23 @@ const useChannelCallbacks: useChannelCallbacksT = (channel) => {
   );
 
   const discardResolution = useCallback<discardResolutionT>(
-    (id) => {
-      channel.get().push('discard_resolution', { decision_id: id });
+    ({ decisionId }, onSuccess, onError) => {
+      channel
+        .get()
+        .push('discard_resolution', { decision_id: decisionId })
+        .receive('ok', onSuccess)
+        .receive('error', onError);
     },
     [channel],
   );
 
   const discardPoll = useCallback<discardPollT>(
-    (id) => {
-      channel.get().push('remove_poll', { decision_id: id });
+    ({ decisionId }, onSuccess, onError) => {
+      channel
+        .get()
+        .push('remove_poll', { decision_id: decisionId })
+        .receive('ok', onSuccess)
+        .receive('error', onError);
     },
     [channel],
   );

@@ -20,8 +20,8 @@ type useDecisionActionsT = (
   resetDecisionModal: () => void;
   showDiscardResolutionConfirmation: () => void;
   showDiscardPollConfirmation: () => void;
-  discardResolution: () => void;
-  discardPoll: () => void;
+  discardResolution: (onSuccess: () => void, onError: () => void) => void;
+  discardPoll: (onSuccess: () => void, onError: () => void) => void;
   showAddPollForm: () => void;
 };
 export const useDecisionActions: useDecisionActionsT = (
@@ -51,15 +51,19 @@ export const useDecisionActions: useDecisionActionsT = (
     setDecisionAction('discard_poll');
   }, [setDecisionAction]);
 
-  const discardResolution = useCallback(() => {
-    onResolutionDiscard(decisionId);
-    resetDecisionModal();
-  }, [setDecisionAction]);
+  const discardResolution = useCallback(
+    (onSuccess: () => void, onError: () => void) => {
+      onResolutionDiscard({ decisionId }, onSuccess, onError);
+    },
+    [setDecisionAction],
+  );
 
-  const discardPoll = useCallback(() => {
-    onPollDiscard(decisionId);
-    resetDecisionModal();
-  }, [setDecisionAction]);
+  const discardPoll = useCallback(
+    (onSuccess: () => void, onError: () => void) => {
+      onPollDiscard({ decisionId }, onSuccess, onError);
+    },
+    [setDecisionAction],
+  );
 
   const showAddPollForm = useCallback(() => {
     setDecisionAction('add_poll');

@@ -24,10 +24,11 @@ import {
 } from './BasicEventInfo.styles';
 import useParticipation from './hooks/useParticipation';
 import { stateEventT } from './types';
-import { HorizontalSeparator } from './EventPage.styles';
 import Markdown from '../../components/Markdown';
 import ReactTooltip from 'react-tooltip';
 import { getOSAndBrowser } from '../../util/deviceInfo';
+import { HorizontalSeparator } from '../../components/Separator';
+import theme from '../../common/theme';
 
 type basicEventInfoPropsT = {
   event: stateEventT;

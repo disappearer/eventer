@@ -39,31 +39,3 @@ export const DecisionsAndChat = styled.div`
     flex-direction: column;
   }
 `;
-
-export const HorizontalSeparator = styled.div`
-  flex: none;
-  margin: 11px 0;
-  height: 1px;
-  background: linear-gradient(
-    to left,
-    transparent,
-    ${({ theme }) => theme.colors.bright},
-    transparent
-  );
-`;
-
-export const VerticalSeparator = styled.div`
-  width: 1px;
-  margin: 0 20px;
-  height: 90%;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    ${({ theme }) => theme.colors.bright},
-    transparent
-  );
-
-  @media (max-width: 490px) {
-    display: none;
-  }
-`;

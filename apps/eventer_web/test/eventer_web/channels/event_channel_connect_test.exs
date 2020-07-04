@@ -20,8 +20,24 @@ defmodule EventerWeb.EventChannelConnectTest do
           votes: %{3 => [option1.id, option2.id], 4 => [option2.id]}
         })
 
-      insert(:decision, %{event: event, creator: user, poll: poll})
+      decision1 =
+        insert(:decision, %{
+          event: event,
+          creator: user,
+          poll: poll,
+          pending: false
+        })
 
+      decision2 = insert(:decision, %{event: event, creator: user})
+
+      decision3 =
+        insert(:decision, %{
+          event: event,
+          creator: user,
+          pending: false
+        })
+
+      IO.inspect(decision3.id, label: "decision3")
       event = Events.get_event(event.id) |> Events.to_map()
       event_id_hash = IdHasher.encode(event.id)
 
@@ -30,7 +46,12 @@ defmodule EventerWeb.EventChannelConnectTest do
 
       assert reply === %{event: event}
 
-      %{event: %{decisions: [%{poll: poll}]}} = reply
+      %{event: %{decisions: [d2, d1, d3]}} = reply
+      assert d1.id === decision1.id
+      assert d2.id === decision2.id
+      assert d3.id === decision3.id
+
+      %{poll: poll} = d1
       assert poll.voted_by === [4, 3]
       [option1 | [option2 | _]] = poll.options
       assert option1.votes === [3]

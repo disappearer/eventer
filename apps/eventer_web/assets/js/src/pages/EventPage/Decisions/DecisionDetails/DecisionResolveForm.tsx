@@ -45,8 +45,8 @@ const DecisionResolveForm: React.FC<resolveFormPropsT> = ({
       {({ values, handleChange, setFieldValue, isSubmitting }) => {
         return (
           <Form>
-            <FormTitle>{formTitle}</FormTitle>
             <FormGrid>
+              <FormTitle>{formTitle}</FormTitle>
               {objective === 'time' ? (
                 <TimeField
                   name="resolution"

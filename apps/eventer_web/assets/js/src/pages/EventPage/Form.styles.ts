@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import TextArea from 'react-autosize-textarea';
 
 export const FormTitle = styled.h3`
-  margin-top: 0;
+  margin: 0;
 `;
 
 export const FormGrid = styled.div`
@@ -16,11 +16,11 @@ export const ButtonsGrid = styled.div`
   grid-template-columns: repeat(2, 70px);
   justify-content: center;
   grid-gap: 30px;
+  margin-top: 15px;
 `;
 
 export const Input = styled(TextArea)`
   width: 280px;
-  margin-bottom: 20px;
   line-height: 16px;
   font-size: 1rem;
   font-weight: 300;

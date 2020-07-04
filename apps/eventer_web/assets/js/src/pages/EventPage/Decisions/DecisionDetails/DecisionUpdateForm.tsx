@@ -18,7 +18,6 @@ type decisionUpdateFromPropsT = {
   id: number;
   onSubmit: updateDecisionT;
   onSuccess: () => void;
-  formTitle: string;
 };
 
 const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
@@ -26,7 +25,6 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
   id,
   onSuccess,
   onSubmit,
-  formTitle,
 }) => {
   return (
     <Formik<valuesT>
@@ -48,8 +46,8 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
       {({ values, handleChange, isSubmitting }) => {
         return (
           <Form>
-            <FormTitle>{formTitle}</FormTitle>
             <FormGrid>
+              <FormTitle>Edit decision</FormTitle>
               <TextField
                 name="title"
                 label="Title"

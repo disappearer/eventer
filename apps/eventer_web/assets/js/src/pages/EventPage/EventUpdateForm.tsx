@@ -17,14 +17,12 @@ type eventUpdateFromPropsT = {
   };
   onSubmit: updateEventT;
   onSuccess: () => void;
-  formTitle: string;
 };
 
 const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
   initialValues,
   onSuccess,
   onSubmit,
-  formTitle,
 }) => {
   return (
     <Formik<valuesT>
@@ -45,8 +43,8 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
     >
       {({ values, handleChange, isSubmitting }) => {
         return (
-          <div>
-            <FormTitle>{formTitle}</FormTitle>
+          <FormGrid>
+            <FormTitle>Edit event</FormTitle>
             <Form>
               <FormGrid>
                 <TextField
@@ -72,7 +70,7 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
                 </ButtonsGrid>
               </FormGrid>
             </Form>
-          </div>
+          </FormGrid>
         );
       }}
     </Formik>

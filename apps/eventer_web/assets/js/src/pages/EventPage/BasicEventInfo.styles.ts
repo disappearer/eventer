@@ -204,6 +204,7 @@ export const DiscussButton = styled(Button)`
   justify-self: end;
   letter-spacing: 0.05rem;
   margin-right: 5px;
+  font-size: 0.7rem;
 
   @media (max-width: ${BREAKPOINT_2}px) {
     justify-self: start;

@@ -29,7 +29,8 @@ defmodule Eventer.Persistence.Events do
 
   def get_event(id) do
     Repo.get(Event, id)
-    |> Repo.preload([:creator, :decisions])
+    |> Repo.preload([:creator])
+    |> Repo.preload(decisions: from(d in Decision, order_by: [desc: d.pending]))
     |> preload_participation_assocs()
   end
 

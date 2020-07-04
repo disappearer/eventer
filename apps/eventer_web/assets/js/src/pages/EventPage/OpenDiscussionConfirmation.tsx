@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/Button';
-import { ButtonsGrid } from './Form.styles';
+import { ButtonsGrid, FormGrid, FormTitle } from './Form.styles';
 import { openDiscussionT, specificObjectiveT } from './types';
+import { toast } from 'react-toastify';
 
 const Error = styled.div`
   margin-top: 3px;
@@ -29,27 +30,32 @@ const OpenDiscussionConfirmation: React.FC<openDiscussionConfirmationPropsT> = (
   onConfirm,
   closeModal,
 }) => {
-  const [error, setError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleConfirmClick = () => {
     setIsSubmitting(true);
-    setError(false);
     onConfirm(objective, closeModal, () => {
       setIsSubmitting(false);
-      setError(true);
+      toast.error('Removing decision failed. Please try again.', {
+        autoClose: false,
+      });
     });
   };
   return (
-    <div>
-      <p>Are you sure you want to open {objective} for discussion?</p>
+    <FormGrid>
+      <FormTitle>Open {objective} discussion</FormTitle>
       <p>
         This will{' '}
-        {hasCorrespondingDecision
-          ? `mark the existing ${objective} decision as pending and discard it's resolution.`
-          : `create a new ${objective} decision.`}
+        {hasCorrespondingDecision ? (
+          <>
+            mark the existing {objective} decision as pending
+            <br /> and discard it's resolution.
+          </>
+        ) : (
+          `create a new ${objective} decision.`
+        )}
       </p>
-      {error && <Error>Request failed for some reason ¯\_(ツ)_/¯</Error>}
+      <p>Are you sure you want to open {objective} for discussion?</p>
       <ButtonsGrid>
         <Button onClick={handleConfirmClick} isSubmitting={isSubmitting}>
           Yes
@@ -58,7 +64,7 @@ const OpenDiscussionConfirmation: React.FC<openDiscussionConfirmationPropsT> = (
           Cancel
         </Button>
       </ButtonsGrid>
-    </div>
+    </FormGrid>
   );
 };
 

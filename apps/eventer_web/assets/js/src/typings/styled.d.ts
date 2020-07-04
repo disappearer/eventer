@@ -17,6 +17,7 @@ declare module 'styled-components' {
       mineShaft: string;
       tundora: string;
       emperor: string;
+      scorpion: string;
       grey: string;
       silver: string;
       gallery: string;
@@ -28,6 +29,8 @@ declare module 'styled-components' {
       limeadePale: string;
       roseOfSharon: string;
       roseOfSharonDark: string;
+      apple: string;
+      lemonGinger: string;
     };
   }
 }

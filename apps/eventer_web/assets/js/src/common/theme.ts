@@ -14,6 +14,7 @@ const theme: DefaultTheme = {
     mineShaft: '#333333',
     tundora: '#444444',
     emperor: '#555',
+    scorpion: '#5a5a5a',
     grey: '#929292',
     silver: '#cccccc',
     gallery: '#eeeeee',
@@ -25,6 +26,8 @@ const theme: DefaultTheme = {
     limeadePale: '#a7621e',
     roseOfSharon: '#bb4f00',
     roseOfSharonDark: '#923f02',
+    apple: '#5a9c39',
+    lemonGinger: '#a7971f',
   },
 };
 

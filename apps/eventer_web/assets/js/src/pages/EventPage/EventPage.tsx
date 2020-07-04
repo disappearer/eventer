@@ -1,9 +1,13 @@
 import { None, Option } from 'funfix';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { reduxStateT } from '../../common/store';
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
+import {
+  HorizontalSeparator,
+  VerticalSeparator,
+} from '../../components/Separator';
 import { useAuthorizedUser } from '../../features/authentication/useAuthorizedUser';
 import BasicEventInfo from './BasicEventInfo';
 import Chat from './Chat/Chat';
@@ -16,9 +20,7 @@ import {
   DecisionsAndChat,
   EventPageWrapper,
   EventPanel,
-  HorizontalSeparator,
   LoaderWrapper,
-  VerticalSeparator,
 } from './EventPage.styles';
 import EventUpdateForm from './EventUpdateForm';
 import useChannel from './hooks/useChannel';
@@ -125,7 +127,6 @@ const EventPage: React.FC = () => {
                           }}
                           onSuccess={hideModal}
                           onSubmit={updateEvent}
-                          formTitle={`Edit ${event.title}`}
                         />
                       );
                     case 'DecisionDetails':
