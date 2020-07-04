@@ -76,33 +76,20 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleTyping();
     e.preventDefault();
-    const value = e.target.value;
-    setMessageText(() => {
-      return value;
-    });
+    setMessageText(e.target.value);
   };
   const submitForm = () => {
-    if (messageText.length > 0) {
-      sendMessage(messageText.trim(), Date.now());
-      setMessageText('');
+    const trimmedMessage = messageText.trim();
+    if (trimmedMessage.length > 0) {
+      sendMessage(trimmedMessage, Date.now());
     }
+    setMessageText('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.charCode == 13) {
-      if (!e.shiftKey) {
-        const trimmedInput = messageText.trim();
-        // TODO: remove these hacky timeouts somehow
-        if (trimmedInput.length > 0) {
-          setTimeout(submitForm, 5);
-        } else {
-          setTimeout(() => {
-            setMessageText(() => {
-              return '';
-            });
-          }, 5);
-        }
-      }
+    if (e.charCode == 13 && !e.shiftKey) {
+      e.preventDefault();
+      submitForm();
     }
   };
 
@@ -221,8 +208,8 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
         <div ref={inputRef}>
           <Input
             value={messageText}
-            onKeyPress={handleKeyPress}
             onChange={handleChange}
+            onKeyPress={handleKeyPress}
             onResize={handleResize}
             maxRows={4}
           />

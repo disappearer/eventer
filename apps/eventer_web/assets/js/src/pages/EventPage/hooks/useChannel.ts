@@ -77,7 +77,6 @@ const getNewChannel: getNewChannelT = (hashId, setEvent, socket, dispatch) => {
   channel
     .join()
     .receive('ok', ({ event }) => {
-      console.log('getNewChannel:getNewChannelT -> event', event);
       const stateEvent = mapResponseEventToStateEvent(event);
       setEvent(Some(stateEvent));
       dispatch(setIsJoined(true));
