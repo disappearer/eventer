@@ -76,10 +76,7 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleTyping();
     e.preventDefault();
-    const value = e.target.value;
-    setMessageText(() => {
-      return value;
-    });
+    setMessageText(e.target.value);
   };
   const submitForm = () => {
     const trimmedMessage = messageText.trim();
@@ -90,11 +87,9 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.charCode == 13) {
-      if (!e.shiftKey) {
-        e.preventDefault();
-        submitForm();
-      }
+    if (e.charCode == 13 && !e.shiftKey) {
+      e.preventDefault();
+      submitForm();
     }
   };
 
