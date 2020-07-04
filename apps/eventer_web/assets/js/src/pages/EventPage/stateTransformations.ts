@@ -4,7 +4,7 @@ import {
   stateDecisionsT,
   stateEventT,
   stateUsersT,
-  responseDecisionT,
+  decisionT,
   pollT,
 } from './types';
 
@@ -21,10 +21,9 @@ export const mapResponseEventToStateEvent: mapResponseEventToStateEventT = (
   } = responseEvent;
 
   const stateDecisions: stateDecisionsT = decisions.reduce((sd, decision) => {
-    const { id, ...decisionData } = decision;
     return {
       ...sd,
-      [id]: decisionData,
+      [decision.id]: decision,
     };
   }, {});
 
@@ -156,16 +155,15 @@ export const updateStateEvent: updateStateEventT = (currentEvent, data) => {
 
 type addStateDecisionT = (
   e: stateEventT,
-  decision: responseDecisionT,
+  decision: decisionT,
 ) => stateEventT;
-export const addStateDecision: addStateDecisionT = (currentEvent, data) => {
-  const { id, ...decisionData } = data;
+export const addStateDecision: addStateDecisionT = (currentEvent, decision) => {
   const { decisions } = currentEvent;
   return {
     ...currentEvent,
     decisions: {
       ...decisions,
-      [id]: decisionData,
+      [decision.id]: decision,
     },
   };
 };
@@ -181,7 +179,7 @@ export const updateStateDecision: updateStateDecisionT = (
   const { id, title, description } = data;
   const { decisions } = currentEvent;
 
-  const { [id]: decisionToUpdate } = decisions;
+  const decisionToUpdate = decisions[id];
 
   return {
     ...currentEvent,
@@ -203,7 +201,7 @@ export const resolveStateDecision: resolveStateDecisionT = (
   const { id, resolution } = data;
   const { decisions } = currentEvent;
 
-  const { [id]: resolvedDecision } = decisions;
+  const resolvedDecision = decisions[id];
 
   return {
     ...currentEvent,
@@ -242,9 +240,7 @@ export const discardStateResolution: discardStateResolutionT = (
   decisionId,
 ) => {
   const { decisions } = currentEvent;
-
-  const { [decisionId]: decision } = decisions;
-
+  const decision = decisions[decisionId];
   return {
     ...currentEvent,
     decisions: {
@@ -256,24 +252,20 @@ export const discardStateResolution: discardStateResolutionT = (
 
 type openStateDiscussionT = (
   e: stateEventT,
-  data:
-    | { status: 'new'; decision: responseDecisionT }
-    | { status: 'updated'; decision: responseDecisionT },
+  data: { decision: decisionT },
 ) => stateEventT;
 export const openStateDiscussion: openStateDiscussionT = (
   currentEvent,
   data,
 ) => {
   const { decisions } = currentEvent;
-  const {
-    decision: { id, ...decisionData },
-  } = data;
+  const { decision } = data;
 
   return {
     ...currentEvent,
-    time: decisionData.objective === 'time' ? null : currentEvent.time,
-    place: decisionData.objective === 'place' ? null : currentEvent.place,
-    decisions: { ...decisions, [id]: decisionData },
+    time: decision.objective === 'time' ? null : currentEvent.time,
+    place: decision.objective === 'place' ? null : currentEvent.place,
+    decisions: { ...decisions, [decision.id]: decision },
   };
 };
 
@@ -284,7 +276,7 @@ type addStatePollT = (
 ) => stateEventT;
 export const addStatePoll: addStatePollT = (currentEvent, decisionId, poll) => {
   const { decisions } = currentEvent;
-  const { [decisionId]: decision } = decisions;
+  const decision = decisions[decisionId];
 
   return {
     ...currentEvent,
@@ -298,7 +290,7 @@ export const addStatePoll: addStatePollT = (currentEvent, decisionId, poll) => {
 type removeStatePollT = (e: stateEventT, decisionId: number) => stateEventT;
 export const removeStatePoll: removeStatePollT = (currentEvent, decisionId) => {
   const { decisions } = currentEvent;
-  const { [decisionId]: decision } = decisions;
+  const decision = decisions[decisionId];
 
   return {
     ...currentEvent,
@@ -328,7 +320,7 @@ export const updateStateVote: updateStateVoteT = (
   optionsVotedFor,
 ) => {
   const { decisions } = currentEvent;
-  const { [decisionId]: decision } = decisions;
+  const decision = decisions[decisionId];
   const { poll } = decision;
   if (poll) {
     const { options } = poll;

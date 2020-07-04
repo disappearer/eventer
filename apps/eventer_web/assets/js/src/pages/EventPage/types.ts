@@ -1,4 +1,4 @@
-import { pollValuesT } from './Decisions/DecisionDetails/PollForm';
+import { pollValuesT } from './Decisions/DecisionDetails/AddPollForm';
 
 export type stateEventT = eventDataT & {
   decisions: stateDecisionsT;
@@ -40,6 +40,7 @@ export type pollT = {
 };
 
 export type decisionT = {
+  id: number;
   title: string;
   description: string | null;
   objective: objectiveT;
@@ -48,11 +49,10 @@ export type decisionT = {
   resolution: string | null;
   poll: pollT | null;
 };
-export type responseDecisionT = decisionT & { id: number };
 export type stateDecisionsT = {
   [key: number]: decisionT;
 };
-export type responseDecisionsT = responseDecisionT[];
+export type responseDecisionsT = decisionT[];
 
 export type userT = {
   name: string;
@@ -119,8 +119,17 @@ export type resolveDecisionT = (
   onError: (e: { resolution?: string }) => void,
 ) => void;
 
-export type discardResolutionT = (id: number) => void;
-export type discardPollT = (id: number) => void;
+export type discardResolutionT = (
+  data: { decisionId: number },
+  onSuccess: () => void,
+  onError: () => void,
+) => void;
+
+export type discardPollT = (
+  data: { decisionId: number },
+  onSuccess: () => void,
+  onError: () => void,
+) => void;
 
 export type addPollT = (
   data: { decisionId: number; poll: pollValuesT },

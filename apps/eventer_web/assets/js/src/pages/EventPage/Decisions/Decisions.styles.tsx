@@ -1,8 +1,10 @@
 import { PlaylistAdd } from '@styled-icons/material';
-import { Delete } from '@styled-icons/material';
 import styled from 'styled-components';
 import { CHAT_HIDING_BREAKPOINT } from '../Chat/Chat.util';
 import { Question, Check } from '@styled-icons/evil';
+import RemoveButton from '../../../components/RemoveButton';
+import { Time, Location } from '@styled-icons/ionicons-sharp';
+
 export const DecisionsWrapper = styled.div`
   flex: 1;
   display: flex;
@@ -22,7 +24,7 @@ export const DecisionListTitleLine = styled.div`
   align-items: center;
 `;
 
-export const DecisionListTitle = styled.h5`
+export const DecisionListTitle = styled.h4`
   display: inline-block;
   margin: 0;
 `;
@@ -40,14 +42,28 @@ export const DecisionTitle = styled.h4`
   color: ${({ theme }) => theme.colors.roseOfSharon};
 `;
 
+export const TimeIcon = styled(Time)`
+  margin-left: 5px;
+  width: 17px;
+  height: 17px;
+  color: ${({ theme }) => theme.colors.roseOfSharon}bb;
+`;
+
+export const LocationIcon = styled(Location)`
+  margin-left: 5px;
+  width: 17px;
+  height: 17px;
+  color: ${({ theme }) => theme.colors.roseOfSharon}bb;
+`;
+
 export const PendingIcon = styled(Question)`
   margin-right: 2px;
   width: 25px;
   height: 25px;
-  color: ${({ theme }) => theme.colors.roseOfSharon};
+  color: ${({ theme }) => theme.colors.lemonGinger};
 
   &:hover {
-    color: ${({ theme }) => theme.colors.roseOfSharonDark};
+    color: ${({ theme }) => theme.colors.lemonGinger};
   }
 `;
 
@@ -55,17 +71,17 @@ export const ResolvedIcon = styled(Check)`
   margin-right: 2px;
   width: 25px;
   height: 25px;
-  color: ${({ theme }) => theme.colors.roseOfSharon};
+  color: ${({ theme }) => theme.colors.apple};
 
   &:hover {
-    color: ${({ theme }) => theme.colors.roseOfSharonDark};
+    color: ${({ theme }) => theme.colors.apple};
   }
 `;
 
 export const AddButton = styled(PlaylistAdd)`
   margin-left: 7px;
-  width: 22px;
-  height: 22px;
+  width: 25px;
+  height: 25px;
   color: ${({ theme }) => theme.colors.roseOfSharon};
 
   &:hover {
@@ -79,17 +95,8 @@ export const DecisionList = styled.div`
   overflow-y: auto;
 `;
 
-export const RemoveButton = styled(Delete)`
-  margin-left: 7px;
-  width: 20px;
-  height: 20px;
+export const RemoveDecisionButton = styled(RemoveButton)`
   visibility: hidden;
-  color: ${({ theme }) => theme.colors.roseOfSharon};
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.roseOfSharonDark};
-    cursor: pointer;
-  }
 `;
 
 export const Decision = styled.div`

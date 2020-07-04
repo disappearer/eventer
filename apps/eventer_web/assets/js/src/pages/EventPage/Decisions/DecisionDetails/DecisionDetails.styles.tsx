@@ -1,38 +1,13 @@
 import styled from 'styled-components';
-import Button from '../../../../components/Button';
+import RemoveButton from '../../../../components/RemoveButton';
+import { VerticalSeparator } from '../../../../components/Separator';
 
 export const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(63px, 103px)) auto;
-  grid-template-areas:
-    'info info poll'
-    'objective status poll'
-    'resolution resolution poll';
-
-  grid-gap: 23px;
-  justify-items: start;
-  justify-content: start;
-  align-items: start;
-
-  @media (max-width: 440px) {
-    grid-template-columns: repeat(2, minmax(63px, 123px));
-    grid-template-areas:
-      'info info'
-      'objective status'
-      'resolution resolution'
-      'poll poll'
-      'poll poll'
-      'poll poll';
-  }
+  display: flex;
+  max-width: 580px;
 `;
 
 export const TitleLine = styled.div`
-  display: grid;
-  grid-template-columns: auto minmax(60px, auto);
-  grid-gap: 20px;
-  justify-content: start;
-  align-items: center;
-
   margin-bottom: 5px;
 `;
 
@@ -44,34 +19,62 @@ export const InfoArea = styled.div`
   grid-area: info;
 `;
 
-export const StatusArea = styled.div`
-  grid-area: status;
+export const OtherInfo = styled.div`
+  display: flex;
+  margin-bottom: 10px;
 `;
 
-export const ObjectiveArea = styled.div`
-  grid-area: objective;
-`;
+export const InfoPiece = styled.div`
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
 
-export const PollArea = styled.div`
-  grid-area: poll;
-  margin-left: 10px;
-
-  @media (max-width: 440px) {
-    margin: 0;
+  &:first-child {
+    margin-right: 30px;
   }
 `;
 
+export const PollArea = styled.div``;
+
 export const ResolutionArea = styled.div`
+  margin-top: 20px;
   grid-area: resolution;
 `;
 
-export const Label = styled.h4`
-  margin: 0;
-  margin-bottom: 5px;
+export const ActionButtons = styled.div`
+  display: flex;
+  margin-top: 20px;
+  & button {
+    :not(:last-child) {
+      margin-right: 20px;
+    }
+  }
 `;
 
-export const RemovePollButton = styled(Button)`
-  margin-left: 10px;
+export const Label = styled.h5`
+  margin: 0;
+  margin-right: 10px;
+`;
+
+export const Data = styled.div`
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: ${({ theme }) => theme.colors.scorpion};
+`;
+
+export const PollSeparator = styled(VerticalSeparator)`
+  height: auto;
+`;
+
+export const PollLabel = styled.h3`
+  margin: 0;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+`;
+
+export const RemovePollButton = styled(RemoveButton)`
+  margin-left: 7px;
 `;
 
 export const ResolutionLabel = styled.h4`

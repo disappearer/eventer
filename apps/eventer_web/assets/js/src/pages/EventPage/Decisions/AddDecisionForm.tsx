@@ -43,34 +43,32 @@ const AddDecisionForm: React.FC<addDecisionFromPropsT> = ({
     >
       {({ values, handleChange, isSubmitting }) => {
         return (
-          <div>
-            <FormTitle>Create a new decision</FormTitle>
-            <Form>
-              <FormGrid>
-                <TextField
-                  name="title"
-                  label="Title"
-                  onChange={handleChange}
-                  value={values.title}
-                />
-                <TextField
-                  name="description"
-                  label="Description (optional)"
-                  onChange={handleChange}
-                  value={values.description}
-                />
+          <Form>
+            <FormGrid>
+              <FormTitle>Create a new decision</FormTitle>
+              <TextField
+                name="title"
+                label="Title"
+                onChange={handleChange}
+                value={values.title}
+              />
+              <TextField
+                name="description"
+                label="Description (optional)"
+                onChange={handleChange}
+                value={values.description}
+              />
 
-                <ButtonsGrid>
-                  <Button type="submit" isSubmitting={isSubmitting}>
-                    Submit
-                  </Button>
-                  <Button onClick={onSuccess} disabled={isSubmitting}>
-                    Cancel
-                  </Button>
-                </ButtonsGrid>
-              </FormGrid>
-            </Form>
-          </div>
+              <ButtonsGrid>
+                <Button type="submit" isSubmitting={isSubmitting}>
+                  Submit
+                </Button>
+                <Button onClick={onSuccess} disabled={isSubmitting}>
+                  Cancel
+                </Button>
+              </ButtonsGrid>
+            </FormGrid>
+          </Form>
         );
       }}
     </Formik>

@@ -23,6 +23,7 @@ const Input = styled.input<inputPropsT>`
   border-bottom: 1px solid ${props => props.theme.colors.emperor};
   font-size: 1rem;
   font-weight: 300;
+  font-family: 'Helvetica', 'Arial', sans-serif;
   color: ${props => props.theme.colors.mineShaft};
   width: 273px;
   ${props =>

@@ -166,3 +166,24 @@ h3.decision-title {
   border: 1px solid #888;
   border-radius: 6px;
 }
+
+/* Tooltip */
+.__react_component_tooltip.show {
+  background: #555 !important;
+}
+
+.__react_component_tooltip.place-left::after {
+  border-left: 8px solid #555 !important;
+}
+
+.__react_component_tooltip.place-right::after {
+  border-right: 8px solid #555 !important;
+}
+
+.__react_component_tooltip.place-top::after {
+  border-top: 8px solid #555 !important;
+}
+
+.__react_component_tooltip.place-bottom::after {
+  border-bottom: 8px solid #555 !important;
+}

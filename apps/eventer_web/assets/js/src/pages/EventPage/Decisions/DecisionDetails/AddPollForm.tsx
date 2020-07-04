@@ -6,12 +6,32 @@ import CheckboxField from '../../../../components/CheckboxField';
 import TextField from '../../../../components/TextField';
 import { ButtonsGrid, FormGrid, FormTitle } from '../../Form.styles';
 import { addPollT, pollT } from '../../types';
+import { CloseO } from '@styled-icons/evil';
 
 const PollOption = styled.div`
   display: grid;
   grid-template-columns: auto auto;
   grid-gap: 5px;
   align-items: center;
+`;
+
+const AddAnswerButton = styled(Button)`
+  font-size: 0.7rem;
+`;
+
+const RemoveOptionIcon = styled(CloseO)`
+  width: 23px;
+  height: 23px;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.roseOfSharonDark};
+    cursor: pointer;
+  }
+`;
+
+const ActionButtons = styled(ButtonsGrid)`
+  margin-top: 10px;
 `;
 
 export type pollValuesT = {
@@ -38,7 +58,7 @@ const defaultValues: pollValuesT = {
   options: [],
 };
 
-const PollForm: FunctionComponent<pollFormPropsT> = ({
+const AddPollForm: FunctionComponent<pollFormPropsT> = ({
   initialValues = defaultValues,
   decisionId,
   onSuccess,
@@ -64,8 +84,8 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
       {({ values, handleChange, isSubmitting }) => {
         return (
           <Form>
-            <FormTitle>Add poll</FormTitle>
             <FormGrid>
+              <FormTitle>Add poll</FormTitle>
               <TextField
                 name="question"
                 label="Poll question"
@@ -98,15 +118,12 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
                           onChange={handleChange}
                           value={option.text}
                         />
-                        <Button
-                          type="button"
+                        <RemoveOptionIcon
                           onClick={() => arrayHelpers.remove(index)}
-                        >
-                          x
-                        </Button>
+                        />
                       </PollOption>
                     ))}
-                    <Button
+                    <AddAnswerButton
                       type="button"
                       onClick={() => {
                         arrayHelpers.push({
@@ -115,18 +132,18 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
                       }}
                     >
                       Add answer
-                    </Button>
+                    </AddAnswerButton>
                   </>
                 )}
               />
-              <ButtonsGrid>
+              <ActionButtons>
                 <Button type="submit" isSubmitting={isSubmitting}>
                   Submit
                 </Button>
                 <Button onClick={onSuccess} disabled={isSubmitting}>
                   Cancel
                 </Button>
-              </ButtonsGrid>
+              </ActionButtons>
             </FormGrid>
           </Form>
         );
@@ -135,4 +152,4 @@ const PollForm: FunctionComponent<pollFormPropsT> = ({
   );
 };
 
-export default PollForm;
+export default AddPollForm;
