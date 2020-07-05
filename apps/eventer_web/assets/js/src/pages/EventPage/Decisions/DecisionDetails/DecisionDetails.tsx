@@ -198,7 +198,14 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
       {decisionAction === 'discard_resolution' && (
         <Confirmation
           title="Discard resolution"
-          question={`Are you sure you want to discard resolution "${resolution}"?`}
+          question={
+            resolution && (
+              <>
+                Are you sure you want to discard resolution "
+                <Markdown>{resolution}</Markdown>"?
+              </>
+            )
+          }
           failText="Resolution discarding failed. Please try again."
           onSubmit={discardResolution}
           goBack={resetDecisionModal}
