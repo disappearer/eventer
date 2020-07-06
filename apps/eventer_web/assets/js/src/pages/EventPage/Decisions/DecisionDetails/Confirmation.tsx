@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 type propsT = {
   title: string;
-  question: string;
+  question: string | React.ReactNode;
   failText: string;
   onSubmit: (onSuccess: () => void, onError: () => void) => void;
   goBack: () => void;

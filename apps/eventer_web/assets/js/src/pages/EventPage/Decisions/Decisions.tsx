@@ -21,7 +21,6 @@ import {
 } from './Decisions.styles';
 import ReactTooltip from 'react-tooltip';
 import { getOSAndBrowser } from '../../../util/deviceInfo';
-import theme from '../../../common/theme';
 
 type decisionsPropsT = {
   decisions: stateDecisionsT;
@@ -107,11 +106,9 @@ const Decisions: React.FC<decisionsPropsT> = ({
                   )}
                 </DecisionTitleLine>
                 <Description>
-                  {pending
-                    ? description && <Markdown>{description}</Markdown>
-                    : formattedResolution && (
-                        <Markdown>{formattedResolution}</Markdown>
-                      )}
+                  {formattedResolution && (
+                    <Markdown>{formattedResolution}</Markdown>
+                  )}
                 </Description>
               </Decision>
             );
