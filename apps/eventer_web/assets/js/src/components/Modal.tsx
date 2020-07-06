@@ -47,9 +47,9 @@ const Modal: React.FC<modalPropsT> = ({
   };
 
   useEffect(() => {
-    document.addEventListener('keydown', handleEscapeKeyPress);
+    document.addEventListener('keyup', handleEscapeKeyPress);
     return () => {
-      document.removeEventListener('keydown', handleEscapeKeyPress);
+      document.removeEventListener('keyup', handleEscapeKeyPress);
     };
   }, []);
 
@@ -62,7 +62,7 @@ const Modal: React.FC<modalPropsT> = ({
     >
       <div className="modal-content">
         <ModalWrapper>
-          <ModalCloseBtn onClick={hideModal} type="button" />
+          <ModalCloseBtn onClick={hideModal} />
           {children}
         </ModalWrapper>
       </div>
