@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import Markdown from '../../../components/Markdown';
 import { formatTime } from '../../../util/time';
 import useParticipation from '../hooks/useParticipation';
@@ -62,8 +62,13 @@ const Decisions: React.FC<decisionsPropsT> = ({
     return os === 'Android' || os === 'iOS';
   }, []);
 
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  }, [sortedDecisions]);
+
   return (
     <DecisionsWrapper>
+      {!isMobile && <ReactTooltip />}
       <DecisionListTitleLine>
         <DecisionListTitle>Decisions</DecisionListTitle>
         {isCurrentUserParticipating && (
@@ -74,14 +79,13 @@ const Decisions: React.FC<decisionsPropsT> = ({
       </DecisionListTitleLine>
       <DecisionList>
         {sortedDecisions.map(
-          ({ id, title, description, pending, objective, resolution }) => {
+          ({ id, title, pending, objective, resolution }) => {
             const formattedResolution =
               resolution && objective === 'time'
                 ? formatTime(resolution)
                 : resolution;
             return (
               <Decision key={id} onClick={() => onDecisionClick(id)}>
-                {!isMobile && <ReactTooltip />}
                 <DecisionTitleLine>
                   <DecisionTitle>
                     {pending ? (
