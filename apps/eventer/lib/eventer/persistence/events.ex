@@ -27,6 +27,18 @@ defmodule Eventer.Persistence.Events do
     end)
   end
 
+  def delete_event(id) do
+    event =
+      Repo.get(Event, id)
+      |> preload_participation_assocs()
+
+    if Enum.empty?(event.participants) and Enum.empty?(event.ex_participants) do
+      Repo.delete(event)
+    else
+      {:error, "Can't delete event that has or has had participants."}
+    end
+  end
+
   def get_event(id) do
     Repo.get(Event, id)
     |> Repo.preload([:creator])

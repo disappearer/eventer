@@ -37,7 +37,7 @@ defmodule EventerWeb.Router do
 
     get "/me", UserController, :index
     post "/me/firebase_token", UserController, :add_firebase_token
-    resources "/events", EventController, only: [:index, :create]
+    resources "/events", EventController, only: [:index, :create, :delete]
   end
 
   scope "/", EventerWeb do

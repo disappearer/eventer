@@ -28,4 +28,18 @@ defmodule EventerWeb.EventController do
 
     render(conn, "events.json", %{events: events})
   end
+
+  def delete(conn, %{"id" => event_id_hash}) do
+    event_id = IdHasher.decode(event_id_hash)
+
+    case Events.delete_event(event_id) do
+      {:ok, _} ->
+        render(conn, "event.json", %{event_id_hash: event_id_hash})
+
+      {:error, errors} ->
+        conn
+        |> put_status(:bad_request)
+        |> render("error.json", %{errors: errors})
+    end
+  end
 end
