@@ -37,7 +37,6 @@ defmodule EventerWeb.EventChannelConnectTest do
           pending: false
         })
 
-      IO.inspect(decision3.id, label: "decision3")
       event = Events.get_event(event.id) |> Events.to_map()
       event_id_hash = IdHasher.encode(event.id)
 
@@ -98,19 +97,19 @@ defmodule EventerWeb.EventChannelConnectTest do
     end
 
     @tag authorized: 1
-    test "assigns event id to socket", %{
+    test "assigns event to socket", %{
       connections: [%{user: user, socket: socket}]
     } do
       event = insert_event(%{creator: user})
       insert(:decision, %{event: event, creator: user})
 
-      event = Events.get_event(event.id) |> Events.to_map()
+      event = Events.get_event(event.id)
       event_id_hash = IdHasher.encode(event.id)
 
       {:ok, _, socket} =
         subscribe_and_join(socket, EventChannel, "event:#{event_id_hash}")
 
-      assert socket.assigns.event_id === event.id
+      assert socket.assigns.event === event
     end
   end
 end

@@ -138,7 +138,7 @@ defmodule EventerWeb.EventChannelChatTest do
 
     @tag :notifications_enabled
     @tag authorized: 2
-    test "'get_chat_messages' with after field", %{
+    test "'get_chat_messages_after' the last message received", %{
       connections: connections
     } do
       EventerWeb.NotifierMock
