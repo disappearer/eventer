@@ -5,24 +5,15 @@ defmodule EventerWeb.EventChannel do
   alias Eventer.Persistence.{Events, Users, Decisions, Messages}
   alias Eventer.Decision
 
-  @notifier Application.get_env(:eventer_web, :notifier)
+  import EventerWeb.EventChannelUtil
+
 
   def join("event:" <> event_id_hash, _message, socket) do
     event_id = IdHasher.decode(event_id_hash)
 
-    event =
-      event_id
-      |> Events.get_event()
-      |> Events.to_map()
+    event = Events.get_event(event_id)
 
-    participant_ids = Enum.map(event.participants, &Map.get(&1, :id))
-
-    socket =
-      Phoenix.Socket.assign(socket,
-        event_id: event.id,
-        creator_id: event.creator.id,
-        participant_ids: participant_ids
-      )
+    socket = Phoenix.Socket.assign(socket, event: event)
 
     if is_participant(socket) do
       send(self(), :join_presence)
@@ -36,7 +27,7 @@ defmodule EventerWeb.EventChannel do
       #   )
     end
 
-    {:ok, %{event: event}, socket}
+    {:ok, %{event: Events.to_map(event)}, socket}
   end
 
   def handle_in("join_event", %{}, socket),
@@ -45,34 +36,44 @@ defmodule EventerWeb.EventChannel do
   def handle_in("get_chat_messages", %{}, socket),
     do: handle_message("get_chat_messages", %{}, socket)
 
+  def handle_in("get_chat_messages_after", payload, socket),
+    do: handle_message("get_chat_messages_after", payload, socket)
+
   def handle_in(message, payload, socket) do
-    if is_participant(socket) do
+    with :is_participant <- get_participation_status(socket),
+         true <- is_allowed(message, socket) do
       handle_message(message, payload, socket)
     else
-      {:reply,
-       {:error,
-        %{
-          errors: %{
-            permissions: "This action is not allowed for non-participants"
-          }
-        }}, socket}
+      :not_participant ->
+        {:reply,
+         {:error,
+          %{
+            errors: %{
+              permissions: "This action is not allowed for non-participants"
+            }
+          }}, socket}
+
+      :not_allowed_cancelled ->
+        {:reply,
+         {:error,
+          %{
+            errors: "Can't perform this action on cancelled event"
+          }}, socket}
     end
   end
 
   def handle_message("join_event", %{}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
-    event_id = socket.assigns.event_id
+    %{event: event} = socket.assigns
 
-    {:ok, _} = Events.join(event_id, user.id)
+    {:ok, _} = Events.join(event.id, user.id)
+
+    joined_event = Events.get_event(event.id)
+    socket = Phoenix.Socket.assign(socket, event: joined_event)
 
     broadcast(socket, "user_joined", %{user: Users.to_map(user)})
 
-    %{participant_ids: participant_ids} = socket.assigns
-    socket = assign(socket, :participant_ids, [user.id | participant_ids])
-
     send(self(), :join_presence)
-
-    event = Events.get_event(event_id)
 
     bot_shout("#{user.name} has joined \"#{event.title}\".", socket)
 
@@ -85,12 +86,14 @@ defmodule EventerWeb.EventChannel do
 
   def handle_message("leave_event", %{}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
+    %{event: event} = socket.assigns
 
-    Events.leave(socket.assigns.event_id, user.id)
+    Events.leave(socket.assigns.event.id, user.id)
+
+    left_event = Events.get_event(event.id)
+    socket = Phoenix.Socket.assign(socket, event: left_event)
 
     broadcast(socket, "user_left", %{userId: user.id})
-
-    event = Events.get_event(socket.assigns.event_id)
 
     bot_shout("#{user.name} has left \"#{event.title}\".", socket)
 
@@ -98,11 +101,13 @@ defmodule EventerWeb.EventChannel do
   end
 
   def handle_message("update_event", %{"event" => event_data}, socket) do
-    case Events.get_event(socket.assigns.event_id)
-         |> Events.update_event(event_data) do
-      {:ok, _} ->
-        broadcast(socket, "event_updated", %{event: event_data})
+    %{event: event} = socket.assigns
 
+    case Events.update_event(event, event_data) do
+      {:ok, updated_event} ->
+        socket = Phoenix.Socket.assign(socket, event: updated_event)
+
+        broadcast(socket, "event_updated", %{event: event_data})
         user = Guardian.Phoenix.Socket.current_resource(socket)
 
         bot_shout(
@@ -116,14 +121,56 @@ defmodule EventerWeb.EventChannel do
     end
   end
 
+  def handle_message("cancel_event", %{}, socket) do
+    %{event: event} = socket.assigns
+
+    case Events.cancel_event(event) do
+      {:ok, cancelled_event} ->
+        socket = Phoenix.Socket.assign(socket, event: cancelled_event)
+        broadcast(socket, "event_cancelled", %{})
+
+        user = Guardian.Phoenix.Socket.current_resource(socket)
+
+        bot_shout(
+          "#{user.name} cancelled the event.",
+          socket
+        )
+
+      {:error, changeset} ->
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
+    end
+  end
+
+  def handle_message("reactivate_event", %{}, socket) do
+    %{event: event} = socket.assigns
+
+    case Events.reactivate_event(event) do
+      {:ok, reactivated_event} ->
+        socket = Phoenix.Socket.assign(socket, event: reactivated_event)
+
+        broadcast(socket, "event_reactivated", %{})
+
+        user = Guardian.Phoenix.Socket.current_resource(socket)
+
+        bot_shout(
+          "#{user.name} reactivated the event.",
+          socket
+        )
+
+      {:error, changeset} ->
+        errors = Eventer.Persistence.Util.get_error_map(changeset)
+        {:reply, {:error, %{errors: errors}}, socket}
+    end
+  end
+
   def handle_message("add_decision", %{"decision" => data}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
-    event_id = socket.assigns.event_id
 
     result =
       data
       |> Map.put_new("creator_id", user.id)
-      |> Map.put_new("event_id", event_id)
+      |> Map.put_new("event_id", socket.assigns.event.id)
       |> Decisions.insert_decision()
 
     case result do
@@ -249,7 +296,7 @@ defmodule EventerWeb.EventChannel do
   def handle_message("open_discussion", %{"objective" => objective}, socket) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
 
-    case Events.open_discussion(socket.assigns.event_id, objective, user.id) do
+    case Events.open_discussion(socket.assigns.event.id, objective, user.id) do
       {:ok, {:new_decision, new_decision}} ->
         broadcast(socket, "discussion_opened", %{
           status: "new",
@@ -366,7 +413,7 @@ defmodule EventerWeb.EventChannel do
         socket
       ) do
     messages =
-      socket.assigns.event_id
+      socket.assigns.event.id
       |> Messages.get_messages(after_time)
       |> Enum.map(&Messages.to_map/1)
 
@@ -375,7 +422,7 @@ defmodule EventerWeb.EventChannel do
 
   def handle_message("get_chat_messages", %{}, socket) do
     messages =
-      socket.assigns.event_id
+      socket.assigns.event.id
       |> Messages.get_messages()
       |> Enum.map(&Messages.to_map/1)
 
@@ -388,7 +435,7 @@ defmodule EventerWeb.EventChannel do
         socket
       ) do
     user = Guardian.Phoenix.Socket.current_resource(socket)
-    event_id = socket.assigns.event_id
+    event_id = socket.assigns.event.id
 
     case Messages.insert_message(%{
            user_id: user.id,
@@ -450,101 +497,4 @@ defmodule EventerWeb.EventChannel do
 
     {:noreply, socket}
   end
-
-  # def leave(event_id, user_id),
-  #   do: Users.set_last_event_visit(user_id, event_id)
-
-  defp is_participant(socket) do
-    user = Guardian.Phoenix.Socket.current_resource(socket)
-    %{creator_id: creator_id, participant_ids: participant_ids} = socket.assigns
-
-    user.id === creator_id || Enum.member?(participant_ids, user.id)
-  end
-
-  defp check_multiple_vote(decision, options) do
-    cond do
-      length(options) < 2 ->
-        {:ok, nil}
-
-      decision.poll.multiple_answers_enabled ->
-        {:ok, nil}
-
-      true ->
-        {:error, %{vote: "Voting for multiple options is disabled"}}
-    end
-  end
-
-  defp add_custom_option(decision, custom_option) do
-    if custom_option do
-      with true <- decision.poll.custom_answer_enabled,
-           {:error, changeset} <-
-             Decisions.add_option(decision, custom_option["text"]),
-           %{options: options_errors} <-
-             Eventer.Persistence.Util.get_error_map(changeset),
-           %{text: "Has a duplicate"} <- List.last(options_errors) do
-        {:error, %{customOption: "Answer already exists"}}
-      else
-        false -> {:error, %{vote: "Poll fixed - custom option not possible"}}
-        result -> result
-      end
-    else
-      {:ok, decision}
-    end
-  end
-
-  defp append_custom_option(options, _decision, nil), do: {options, nil}
-
-  defp append_custom_option(options, decision, _custom_option) do
-    new_option = List.last(decision.poll.options)
-    {[new_option.id | options], new_option}
-  end
-
-  defp notify_absent_participants(event_id, socket, body) do
-    event = Events.get_event(event_id)
-
-    absentee_ids = get_absent_participants(event, socket)
-
-    if not Enum.empty?(absentee_ids) do
-      if Application.get_env(:eventer_web, :notifications_enabled) do
-        Task.start_link(fn ->
-          @notifier.notify_absent_participants(absentee_ids, event, %{
-            title: "\"#{event.title}\" is active!",
-            body: body
-          })
-
-          Users.set_notification_pending(absentee_ids, event_id)
-        end)
-      end
-    end
-  end
-
-  defp get_absent_participants(
-         %{participants: participants},
-         socket
-       ) do
-    participant_ids = Enum.map(participants, &Map.get(&1, :id))
-    user = Guardian.Phoenix.Socket.current_resource(socket)
-
-    present_participant_ids =
-      Presence.list(socket)
-      |> Enum.map(fn {id, _} -> Integer.parse(id) |> elem(0) end)
-
-    Enum.filter(
-      participant_ids,
-      &(&1 not in [user.id | present_participant_ids])
-    )
-    |> filter_unnotified(socket.assigns.event_id)
-  end
-
-  defp filter_unnotified(absentee_ids, event_id) do
-    Users.get_unnotified_users_ids(absentee_ids, event_id)
-  end
-
-  defp bot_shout(text, socket),
-    do:
-      handle_message(
-        "chat_shout",
-        %{"text" => text, "is_bot" => true},
-        socket
-      )
 end

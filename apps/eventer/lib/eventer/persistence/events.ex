@@ -99,6 +99,10 @@ defmodule Eventer.Persistence.Events do
     update_event(event, %{cancelled: true})
   end
 
+  def reactivate_event(event) do
+    update_event(event, %{cancelled: false})
+  end
+
   def join(event_id, user_id) do
     case Repo.get_by(Participation, event_id: event_id, user_id: user_id) do
       nil ->
