@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import TextArea from 'react-autosize-textarea';
 import { CHAT_HIDING_BREAKPOINT } from './Chat.util';
+import { Send } from '@styled-icons/ionicons-sharp/Send';
 
 type chatWrapperPropsT = {
   visible: boolean;
@@ -112,4 +113,26 @@ export const TypingIndicator = styled.div<{ visible: boolean }>`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+`;
+
+export const SendBtnWrapper = styled.div`
+  position: relative;
+  left: 11px;
+  background-color: ${({ theme }) => theme.colors.main};
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.secondary};
+    cursor: pointer;
+  }
+  border-radius: 50%;
+`;
+export const ChatSendBtnMobile = styled(Send)`
+  width: 34px;
+  height: 34px;
+  color: white;
+  padding: 7px;
+  padding-left: 10px;
+`;
+
+export const ChatInputWrapper = styled.div`
+  display: flex;
 `;

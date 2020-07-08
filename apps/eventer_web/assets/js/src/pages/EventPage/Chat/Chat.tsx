@@ -26,8 +26,12 @@ import {
   Title,
   TypingIndicator,
   UserName,
+  ChatSendBtnMobile,
+  SendBtnWrapper,
+  ChatInputWrapper,
 } from './Chat.styles';
 import Markdown from '../../../components/Markdown';
+import { getOSAndBrowser } from '../../../util/deviceInfo';
 
 type chatPropsT = {
   visible: boolean;
@@ -59,7 +63,7 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
       return '';
     }
 
-    const userNames = typists.map((userId) => participants[userId].name);
+    const userNames = typists.map(userId => participants[userId].name);
     switch (userNames.length) {
       case 1:
         return `${userNames[0]} is typing...`;
@@ -119,6 +123,11 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
     [previousInputHeightRef, inputRef.current],
   );
 
+  const isMobile = useMemo(() => {
+    const { os } = getOSAndBrowser();
+    return os === 'Android' || os === 'iOS';
+  }, []);
+
   return (
     <ChatWrapper visible={visible}>
       <Title>Chat and updates</Title>
@@ -128,7 +137,7 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
             <div key={day}>
               <Day>{day}</Day>
               <div>
-                {messages.map((messageItem) => {
+                {messages.map(messageItem => {
                   if (messageItem.isGroup) {
                     const {
                       userId,
@@ -205,7 +214,7 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
         })}
       </Messages>
       {isParticipant && (
-        <div ref={inputRef}>
+        <ChatInputWrapper ref={inputRef}>
           <Input
             value={messageText}
             onChange={handleChange}
@@ -213,7 +222,12 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
             onResize={handleResize}
             maxRows={4}
           />
-        </div>
+          {isMobile && (
+            <SendBtnWrapper>
+              <ChatSendBtnMobile onClick={submitForm} />
+            </SendBtnWrapper>
+          )}
+        </ChatInputWrapper>
       )}
 
       <TypingIndicator visible={whosTyping.length > 0}>
