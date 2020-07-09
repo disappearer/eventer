@@ -222,11 +222,10 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
             onResize={handleResize}
             maxRows={4}
           />
-          {isMobile && (
-            <SendBtnWrapper>
-              <ChatSendBtnMobile onClick={submitForm} />
-            </SendBtnWrapper>
-          )}
+
+          <SendBtnWrapper>
+            <ChatSendBtnMobile onClick={submitForm} />
+          </SendBtnWrapper>
         </ChatInputWrapper>
       )}
 
