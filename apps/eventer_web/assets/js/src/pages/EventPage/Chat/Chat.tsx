@@ -129,16 +129,6 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
     return os === 'Android' || os === 'iOS';
   }, []);
 
-  const renderSendBtn = () => {
-    if (isMobile) {
-      return (
-        <SendBtnWrapper>
-          <ChatSendBtnMobile onClick={submitForm} />
-        </SendBtnWrapper>
-      );
-    }
-  };
-
   return (
     <ChatWrapper visible={visible}>
       <Title>Chat and updates</Title>
@@ -235,7 +225,11 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
             onResize={handleResize}
             maxRows={4}
           />
-          {renderSendBtn()}
+          {isMobile && (
+            <SendBtnWrapper>
+              <ChatSendBtnMobile onClick={submitForm} />
+            </SendBtnWrapper>
+          )}
         </ChatInputWrapper>
       )}
 
