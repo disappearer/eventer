@@ -129,22 +129,12 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
     return os === 'Android' || os === 'iOS';
   }, []);
 
-  const { os } = getOSAndBrowser();
-
-  const sendBtn = () => {
+  const renderSendBtn = () => {
     if (isMobile) {
       return (
         <SendBtnWrapper>
           <ChatSendBtnMobile onClick={submitForm} />
-          <p>os::{os}</p>
         </SendBtnWrapper>
-      );
-    } else {
-      return (
-        <div>
-          <p>isMobile::{isMobile ? 'true' : 'false'}</p>
-          <p>os::{os}</p>
-        </div>
       );
     }
   };
@@ -245,7 +235,7 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
             onResize={handleResize}
             maxRows={4}
           />
-          {sendBtn()}
+          {renderSendBtn()}
         </ChatInputWrapper>
       )}
 
