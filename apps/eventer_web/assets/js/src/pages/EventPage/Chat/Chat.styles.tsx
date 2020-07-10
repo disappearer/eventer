@@ -40,21 +40,22 @@ export const Day = styled.div`
 `;
 
 export const Message = styled.div`
-  display: grid;
-  column-gap: 10px;
-  grid-template-columns: auto 1fr;
+  display: flex;
   padding: 5px 0;
 `;
 
 export const Avatar = styled.img`
-  grid-column: 1 / span 1;
-  grid-row: 1 / span 2;
+  flex: none;
   border-radius: 50%;
+  margin-right: 5px;
+`;
+
+export const MessageData = styled.div`
+  flex: 1;
+  width: 200px;
 `;
 
 export const UserName = styled.div`
-  grid-column: 2 / span 1;
-  grid-row: 1 / span 1;
   color: ${({ theme }) => theme.colors.secondary};
   letter-spacing: 0.03rem;
   font-weight: 400;
@@ -68,7 +69,8 @@ export const TimeStamp = styled.span`
 `;
 
 export const MessageText = styled.div`
-  grid-column: 2 / span 1;
+  word-break: break-all;
+  word-wrap: break-word;
   color: ${({ theme }) => theme.colors.mineShaft};
   font-size: 1rem;
   padding: 3px 0;
@@ -116,8 +118,7 @@ export const TypingIndicator = styled.div<{ visible: boolean }>`
 `;
 
 export const SendBtnWrapper = styled.div`
-  position: relative;
-  left: 11px;
+  margin-left: 10px;
   background-color: ${({ theme }) => theme.colors.main};
   &:hover {
     background-color: ${({ theme }) => theme.colors.secondary};
@@ -131,8 +132,10 @@ export const ChatSendBtnMobile = styled(Send)`
   color: white;
   padding: 7px;
   padding-left: 10px;
+  align-self: bottom;
 `;
 
 export const ChatInputWrapper = styled.div`
   display: flex;
+  align-items: flex-end;
 `;
