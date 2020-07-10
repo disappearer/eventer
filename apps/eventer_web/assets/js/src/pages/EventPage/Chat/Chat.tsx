@@ -29,6 +29,7 @@ import {
   ChatSendBtnMobile,
   SendBtnWrapper,
   ChatInputWrapper,
+  MessageData,
 } from './Chat.styles';
 import Markdown from '../../../components/Markdown';
 import { getOSAndBrowser } from '../../../util/deviceInfo';
@@ -128,6 +129,26 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
     return os === 'Android' || os === 'iOS';
   }, []);
 
+  const { os } = getOSAndBrowser();
+
+  const sendBtn = () => {
+    if (isMobile) {
+      return (
+        <SendBtnWrapper>
+          <ChatSendBtnMobile onClick={submitForm} />
+          <p>os::{os}</p>
+        </SendBtnWrapper>
+      );
+    } else {
+      return (
+        <div>
+          <p>isMobile::{isMobile ? 'true' : 'false'}</p>
+          <p>os::{os}</p>
+        </div>
+      );
+    }
+  };
+
   return (
     <ChatWrapper visible={visible}>
       <Title>Chat and updates</Title>
@@ -154,15 +175,15 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
                     return (
                       <Message key={singleMessages[0].id}>
                         <Avatar src={imageUrl} width={40} height={40} />
-                        <UserName>
-                          {user.name}
-                          <TimeStamp>{at}</TimeStamp>
-                        </UserName>
-                        {singleMessages.map(({ id, text }) => (
-                          <MessageText key={id}>
-                            <Markdown>{text}</Markdown>
-                          </MessageText>
-                        ))}
+                        <MessageData>
+                          <UserName>
+                            {user.name}
+                            <TimeStamp>{at}</TimeStamp>
+                          </UserName>
+                          {singleMessages.map(({ id, text }) => (
+                            <MessageText key={id}>{text}</MessageText>
+                          ))}
+                        </MessageData>
                       </Message>
                     );
                   } else {
@@ -197,13 +218,15 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
                     return (
                       <Message key={id}>
                         <Avatar src={imageUrl} width={40} height={40} />
-                        <UserName>
-                          {user.name}
-                          <TimeStamp>{at}</TimeStamp>
-                        </UserName>
-                        <MessageText>
-                          <Markdown>{text}</Markdown>
-                        </MessageText>
+                        <MessageData>
+                          <UserName>
+                            {user.name}
+                            <TimeStamp>{at}</TimeStamp>
+                          </UserName>
+                          <MessageText>
+                            <Markdown>{text}</Markdown>
+                          </MessageText>
+                        </MessageData>
                       </Message>
                     );
                   }
@@ -222,10 +245,7 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
             onResize={handleResize}
             maxRows={4}
           />
-
-          <SendBtnWrapper>
-            <ChatSendBtnMobile onClick={submitForm} />
-          </SendBtnWrapper>
+          {sendBtn()}
         </ChatInputWrapper>
       )}
 
