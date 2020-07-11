@@ -242,7 +242,8 @@ export const ParticipantsGrid = styled.div`
   justify-items: start;
 
   font-size: 0.9rem;
-  line-height: 1;
+  max-height: 80px;
+  overflow: scroll;
 `;
 
 export const Participant = styled.div`
