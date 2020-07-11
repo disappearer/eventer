@@ -243,6 +243,9 @@ export const ParticipantsGrid = styled.div`
 
   font-size: 0.9rem;
   line-height: 1;
+  max-height: 73px;
+  min-height: 45px;
+  overflow: scroll;
 `;
 
 export const Participant = styled.div`

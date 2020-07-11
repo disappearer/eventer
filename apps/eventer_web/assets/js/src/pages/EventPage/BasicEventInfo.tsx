@@ -115,18 +115,20 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
       </TimePlace>
       <HorizontalSeparator />
       <Participants>
-        <Label>Participants</Label>
+        <Label>Participants ({Object.keys(participants).length})</Label>
         <ParticipantsGrid>
-          {Object.entries(participants).map(
-            ([participantId, participantData]) => (
+          {Object.entries(participants)
+            .sort((a, b) =>
+              a[1].isOnline === b[1].isOnline ? 0 : a[1].isOnline ? -1 : 1,
+            )
+            .map(([participantId, participantData]) => (
               <Participant key={participantId}>
                 <div>
                   <PresenceIndicator isOnline={participantData.isOnline} />
                 </div>
                 {participantData.name}
               </Participant>
-            ),
-          )}
+            ))}
         </ParticipantsGrid>
       </Participants>
     </BasicEventInfoWrapper>
