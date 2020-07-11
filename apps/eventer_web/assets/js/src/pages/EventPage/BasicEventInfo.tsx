@@ -56,6 +56,14 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
     return os === 'Android' || os === 'iOS';
   }, []);
 
+  const sortedParticipants = useMemo(
+    () =>
+      Object.entries(participants).sort((a, b) =>
+        a[1].isOnline === b[1].isOnline ? 0 : a[1].isOnline ? -1 : 1,
+      ),
+    [participants],
+  );
+
   return (
     <BasicEventInfoWrapper>
       {!isMobile && <ReactTooltip />}
@@ -117,18 +125,14 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
       <Participants>
         <Label>Participants ({Object.keys(participants).length})</Label>
         <ParticipantsGrid>
-          {Object.entries(participants)
-            .sort((a, b) =>
-              a[1].isOnline === b[1].isOnline ? 0 : a[1].isOnline ? -1 : 1,
-            )
-            .map(([participantId, participantData]) => (
-              <Participant key={participantId}>
-                <div>
-                  <PresenceIndicator isOnline={participantData.isOnline} />
-                </div>
-                {participantData.name}
-              </Participant>
-            ))}
+          {sortedParticipants.map(([participantId, participantData]) => (
+            <Participant key={participantId}>
+              <div>
+                <PresenceIndicator isOnline={participantData.isOnline} />
+              </div>
+              {participantData.name}
+            </Participant>
+          ))}
         </ParticipantsGrid>
       </Participants>
     </BasicEventInfoWrapper>
