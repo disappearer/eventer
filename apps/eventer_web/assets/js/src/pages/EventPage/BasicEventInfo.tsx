@@ -68,8 +68,7 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
   );
 
   const handleShareEventUrl = () => {
-    const eventUrl = window.location.href;
-    copyUrlToClipboard(eventUrl);
+    copyUrlToClipboard(window.location.href);
     toast('Event URL copied to clipboard!');
   };
 
