@@ -21,6 +21,7 @@ import {
   TimePlace,
   CreatedByAndParticipationButton,
   ParticipationButton,
+  ShareEventUrl,
 } from './BasicEventInfo.styles';
 import useParticipation from './hooks/useParticipation';
 import { stateEventT } from './types';
@@ -28,6 +29,8 @@ import Markdown from '../../components/Markdown';
 import ReactTooltip from 'react-tooltip';
 import { getOSAndBrowser } from '../../util/deviceInfo';
 import { HorizontalSeparator } from '../../components/Separator';
+import { copyUrlToClipboard } from '../../util/copyUrlToClipboard';
+import { toast } from 'react-toastify';
 import theme from '../../common/theme';
 
 type basicEventInfoPropsT = {
@@ -64,6 +67,12 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
     [participants],
   );
 
+  const handleShareEventUrl = () => {
+    const eventUrl = window.location.href;
+    copyUrlToClipboard(eventUrl);
+    toast('Event URL copied to clipboard!');
+  };
+
   return (
     <BasicEventInfoWrapper>
       {!isMobile && <ReactTooltip />}
@@ -72,11 +81,14 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
           <EventTitle>
             {title}
             {isCurrentUserParticipating && (
-              <EditEventButton
-                onClick={onEditEventClick}
-                data-tip="Edit event title or description"
-                data-place="bottom"
-              />
+              <>
+                <EditEventButton
+                  onClick={onEditEventClick}
+                  data-tip="Edit event title or description"
+                  data-place="bottom"
+                />
+                <ShareEventUrl onClick={handleShareEventUrl} />
+              </>
             )}
           </EventTitle>
         </EventTitleLine>

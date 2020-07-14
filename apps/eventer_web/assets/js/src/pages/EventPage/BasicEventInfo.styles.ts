@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Button from '../../components/Button';
-import { Edit } from '@styled-icons/material';
+import { Edit, Share } from '@styled-icons/material';
 import { CHAT_HIDING_BREAKPOINT } from './Chat/Chat.util';
 
 export const BREAKPOINT_1 = '380';
@@ -27,6 +27,18 @@ export const EditEventButton = styled(Edit)`
   margin-bottom: 3px;
   width: 21px;
   height: 21px;
+  color: ${({ theme }) => theme.colors.roseOfSharon};
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.roseOfSharonDark};
+    cursor: pointer;
+  }
+`;
+
+export const ShareEventUrl = styled(Share)`
+  width: 21px;
+  height: 21px;
+  margin-left: 7px;
   color: ${({ theme }) => theme.colors.roseOfSharon};
 
   &:hover {
