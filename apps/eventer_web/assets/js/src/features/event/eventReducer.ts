@@ -1,14 +1,19 @@
 import { Reducer } from 'redux';
-import { actionT, TOGGLE_CHAT, SET_IS_CHAT_VISIBLE, SET_IS_JOINED } from './eventActions';
+import {
+  actionT,
+  TOGGLE_CHAT,
+  SET_IS_CHAT_VISIBLE,
+  SET_IS_CHANNEL_JOINED,
+} from './eventActions';
 
 export type eventT = {
   isChatVisible: boolean;
-  isJoined: boolean;
+  isChannelJoined: boolean;
 };
 
 const initialState: eventT = {
   isChatVisible: false,
-  isJoined: false
+  isChannelJoined: false,
 };
 
 const userReducer: Reducer<eventT, actionT> = (
@@ -21,9 +26,9 @@ const userReducer: Reducer<eventT, actionT> = (
     case SET_IS_CHAT_VISIBLE:
       const { isChatVisible } = action.payload;
       return { ...state, isChatVisible };
-    case SET_IS_JOINED:
-      const { isJoined } = action.payload;
-      return { ...state, isJoined };
+    case SET_IS_CHANNEL_JOINED:
+      const { isChannelJoined } = action.payload;
+      return { ...state, isChannelJoined };
     default:
       return state;
   }

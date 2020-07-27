@@ -9,19 +9,19 @@ import { messageT } from './Chat.hooks';
 
 export const CHAT_HIDING_BREAKPOINT = '490';
 
-type singleMessageT = {
+export type singleMessageT = {
   isGroup: false;
   message: messageT;
 };
 
-type messageGroupT = {
+export type messageGroupT = {
   isGroup: true;
   userId: number;
   startTime: Date;
   messages: messageT[];
 };
 
-type chatMessageT = singleMessageT | messageGroupT;
+export type chatMessageT = singleMessageT | messageGroupT;
 
 export type dayMessagesT = {
   day: string;
@@ -29,7 +29,8 @@ export type dayMessagesT = {
 };
 
 type groupChatMessagesT = (messages: messageT[]) => dayMessagesT[];
-export const groupChatMessages: groupChatMessagesT = (messages) => {
+
+export const groupChatMessages: groupChatMessagesT = messages => {
   return messages.reduce<dayMessagesT[]>((groupedMessages, newMessage) => {
     const newMessageDate =
       newMessage.inserted_at === '...'
