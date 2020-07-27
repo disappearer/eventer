@@ -31,7 +31,7 @@ type handleTypingT = () => void;
 type useChannelForChatT = (
   channelOption: Option<Channel>,
   user: userDataT,
-  visible: boolean,
+  isChatVisible: boolean,
   messagesRef: React.RefObject<HTMLDivElement>,
 ) => {
   groupedMessages: dayMessagesT[];
@@ -40,19 +40,20 @@ type useChannelForChatT = (
   scroll: scrollT;
   handleTyping: handleTypingT;
 };
+
 export const useChannelForChat: useChannelForChatT = (
   channelOption,
   user,
-  visible,
+  isChatVisible,
   messagesRef,
 ) => {
   const { id_hash } = useParams();
-  const [latestIdHash, setLatestIdHash] = useState('');
-  const [previousIsJoined, setPreviousIsJoined] = useState(true);
+  const [previousEventIdHash, setPreviousEventIdHash] = useState('');
+  const [previousIsChannelJoined, setPreviousIsChannelJoined] = useState(true);
   const [messages, setMessages] = useState<messageT[]>([]);
   const [typists, setTypists] = useState<number[]>([]);
-  const isJoined = useSelector<reduxStateT, boolean>(
-    ({ event: { isJoined } }) => isJoined,
+  const isChannelJoined = useSelector<reduxStateT, boolean>(
+    ({ event: { isChannelJoined } }) => isChannelJoined,
   );
 
   const scrollToBottom = useCallback(() => {
@@ -71,118 +72,136 @@ export const useChannelForChat: useChannelForChatT = (
   }, [messagesRef.current]);
 
   const scroll = useCallback<scrollT>(
-    (amount) => {
+    scrollAmount => {
       const messagesDiv = messagesRef.current;
       if (messagesDiv) {
         const isAtBottom =
           messagesDiv.scrollTop ===
           messagesDiv.scrollHeight - messagesDiv.clientHeight;
-        if (amount < 0 && isAtBottom) {
+        if (scrollAmount < 0 && isAtBottom) {
           return;
         }
-        messagesDiv.scrollTop = messagesDiv.scrollTop + amount;
+        messagesDiv.scrollTop = messagesDiv.scrollTop + scrollAmount;
       }
     },
     [messagesRef.current],
   );
 
-  const handleIncomingMessages = useCallback((message) => {
-    if (message.user_id !== user.id || message.is_bot) {
-      const messagesDiv = messagesRef.current;
-      if (messagesDiv) {
-        const shouldScrollToBottom =
-          messagesDiv.scrollTop ===
-          messagesDiv.scrollHeight - messagesDiv.clientHeight;
-        setMessages((oldMessages) => [...oldMessages, message]);
-        if (shouldScrollToBottom) {
-          setTimeout(scrollToBottom, 50);
+  const handleIncomingMessage = useCallback(
+    message => {
+      if (message.user_id !== user.id || message.is_bot) {
+        const messagesDiv = messagesRef.current;
+        if (messagesDiv) {
+          const shouldScrollToBottom =
+            messagesDiv.scrollTop ===
+            messagesDiv.scrollHeight - messagesDiv.clientHeight;
+          setMessages(oldMessages => [...oldMessages, message]);
+          if (shouldScrollToBottom) {
+            setTimeout(scrollToBottom, 50);
+          }
         }
       }
-    }
-  }, []);
+    },
+    [messagesRef.current],
+  );
 
   const timeoutRef = useRef<number>();
 
   const handleOthersTyping = useCallback(({ user_id }: { user_id: number }) => {
     if (user_id !== user.id) {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = undefined;
+        resetTimeoutRef();
       }
-      setTypists((currentTypists) =>
+      setTypists(currentTypists =>
         currentTypists.includes(user_id)
           ? currentTypists
           : [...currentTypists, user_id],
       );
       timeoutRef.current = setTimeout(() => {
-        setTypists((currentTypists) =>
-          currentTypists.filter((id) => id !== user_id),
+        setTypists(currentTypists =>
+          currentTypists.filter(id => id !== user_id),
         );
       }, TYPING_THROTTLE_DELAY + 200);
     }
   }, []);
 
-  useEffect(() => {
-    if (latestIdHash !== id_hash && !channelOption.isEmpty() && visible) {
-      const channel = channelOption.get();
+  const resetTimeoutRef = useCallback(() => {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = undefined;
+  }, []);
+
+  const getChatMessages = useCallback(
+    (channel: Channel) => {
       channel
         .push('get_chat_messages', {})
         .receive('ok', ({ messages }: { messages: messageT[] }) => {
-          groupChatMessages(messages);
           setMessages(messages);
-          setLatestIdHash(id_hash || 'undefined');
+          setPreviousEventIdHash(id_hash || 'undefined');
           setTimeout(scrollToBottom, 50);
         });
+    },
+    [channelOption],
+  );
 
-      channel.on('chat_shout', handleIncomingMessages);
-      channel.on('chat_is_typing', handleOthersTyping);
+  const getMessagesSinceLastFocus = useCallback((channel: Channel) => {
+    if (messages.length) {
+      const after = messages[messages.length - 1].inserted_at;
+      channel
+        .push('get_chat_messages_after', { after })
+        .receive('ok', ({ messages }: { messages: messageT[] }) => {
+          setMessages(currentMessages => [...currentMessages, ...messages]);
+          setPreviousEventIdHash(id_hash || 'undefined');
+          setTimeout(scrollABit, 50);
+        })
+        .receive('error', error => {
+          console.log('error', error);
+        });
+    } else {
+      getChatMessages(channel);
     }
-  }, [channelOption, visible, id_hash, latestIdHash]);
+  }, []);
+
+  const setChannelHandlers = useCallback((channel: Channel) => {
+    channel.on('chat_shout', handleIncomingMessage);
+    channel.on('chat_is_typing', handleOthersTyping);
+  }, []);
 
   useEffect(() => {
-    const rejoined = isJoined && !previousIsJoined;
-    if (latestIdHash === id_hash && rejoined && visible) {
-      if (messages.length) {
-        const after = messages[messages.length - 1].inserted_at;
-        const channel = channelOption.get();
-        channel
-          .push('get_chat_messages_after', { after })
-          .receive('ok', ({ messages }: { messages: messageT[] }) => {
-            setMessages((currentMessages) => [...currentMessages, ...messages]);
-            setLatestIdHash(id_hash || 'undefined');
-            setTimeout(scrollABit, 50);
-          })
-          .receive('error', (error) => {
-            console.log('error', error);
-          });
+    if (
+      previousEventIdHash !== id_hash &&
+      !channelOption.isEmpty() &&
+      isChatVisible
+    ) {
+      const channel = channelOption.get();
 
-        channel.on('chat_shout', handleIncomingMessages);
-        channel.on('chat_is_typing', handleOthersTyping);
-      } else {
-        const channel = channelOption.get();
-        channel
-          .push('get_chat_messages', {})
-          .receive('ok', ({ messages }: { messages: messageT[] }) => {
-            setMessages(messages);
-            setLatestIdHash(id_hash || 'undefined');
-          });
-      }
+      getChatMessages(channel);
+      setChannelHandlers(channel);
     }
-    setPreviousIsJoined(isJoined);
+  }, [channelOption, isChatVisible, id_hash, previousEventIdHash]);
+
+  useEffect(() => {
+    const isChannelRejoined = isChannelJoined && !previousIsChannelJoined;
+    if (previousEventIdHash === id_hash && isChannelRejoined && isChatVisible) {
+      const channel = channelOption.get();
+
+      getMessagesSinceLastFocus(channel);
+      setChannelHandlers(channel);
+    }
+    setPreviousIsChannelJoined(isChannelJoined);
   }, [
     channelOption,
-    visible,
+    isChatVisible,
     messages,
-    isJoined,
-    previousIsJoined,
-    latestIdHash,
+    isChannelJoined,
+    previousIsChannelJoined,
+    previousEventIdHash,
     id_hash,
   ]);
 
   const sendMessage = useCallback<sendMessageT>(
     (text, timestamp) => {
       const tempId = `temp:${timestamp}`;
-      setMessages((currentMessages) => [
+      setMessages(currentMessages => [
         ...currentMessages,
         {
           id: tempId,
@@ -197,8 +216,8 @@ export const useChannelForChat: useChannelForChatT = (
         .get()
         .push('chat_shout', { text })
         .receive('ok', ({ message }: { message: messageT }) => {
-          setMessages((currentMessages) =>
-            currentMessages.map((currentMessage) =>
+          setMessages(currentMessages =>
+            currentMessages.map(currentMessage =>
               currentMessage.id === tempId ? message : currentMessage,
             ),
           );

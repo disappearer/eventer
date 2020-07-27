@@ -1,4 +1,3 @@
-import { format, parseISO } from 'date-fns';
 import { Option } from 'funfix';
 import { Channel } from 'phoenix';
 import React, {
@@ -9,30 +8,12 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import avatarPlaceholder from '../../../../../static/images/avatar-placeholder.png';
 import { useAuthorizedUser } from '../../../features/authentication/useAuthorizedUser';
 import EventContext from '../EventContext';
 import { useChannelForChat } from './Chat.hooks';
-import {
-  Avatar,
-  BotMessage,
-  ChatWrapper,
-  Day,
-  Input,
-  Message,
-  Messages,
-  MessageText,
-  TimeStamp,
-  Title,
-  TypingIndicator,
-  UserName,
-  ChatSendBtnMobile,
-  SendBtnWrapper,
-  ChatInputWrapper,
-  MessageData,
-} from './Chat.styles';
-import Markdown from '../../../components/Markdown';
-import { getOSAndBrowser } from '../../../util/deviceInfo';
+import { ChatWrapper, Title, TypingIndicator } from './Chat.styles';
+import ChatMessages from './ChatMessages';
+import ChatInput from './ChatInput';
 
 type chatPropsT = {
   visible: boolean;
@@ -78,25 +59,33 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
   }, [participants, typists]);
 
   const [messageText, setMessageText] = useState('');
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    handleTyping();
-    e.preventDefault();
-    setMessageText(e.target.value);
-  };
-  const submitForm = () => {
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      handleTyping();
+      e.preventDefault();
+      setMessageText(e.target.value);
+    },
+    [messageText],
+  );
+
+  const handleEnterKeyPress = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.charCode == 13 && !e.shiftKey) {
+        e.preventDefault();
+        submitForm();
+      }
+    },
+    [messageText],
+  );
+
+  const submitForm = useCallback(() => {
     const trimmedMessage = messageText.trim();
     if (trimmedMessage.length > 0) {
       sendMessage(trimmedMessage, Date.now());
     }
     setMessageText('');
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.charCode == 13 && !e.shiftKey) {
-      e.preventDefault();
-      submitForm();
-    }
-  };
+  }, [messageText]);
 
   const inputRef = useRef<HTMLDivElement>(null);
   const previousInputHeightRef = useRef<number>(0);
@@ -124,113 +113,22 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
     [previousInputHeightRef, inputRef.current],
   );
 
-  const isMobile = useMemo(() => {
-    const { os } = getOSAndBrowser();
-    return os === 'Android' || os === 'iOS';
-  }, []);
-
   return (
     <ChatWrapper visible={visible}>
       <Title>Chat and updates</Title>
-      <Messages ref={messagesRef}>
-        {groupedMessages.map(({ day, messages }) => {
-          return (
-            <div key={day}>
-              <Day>{day}</Day>
-              <div>
-                {messages.map(messageItem => {
-                  if (messageItem.isGroup) {
-                    const {
-                      userId,
-                      startTime,
-                      messages: singleMessages,
-                    } = messageItem;
-                    const user = participants[userId] || exParticipants[userId];
-                    const imageUrl = user.image
-                      ? `${user.image}=s40-c`
-                      : avatarPlaceholder;
-
-                    const at = format(startTime, 'h:mm b');
-
-                    return (
-                      <Message key={singleMessages[0].id}>
-                        <Avatar src={imageUrl} width={40} height={40} />
-                        <MessageData>
-                          <UserName>
-                            {user.name}
-                            <TimeStamp>{at}</TimeStamp>
-                          </UserName>
-                          {singleMessages.map(({ id, text }) => (
-                            <MessageText key={id}>{text}</MessageText>
-                          ))}
-                        </MessageData>
-                      </Message>
-                    );
-                  } else {
-                    const {
-                      id,
-                      text,
-                      inserted_at,
-                      user_id,
-                      is_bot,
-                    } = messageItem.message;
-                    const at =
-                      inserted_at === '...'
-                        ? inserted_at
-                        : format(parseISO(inserted_at + 'Z'), 'h:mm b');
-
-                    if (is_bot) {
-                      return (
-                        <BotMessage key={id}>
-                          <TimeStamp>
-                            {text} {at}
-                          </TimeStamp>
-                        </BotMessage>
-                      );
-                    }
-
-                    const user =
-                      participants[user_id] || exParticipants[user_id];
-                    const imageUrl = user.image
-                      ? `${user.image}=s40-c`
-                      : avatarPlaceholder;
-
-                    return (
-                      <Message key={id}>
-                        <Avatar src={imageUrl} width={40} height={40} />
-                        <MessageData>
-                          <UserName>
-                            {user.name}
-                            <TimeStamp>{at}</TimeStamp>
-                          </UserName>
-                          <MessageText>
-                            <Markdown>{text}</Markdown>
-                          </MessageText>
-                        </MessageData>
-                      </Message>
-                    );
-                  }
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </Messages>
+      <ChatMessages
+        messagesRef={messagesRef}
+        groupedMessages={groupedMessages}
+      />
       {isParticipant && (
-        <ChatInputWrapper ref={inputRef}>
-          <Input
-            value={messageText}
-            onChange={handleChange}
-            onKeyPress={handleKeyPress}
-            onResize={handleResize}
-            maxRows={4}
-          />
-          {isMobile && (
-            <SendBtnWrapper>
-              <ChatSendBtnMobile onClick={submitForm} />
-            </SendBtnWrapper>
-          )}
-        </ChatInputWrapper>
+        <ChatInput
+          inputRef={inputRef}
+          messageText={messageText}
+          handleInputChange={handleInputChange}
+          handleEnterKeyPress={handleEnterKeyPress}
+          handleResize={handleResize}
+          submitForm={submitForm}
+        />
       )}
 
       <TypingIndicator visible={whosTyping.length > 0}>
