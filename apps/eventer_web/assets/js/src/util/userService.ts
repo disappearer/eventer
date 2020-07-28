@@ -1,4 +1,4 @@
-import { userDataT } from '../features/authentication/userReducer';
+import { userDataT } from '../features/authentication/userTypes';
 import { get, getReturnT, post } from './api';
 
 type fetchUserResponseT = { user: userDataT };

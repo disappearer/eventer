@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import MessageGroup from './MessageGroup';
 import SingleMessage from './SingleMessage';
 import { Messages, Day } from './Chat.styles';
-import { dayMessagesT } from './Chat.util';
+import { dayMessagesT } from './chatTypes';
 
 type chatMessagesT = {
   messagesRef: React.RefObject<HTMLDivElement>;

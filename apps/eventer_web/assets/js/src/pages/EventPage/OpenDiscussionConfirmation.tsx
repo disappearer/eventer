@@ -61,7 +61,7 @@ const OpenDiscussionConfirmation: React.FC<openDiscussionConfirmationPropsT> = (
             decision as pending
             <br />
             {' '}
-            and discard it's resolution.
+            and discard it&quot;s resolution.
           </>
         ) : (
           `create a new ${objective} decision.`

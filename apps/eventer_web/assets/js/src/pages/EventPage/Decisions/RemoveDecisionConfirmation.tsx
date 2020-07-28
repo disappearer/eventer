@@ -52,9 +52,9 @@ const RemoveDecisionConfirmation: React.FC<removeDecisionConfirmationPropsT> = (
     <FormGrid>
       <FormTitle>Remove decision</FormTitle>
       <p>
-        Are you sure you want to remove the decision "
+        Are you sure you want to remove the decision &quot;
         {title}
-        "?
+        &quot;?
       </p>
       <ButtonsGrid>
         <Button onClick={handleConfirmClick} isSubmitting={isSubmitting}>

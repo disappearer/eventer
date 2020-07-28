@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import { FieldArray } from 'formik';
 import React from 'react';
 import styled from 'styled-components';

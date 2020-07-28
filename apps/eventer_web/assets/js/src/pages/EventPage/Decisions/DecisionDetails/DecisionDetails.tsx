@@ -205,9 +205,9 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
           question={
             resolution && (
               <>
-                Are you sure you want to discard resolution "
+                Are you sure you want to discard resolution &quot;
                 <Markdown>{resolution}</Markdown>
-                "?
+                &quot;?
               </>
             )
           }

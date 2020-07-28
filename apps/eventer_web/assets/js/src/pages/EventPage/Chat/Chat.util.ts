@@ -5,30 +5,9 @@ import {
   isYesterday,
   parseISO,
 } from 'date-fns';
-import { messageT } from './Chat.hooks';
+import { groupChatMessagesT, dayMessagesT, singleMessageT } from './chatTypes';
 
 export const CHAT_HIDING_BREAKPOINT = '490';
-
-export type singleMessageT = {
-  isGroup: false;
-  message: messageT;
-};
-
-export type messageGroupT = {
-  isGroup: true;
-  userId: number;
-  startTime: Date;
-  messages: messageT[];
-};
-
-export type chatMessageT = singleMessageT | messageGroupT;
-
-export type dayMessagesT = {
-  day: string;
-  messages: chatMessageT[];
-};
-
-type groupChatMessagesT = (messages: messageT[]) => dayMessagesT[];
 
 function getDay(date: Date): string {
   switch (true) {

@@ -1,14 +1,7 @@
 import { Reducer } from 'redux';
 import { Option, None, Some } from 'funfix';
 import { actionT, SET_USER, REMOVE_USER } from './userActions';
-
-export type userDataT = {
-  id: number;
-  email: string;
-  name: string;
-  image: string;
-  token: string;
-};
+import { userDataT } from './userTypes';
 
 export type userT = {
   data: Option<userDataT>;

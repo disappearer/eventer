@@ -62,12 +62,13 @@ type checkPermissionsAndInitFirebaseT = () => Promise<
 >;
 const checkPermissionsAndInitFirebase: checkPermissionsAndInitFirebaseT = async () => {
   switch (Notification.permission) {
-    case 'default':
+    case 'default': {
       const value = await Notification.requestPermission();
       if (value === 'granted') {
         return initFirebase();
       }
-      break;
+      return undefined;
+    }
     case 'granted':
       return initFirebase();
     default:
@@ -116,5 +117,5 @@ export const useFirebase = () => {
         }
       });
     }
-  }, [messaging, isTabFocused]);
+  }, [messaging, isTabFocused, navigate]);
 };

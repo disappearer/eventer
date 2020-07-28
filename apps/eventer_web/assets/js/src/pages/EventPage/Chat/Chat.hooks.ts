@@ -11,8 +11,9 @@ import React, {
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { reduxStateT } from '../../../common/store';
-import { userDataT } from '../../../features/authentication/userReducer';
-import { dayMessagesT, groupChatMessages } from './Chat.util';
+import { userDataT } from '../../../features/authentication/userTypes';
+import { groupChatMessages } from './Chat.util';
+import { dayMessagesT } from './chatTypes';
 
 const TYPING_THROTTLE_DELAY = 2000;
 

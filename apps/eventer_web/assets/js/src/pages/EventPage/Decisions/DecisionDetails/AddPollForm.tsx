@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import { FieldArray, Form, Formik } from 'formik';
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
@@ -6,7 +7,7 @@ import Button from '../../../../components/Button';
 import CheckboxField from '../../../../components/CheckboxField';
 import TextField from '../../../../components/TextField';
 import { ButtonsGrid, FormGrid, FormTitle } from '../../Form.styles';
-import { addPollT, pollT } from '../../types';
+import { addPollT, pollT, pollValuesT } from '../../types';
 
 const PollOption = styled.div`
   display: grid;
@@ -33,16 +34,6 @@ const RemoveOptionIcon = styled(CloseO)`
 const ActionButtons = styled(ButtonsGrid)`
   margin-top: 10px;
 `;
-
-export type pollValuesT = {
-  question: string;
-  custom_answer_enabled: boolean;
-  multiple_answers_enabled: boolean;
-  options: {
-    text: string;
-    id: string | undefined;
-  }[];
-};
 
 type pollFormPropsT = {
   initialValues?: pollT;

@@ -1,5 +1,3 @@
-import { pollValuesT } from './Decisions/DecisionDetails/AddPollForm';
-
 export type stateEventT = eventDataT & {
   decisions: stateDecisionsT;
   participants: stateUsersT;
@@ -37,6 +35,16 @@ export type pollT = {
   multiple_answers_enabled: boolean;
   voted_by: number[];
   options: optionT[];
+};
+
+export type pollValuesT = {
+  question: string;
+  custom_answer_enabled: boolean;
+  multiple_answers_enabled: boolean;
+  options: {
+    text: string;
+    id: string | undefined;
+  }[];
 };
 
 export type decisionT = {

@@ -12,7 +12,7 @@ import {
 import EventContext from '../EventContext';
 import Markdown from '../../../components/Markdown';
 import avatarPlaceholder from '../../../../../static/images/avatar-placeholder.png';
-import { singleMessageT } from './Chat.util';
+import { singleMessageT } from './chatTypes';
 import BotChatMessage from './BotChatMessage';
 
 type singleMessagePropsT = {

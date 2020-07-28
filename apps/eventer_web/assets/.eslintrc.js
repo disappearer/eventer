@@ -32,8 +32,8 @@ module.exports = {
   ],
   rules: {
     'arrow-parens': 0,
+    'arrow-body-style': 0,
     camelcase: [0, { properties: 0 }],
-    'consistent-return': 0,
     'default-case': 0,
     'import/prefer-default-export': 0,
     'import/extensions': [
@@ -46,12 +46,9 @@ module.exports = {
         tsx: 'never',
       },
     ],
-    'import/no-cycle': 0,
     'no-unused-vars': 1,
     'no-console': 1,
     'no-shadow': 0,
-    'no-case-declarations': 0,
-    'no-plusplus': 0,
     'no-use-before-define': 0,
     'no-restricted-globals': 0,
     'no-nested-ternary': 0,
@@ -62,12 +59,9 @@ module.exports = {
     'react/prop-types': 0,
     'react/jsx-filename-extension': 0,
     'react/jsx-props-no-spreading': 0,
-    'react/no-unescaped-entities': 0,
     'react/destructuring-assignment': 0,
-    'react/no-array-index-key': 0,
     '@typescript-eslint/no-empty-function': 0,
     '@typescript-eslint/no-unused-vars': 1,
-    '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-empty-interface': [
       'error',
       {

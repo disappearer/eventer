@@ -24,7 +24,7 @@ messaging.setBackgroundMessageHandler((payload) => {
       includeUncontrolled: true,
     })
     .then((windowClients) => {
-      for (let i = 0; i < windowClients.length; i++) {
+      for (let i = 0; i < windowClients.length; i += 1) {
         const windowClient = windowClients[i];
         windowClient.postMessage(payload);
       }

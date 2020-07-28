@@ -1,7 +1,8 @@
 import { useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { reduxStateT } from '../../common/store';
-import { userT, userDataT } from './userReducer';
+import { userT } from './userReducer';
+import { userDataT } from './userTypes';
 import { setRedirectCookie } from '../../util/cookieHelper';
 
 const dummyUserData: userDataT = {
