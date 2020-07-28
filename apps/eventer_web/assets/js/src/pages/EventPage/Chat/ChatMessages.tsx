@@ -11,22 +11,18 @@ type chatMessagesT = {
 
 const ChatMessages: FC<chatMessagesT> = ({ messagesRef, groupedMessages }) => (
   <Messages ref={messagesRef}>
-    {groupedMessages.map(({ day, messages }) => {
-      return (
-        <div key={day}>
-          <Day>{day}</Day>
-          <div>
-            {messages.map(messageItem =>
-              messageItem.isGroup ? (
-                <MessageGroup messageItem={messageItem} />
-              ) : (
-                <SingleMessage messageItem={messageItem} />
-              ),
-            )}
-          </div>
+    {groupedMessages.map(({ day, messages }) => (
+      <div key={day}>
+        <Day>{day}</Day>
+        <div>
+          {messages.map((messageItem) => (messageItem.isGroup ? (
+            <MessageGroup messageItem={messageItem} />
+          ) : (
+            <SingleMessage messageItem={messageItem} />
+          )))}
         </div>
-      );
-    })}
+      </div>
+    ))}
   </Messages>
 );
 

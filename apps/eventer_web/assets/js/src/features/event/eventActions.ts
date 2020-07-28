@@ -18,16 +18,14 @@ export type actionT =
   | ack<'SET_IS_CHANNEL_JOINED', { isChannelJoined: boolean }>;
 
 type toggleChatT = () => actionT;
-export const toggleChat: toggleChatT = () => {
-  return { type: TOGGLE_CHAT, payload: {} };
-};
+export const toggleChat: toggleChatT = () => ({ type: TOGGLE_CHAT, payload: {} });
 
 type setIsChatVisibleT = (a: boolean) => actionT;
-export const setIsChatVisible: setIsChatVisibleT = isChatVisible => {
-  return { type: SET_IS_CHAT_VISIBLE, payload: { isChatVisible } };
-};
+export const setIsChatVisible: setIsChatVisibleT = (isChatVisible) => (
+  { type: SET_IS_CHAT_VISIBLE, payload: { isChatVisible } }
+);
 
 type setIsChannelJoinedT = (a: boolean) => actionT;
-export const setIsChannelJoined: setIsChannelJoinedT = isChannelJoined => {
-  return { type: SET_IS_CHANNEL_JOINED, payload: { isChannelJoined } };
-};
+export const setIsChannelJoined: setIsChannelJoinedT = (isChannelJoined) => (
+  { type: SET_IS_CHANNEL_JOINED, payload: { isChannelJoined } }
+);

@@ -93,7 +93,7 @@ const Nav: React.FC = () => {
   const match = useRouteMatch<{ id_hash: string }>('/events/:id_hash');
 
   const theme = useContext(ThemeContext);
-  const user = useSelector<reduxStateT, userT>(({ user }) => user);
+  const currentUser = useSelector<reduxStateT, userT>(({ user }) => user);
   const isChatVisible = useSelector<reduxStateT, boolean>(
     ({ event: { isChatVisible } }) => isChatVisible,
   );
@@ -108,7 +108,7 @@ const Nav: React.FC = () => {
     } else {
       setIsMenuOpen(true);
     }
-  }, [location]);
+  }, [dispatch, location, match]);
 
   const toggleMenu = () => {
     setIsMenuOpen((menuOpen) => !menuOpen);
@@ -137,7 +137,7 @@ const Nav: React.FC = () => {
           <NavListItem>
             <Link to="/">Home</Link>
           </NavListItem>
-          {!user.data.isEmpty() && (
+          {!currentUser.data.isEmpty() && (
             <NavListItem>
               <Link to="/events/new">New Event</Link>
             </NavListItem>
@@ -147,7 +147,7 @@ const Nav: React.FC = () => {
           </NavListItem>
         </NavList>
         <User>
-          {user.data.fold(
+          {currentUser.data.fold(
             () => (
               <NavListItem>
                 <Link to="/login">Login</Link>
@@ -157,7 +157,7 @@ const Nav: React.FC = () => {
               <>
                 <UserName id="display-name">{name}</UserName>
                 <NavListItem>
-                  <ExternalLink asButton={true} href="/auth/logout">
+                  <ExternalLink asButton href="/auth/logout">
                     Logout
                   </ExternalLink>
                 </NavListItem>

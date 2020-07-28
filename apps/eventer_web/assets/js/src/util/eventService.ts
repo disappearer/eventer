@@ -30,7 +30,7 @@ type createEventResponseT =
   | createEventErrorResponseT;
 
 type createEventT = (data: eventDataT) => Promise<createEventResponseT>;
-export const createEvent: createEventT = async eventData => {
+export const createEvent: createEventT = async (eventData) => {
   const event = await post<createEventResponseT, createEventBodyT>(
     '/api/events',
     { event: eventData },

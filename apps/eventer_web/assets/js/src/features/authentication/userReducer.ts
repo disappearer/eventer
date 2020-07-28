@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
-import { actionT, SET_USER, REMOVE_USER } from './userActions';
 import { Option, None, Some } from 'funfix';
+import { actionT, SET_USER, REMOVE_USER } from './userActions';
 
 export type userDataT = {
   id: number;

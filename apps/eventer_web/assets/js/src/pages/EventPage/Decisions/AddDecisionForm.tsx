@@ -23,56 +23,52 @@ type addDecisionFromPropsT = {
 const AddDecisionForm: React.FC<addDecisionFromPropsT> = ({
   onSuccess,
   onSubmit,
-}) => {
-  return (
-    <Formik<valuesT>
-      initialValues={initialValues}
-      onSubmit={(values, { setErrors, setSubmitting }) => {
-        onSubmit(
-          values,
-          () => {
-            setSubmitting(false);
-            onSuccess();
-          },
-          (errors) => {
-            setSubmitting(false);
-            setErrors(errors);
-          },
-        );
-      }}
-    >
-      {({ values, handleChange, isSubmitting }) => {
-        return (
-          <Form>
-            <FormGrid>
-              <FormTitle>Create a new decision</FormTitle>
-              <TextField
-                name="title"
-                label="Title"
-                onChange={handleChange}
-                value={values.title}
-              />
-              <TextField
-                name="description"
-                label="Description (optional)"
-                onChange={handleChange}
-                value={values.description}
-              />
+}) => (
+  <Formik<valuesT>
+    initialValues={initialValues}
+    onSubmit={(values, { setErrors, setSubmitting }) => {
+      onSubmit(
+        values,
+        () => {
+          setSubmitting(false);
+          onSuccess();
+        },
+        (errors) => {
+          setSubmitting(false);
+          setErrors(errors);
+        },
+      );
+    }}
+  >
+    {({ values, handleChange, isSubmitting }) => (
+      <Form>
+        <FormGrid>
+          <FormTitle>Create a new decision</FormTitle>
+          <TextField
+            name="title"
+            label="Title"
+            onChange={handleChange}
+            value={values.title}
+          />
+          <TextField
+            name="description"
+            label="Description (optional)"
+            onChange={handleChange}
+            value={values.description}
+          />
 
-              <ButtonsGrid>
-                <Button type="submit" isSubmitting={isSubmitting}>
-                  Submit
-                </Button>
-                <Button onClick={onSuccess} disabled={isSubmitting}>
-                  Cancel
-                </Button>
-              </ButtonsGrid>
-            </FormGrid>
-          </Form>
-        );
-      }}
-    </Formik>
-  );
-};
+          <ButtonsGrid>
+            <Button type="submit" isSubmitting={isSubmitting}>
+              Submit
+            </Button>
+            <Button onClick={onSuccess} disabled={isSubmitting}>
+              Cancel
+            </Button>
+          </ButtonsGrid>
+        </FormGrid>
+      </Form>
+    )}
+  </Formik>
+);
 
 export default AddDecisionForm;

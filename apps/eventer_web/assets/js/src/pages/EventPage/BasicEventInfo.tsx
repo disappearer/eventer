@@ -1,4 +1,6 @@
 import React, { useMemo } from 'react';
+import ReactTooltip from 'react-tooltip';
+import { toast } from 'react-toastify';
 import Description from '../../components/Description';
 import { getDateString, getTimeString } from '../../util/time';
 import {
@@ -26,12 +28,9 @@ import {
 import useParticipation from './hooks/useParticipation';
 import { stateEventT } from './types';
 import Markdown from '../../components/Markdown';
-import ReactTooltip from 'react-tooltip';
 import { getOSAndBrowser } from '../../util/deviceInfo';
 import { HorizontalSeparator } from '../../components/Separator';
 import { copyUrlToClipboard } from '../../util/copyUrlToClipboard';
-import { toast } from 'react-toastify';
-import theme from '../../common/theme';
 
 type basicEventInfoPropsT = {
   event: stateEventT;
@@ -51,7 +50,9 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
   joinEvent,
   leaveEvent,
 }) => {
-  const { title, description, time, place, creatorId, participants } = event;
+  const {
+    title, description, time, place, creatorId, participants,
+  } = event;
   const isCurrentUserParticipating = useParticipation();
 
   const isMobile = useMemo(() => {
@@ -60,10 +61,9 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
   }, []);
 
   const sortedParticipants = useMemo(
-    () =>
-      Object.entries(participants).sort((a, b) =>
-        a[1].isOnline === b[1].isOnline ? 0 : a[1].isOnline ? -1 : 1,
-      ),
+    () => Object.entries(participants).sort(
+      (a, b) => (a[1].isOnline === b[1].isOnline ? 0 : a[1].isOnline ? -1 : 1),
+    ),
     [participants],
   );
 
@@ -97,7 +97,10 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
           </Description>
         )}
         <CreatedByAndParticipationButton>
-          <CreatedBy>Created by {participants[creatorId].name}</CreatedBy>
+          <CreatedBy>
+            Created by
+            {participants[creatorId].name}
+          </CreatedBy>
           {creatorId !== currentUserId && (
             <ParticipationButton
               onClick={participants[currentUserId] ? leaveEvent : joinEvent}
@@ -134,7 +137,11 @@ const BasicEventInfo: React.FC<basicEventInfoPropsT> = ({
       </TimePlace>
       <HorizontalSeparator />
       <Participants>
-        <Label>Participants ({Object.keys(participants).length})</Label>
+        <Label>
+          Participants (
+          {Object.keys(participants).length}
+          )
+        </Label>
         <ParticipantsGrid>
           {sortedParticipants.map(([participantId, participantData]) => (
             <Participant key={participantId}>

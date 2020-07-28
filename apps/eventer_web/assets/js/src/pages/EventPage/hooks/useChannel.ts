@@ -61,7 +61,7 @@ const useChannel: useChannelT = (token, setEvent) => {
       window.removeEventListener('blur', leaveChannel);
       window.removeEventListener('focus', joinChannel);
     };
-  }, [id_hash]);
+  }, [dispatch, id_hash, setEvent, token]);
 
   return { channel };
 };
@@ -84,77 +84,77 @@ const getNewChannel: getNewChannelT = (hashId, setEvent, socket, dispatch) => {
     .receive('error', ({ reason }) => console.log('failed join', reason));
 
   channel.on('user_joined', ({ user }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(addUserToParticipants(e, user));
     });
   });
 
   channel.on('user_left', ({ userId }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(moveToExParticipants(e, userId));
     });
   });
 
   channel.on('event_updated', ({ event: data }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(updateStateEvent(e, data));
     });
   });
 
   channel.on('decision_added', ({ decision }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(addStateDecision(e, decision));
     });
   });
 
   channel.on('decision_updated', ({ decision }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(updateStateDecision(e, decision));
     });
   });
 
   channel.on('decision_resolved', ({ decision }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(resolveStateDecision(e, decision));
     });
   });
 
   channel.on('resolution_discarded', ({ decision_id }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(discardStateResolution(e, decision_id));
     });
   });
 
   channel.on('decision_removed', ({ decision_id }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(removeStateDecision(e, decision_id));
     });
   });
 
-  channel.on('discussion_opened', data => {
-    setEvent(event => {
+  channel.on('discussion_opened', (data) => {
+    setEvent((event) => {
       const e = event.get();
       return Some(openStateDiscussion(e, data));
     });
   });
 
   channel.on('poll_added', ({ decision_id, poll }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(addStatePoll(e, decision_id, poll));
     });
   });
 
   channel.on('poll_removed', ({ decision_id }) => {
-    setEvent(event => {
+    setEvent((event) => {
       const e = event.get();
       return Some(removeStatePoll(e, decision_id));
     });
@@ -162,8 +162,10 @@ const getNewChannel: getNewChannelT = (hashId, setEvent, socket, dispatch) => {
 
   channel.on(
     'user_voted',
-    ({ user_id, decision_id, custom_option, options }) => {
-      setEvent(event => {
+    ({
+      user_id, decision_id, custom_option, options,
+    }) => {
+      setEvent((event) => {
         const e = event.get();
         return Some(
           updateStateVote(e, user_id, decision_id, custom_option, options),
@@ -172,15 +174,15 @@ const getNewChannel: getNewChannelT = (hashId, setEvent, socket, dispatch) => {
     },
   );
 
-  channel.on('presence_state', presenceState => {
-    setEvent(event => {
+  channel.on('presence_state', (presenceState) => {
+    setEvent((event) => {
       const e = event.get();
       return Some(setPresenceData(e, presenceState));
     });
   });
 
-  channel.on('presence_diff', presenceDiff => {
-    setEvent(event => {
+  channel.on('presence_diff', (presenceDiff) => {
+    setEvent((event) => {
       const e = event.get();
       return Some(updatePresenceData(e, presenceDiff));
     });

@@ -25,11 +25,10 @@ export const Option = styled.div<optionPropsT>`
   padding: 5px 17px;
   text-align: center;
   border-radius: 27px;
-  ${(props) =>
-    props.selected
-      ? `border: 1px solid ${props.theme.colors.pale};
+  ${(props) => (props.selected
+    ? `border: 1px solid ${props.theme.colors.pale};
           background: ${props.theme.colors.jaggedIce};`
-      : `border: 1px solid ${props.theme.colors.grey};`}
+    : `border: 1px solid ${props.theme.colors.grey};`)}
 
   &:hover {
     cursor: pointer;

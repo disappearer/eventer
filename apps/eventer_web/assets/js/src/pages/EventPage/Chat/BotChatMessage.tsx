@@ -11,7 +11,9 @@ type botMessageT = {
 const BotChatMessage: FC<botMessageT> = ({ id, text, at }) => (
   <BotMessage key={id}>
     <TimeStamp>
-      {text} {at}
+      {text}
+      {' '}
+      {at}
     </TimeStamp>
   </BotMessage>
 );

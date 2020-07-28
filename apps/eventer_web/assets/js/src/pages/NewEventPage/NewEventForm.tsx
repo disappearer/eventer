@@ -56,7 +56,9 @@ const NewEventForm: React.FC = () => {
         }
       }}
     >
-      {({ values, handleChange, setFieldValue, isSubmitting }) => {
+      {({
+        values, handleChange, setFieldValue, isSubmitting,
+      }) => {
         handleIndecision('time', values, setFieldValue);
         handleIndecision('place', values, setFieldValue);
         return (

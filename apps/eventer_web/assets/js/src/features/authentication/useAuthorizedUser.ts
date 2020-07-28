@@ -22,7 +22,6 @@ export const useAuthorizedUser = () => {
     history.push('/login');
   }
 
-
   return user.data.fold(
     () => dummyUserData,
     (data) => data,

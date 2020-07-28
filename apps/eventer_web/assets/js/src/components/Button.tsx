@@ -26,10 +26,9 @@ const StyledButton = styled.button<styledButtonPropsT>`
     color: ${({ theme }) => theme.colors.grey};
     background-color: transparent;
     border: 1px solid
-      ${(props) =>
-        props.isSubmitting
-          ? props.theme.colors.roseOfSharon
-          : props.theme.colors.grey};
+      ${(props) => (props.isSubmitting
+    ? props.theme.colors.roseOfSharon
+    : props.theme.colors.grey)};
     cursor: default;
   }
 `;

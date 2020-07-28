@@ -50,7 +50,7 @@ export const useChannelForChat: useChannelForChatT = (
   const { id_hash } = useParams();
   const [previousEventIdHash, setPreviousEventIdHash] = useState('');
   const [previousIsChannelJoined, setPreviousIsChannelJoined] = useState(true);
-  const [messages, setMessages] = useState<messageT[]>([]);
+  const [chatMessages, setMessages] = useState<messageT[]>([]);
   const [typists, setTypists] = useState<number[]>([]);
   const isChannelJoined = useSelector<reduxStateT, boolean>(
     ({ event: { isChannelJoined } }) => isChannelJoined,
@@ -62,14 +62,14 @@ export const useChannelForChat: useChannelForChatT = (
       messagesDiv.scrollTop =
         messagesDiv.scrollHeight - messagesDiv.clientHeight;
     }
-  }, [messagesRef.current]);
+  }, [messagesRef]);
 
   const scrollABit = useCallback(() => {
     const messagesDiv = messagesRef.current;
     if (messagesDiv) {
-      messagesDiv.scrollTop = messagesDiv.scrollTop + 13;
+      messagesDiv.scrollTop += 13;
     }
-  }, [messagesRef.current]);
+  }, [messagesRef]);
 
   const scroll = useCallback<scrollT>(
     scrollAmount => {
@@ -81,10 +81,10 @@ export const useChannelForChat: useChannelForChatT = (
         if (scrollAmount < 0 && isAtBottom) {
           return;
         }
-        messagesDiv.scrollTop = messagesDiv.scrollTop + scrollAmount;
+        messagesDiv.scrollTop += scrollAmount;
       }
     },
-    [messagesRef.current],
+    [messagesRef],
   );
 
   const handleIncomingMessage = useCallback(
@@ -102,33 +102,29 @@ export const useChannelForChat: useChannelForChatT = (
         }
       }
     },
-    [messagesRef.current],
+    [messagesRef, scrollToBottom, user.id],
   );
 
   const timeoutRef = useRef<number>();
+
+  const resetTimeoutRef = useCallback(() => {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = undefined;
+  }, []);
 
   const handleOthersTyping = useCallback(({ user_id }: { user_id: number }) => {
     if (user_id !== user.id) {
       if (timeoutRef.current) {
         resetTimeoutRef();
       }
-      setTypists(currentTypists =>
-        currentTypists.includes(user_id)
-          ? currentTypists
-          : [...currentTypists, user_id],
-      );
+      setTypists(currentTypists => (currentTypists.includes(user_id)
+        ? currentTypists
+        : [...currentTypists, user_id]));
       timeoutRef.current = setTimeout(() => {
-        setTypists(currentTypists =>
-          currentTypists.filter(id => id !== user_id),
-        );
+        setTypists(currentTypists => currentTypists.filter(id => id !== user_id));
       }, TYPING_THROTTLE_DELAY + 200);
     }
-  }, []);
-
-  const resetTimeoutRef = useCallback(() => {
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = undefined;
-  }, []);
+  }, [resetTimeoutRef, user.id]);
 
   const getChatMessages = useCallback(
     (channel: Channel) => {
@@ -140,12 +136,12 @@ export const useChannelForChat: useChannelForChatT = (
           setTimeout(scrollToBottom, 50);
         });
     },
-    [channelOption],
+    [id_hash, scrollToBottom],
   );
 
   const getMessagesSinceLastFocus = useCallback((channel: Channel) => {
-    if (messages.length) {
-      const after = messages[messages.length - 1].inserted_at;
+    if (chatMessages.length) {
+      const after = chatMessages[chatMessages.length - 1].inserted_at;
       channel
         .push('get_chat_messages_after', { after })
         .receive('ok', ({ messages }: { messages: messageT[] }) => {
@@ -159,12 +155,12 @@ export const useChannelForChat: useChannelForChatT = (
     } else {
       getChatMessages(channel);
     }
-  }, []);
+  }, [getChatMessages, id_hash, chatMessages, scrollABit]);
 
   const setChannelHandlers = useCallback((channel: Channel) => {
     channel.on('chat_shout', handleIncomingMessage);
     channel.on('chat_is_typing', handleOthersTyping);
-  }, []);
+  }, [handleIncomingMessage, handleOthersTyping]);
 
   useEffect(() => {
     if (
@@ -177,7 +173,14 @@ export const useChannelForChat: useChannelForChatT = (
       getChatMessages(channel);
       setChannelHandlers(channel);
     }
-  }, [channelOption, isChatVisible, id_hash, previousEventIdHash]);
+  },
+  [
+    channelOption,
+    isChatVisible,
+    id_hash, previousEventIdHash,
+    getChatMessages,
+    setChannelHandlers,
+  ]);
 
   useEffect(() => {
     const isChannelRejoined = isChannelJoined && !previousIsChannelJoined;
@@ -188,14 +191,17 @@ export const useChannelForChat: useChannelForChatT = (
       setChannelHandlers(channel);
     }
     setPreviousIsChannelJoined(isChannelJoined);
-  }, [
+  },
+  [
     channelOption,
     isChatVisible,
-    messages,
+    chatMessages,
     isChannelJoined,
     previousIsChannelJoined,
     previousEventIdHash,
     id_hash,
+    getMessagesSinceLastFocus,
+    setChannelHandlers,
   ]);
 
   const sendMessage = useCallback<sendMessageT>(
@@ -216,14 +222,11 @@ export const useChannelForChat: useChannelForChatT = (
         .get()
         .push('chat_shout', { text })
         .receive('ok', ({ message }: { message: messageT }) => {
-          setMessages(currentMessages =>
-            currentMessages.map(currentMessage =>
-              currentMessage.id === tempId ? message : currentMessage,
-            ),
-          );
+          setMessages(currentMessages => currentMessages
+            .map(currentMessage => (currentMessage.id === tempId ? message : currentMessage)));
         });
     },
-    [channelOption],
+    [channelOption, scrollToBottom, user.id],
   );
 
   const handleTyping = useCallback<handleTypingT>(
@@ -237,9 +240,15 @@ export const useChannelForChat: useChannelForChatT = (
     [channelOption],
   );
 
-  const groupedMessages = useMemo(() => groupChatMessages(messages), [
-    messages,
+  const groupedMessages = useMemo(() => groupChatMessages(chatMessages), [
+    chatMessages,
   ]);
 
-  return { groupedMessages, typists, sendMessage, scroll, handleTyping };
+  return {
+    groupedMessages,
+    typists,
+    sendMessage,
+    scroll,
+    handleTyping,
+  };
 };

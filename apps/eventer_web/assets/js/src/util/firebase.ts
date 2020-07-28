@@ -33,7 +33,7 @@ const initFirebase: initFirebaseT = () => {
       const nav = navigator as BraveNavigator;
       if (nav.brave) {
         alert(
-          `Push notifications registration failed.\nSince you are using Brave, it may help if you enable "Use Google Services for Push Messaging" option in the "Privacy and security" section of the browser preferences.`,
+          'Push notifications registration failed.\nSince you are using Brave, it may help if you enable "Use Google Services for Push Messaging" option in the "Privacy and security" section of the browser preferences.',
         );
       }
     });
@@ -102,19 +102,17 @@ export const useFirebase = () => {
             onClick: () => navigate(`/events/${payload.data.id_hash}`),
             autoClose: false,
           });
-        } else {
-          if (Notification.permission === 'granted') {
-            const notification = new Notification(
-              `"${payload.notification.title}" is active!`,
-              {
-                body: 'Someone wrote in the chat.',
-                requireInteraction: true,
-              },
-            );
-            notification.onclick = function () {
-              window.focus();
-            };
-          }
+        } else if (Notification.permission === 'granted') {
+          const notification = new Notification(
+            `"${payload.notification.title}" is active!`,
+            {
+              body: 'Someone wrote in the chat.',
+              requireInteraction: true,
+            },
+          );
+          notification.onclick = function () {
+            window.focus();
+          };
         }
       });
     }

@@ -7,7 +7,6 @@ type hasExistingDecisionT = (
 export const hasExistingDecision: hasExistingDecisionT = (
   decisions,
   objective,
-) =>
-  Object.entries(decisions).findIndex(
-    ([_, data]) => data.objective === objective,
-  ) !== -1;
+) => Object.entries(decisions).findIndex(
+  ([_, data]) => data.objective === objective,
+) !== -1;

@@ -14,7 +14,7 @@ export type reduxStateT = {
 const rootReducer = combineReducers<reduxStateT>({
   user: userReducer,
   event: eventReducer,
-  notifications: notificationReducer
+  notifications: notificationReducer,
 });
 
 export default createStore(rootReducer);

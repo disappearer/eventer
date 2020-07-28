@@ -32,72 +32,71 @@ type decisionFormPropsT = {
   onChange: (e: React.ChangeEvent<any>) => void;
 }
 
-const DecisionsForm: React.FC<decisionFormPropsT> = ({values, onChange}) => {
-  return (
-    <>
-      <DecisionsTitle>Decisions</DecisionsTitle>
-      <FieldArray
-        name="decisions"
-        render={arrayHelpers => (
-          <DecisionFields>
-            {values.decisions.map((decision, index) => {
-              let placeholder, label;
-              switch (decision.objective) {
-                case 'time':
-                  placeholder = 'When?';
-                  label = 'Title - time decision';
-                  break;
-                case 'place':
-                  placeholder = 'Where?';
-                  label = 'Title - place decision';
-                  break;
-                default:
-                  label = 'Title';
-              }
-              return (
-                shouldShowDecision(decision, values) && (
-                  <NewDecisionForm key={index}>
-                    <TextField
-                      name={`decisions[${index}].title`}
-                      label={label}
-                      placeholder={placeholder}
-                      onChange={onChange}
-                      value={decision.title}
-                    />
-                    <TextField
-                      name={`decisions[${index}].description`}
-                      label="Description (optional)"
-                      onChange={onChange}
-                      value={decision.description}
-                    />
-                    {decision.objective === 'general' && (
-                      <div>
-                        <Button type="button" onClick={() => arrayHelpers.remove(index)}>
-                          Remove decision
-                        </Button>
-                      </div>
-                    )}
-                  </NewDecisionForm>
-                )
-              );
-            })}
-            <AddDecisionButton
-              type="button"
-              onClick={() => {
-                arrayHelpers.push({
-                  title: '',
-                  description: '',
-                  objective: 'general',
-                });
-              }}
-            >
-              Add decision
-            </AddDecisionButton>
-          </DecisionFields>
-        )}
-      />
-    </>
-  );
-};
+const DecisionsForm: React.FC<decisionFormPropsT> = ({ values, onChange }) => (
+  <>
+    <DecisionsTitle>Decisions</DecisionsTitle>
+    <FieldArray
+      name="decisions"
+      render={(arrayHelpers) => (
+        <DecisionFields>
+          {values.decisions.map((decision, index) => {
+            let placeholder; let
+              label;
+            switch (decision.objective) {
+              case 'time':
+                placeholder = 'When?';
+                label = 'Title - time decision';
+                break;
+              case 'place':
+                placeholder = 'Where?';
+                label = 'Title - place decision';
+                break;
+              default:
+                label = 'Title';
+            }
+            return (
+              shouldShowDecision(decision, values) && (
+              <NewDecisionForm key={index}>
+                <TextField
+                  name={`decisions[${index}].title`}
+                  label={label}
+                  placeholder={placeholder}
+                  onChange={onChange}
+                  value={decision.title}
+                />
+                <TextField
+                  name={`decisions[${index}].description`}
+                  label="Description (optional)"
+                  onChange={onChange}
+                  value={decision.description}
+                />
+                {decision.objective === 'general' && (
+                <div>
+                  <Button type="button" onClick={() => arrayHelpers.remove(index)}>
+                    Remove decision
+                  </Button>
+                </div>
+                )}
+              </NewDecisionForm>
+              )
+            );
+          })}
+          <AddDecisionButton
+            type="button"
+            onClick={() => {
+              arrayHelpers.push({
+                title: '',
+                description: '',
+                objective: 'general',
+              });
+            }}
+          >
+            Add decision
+          </AddDecisionButton>
+        </DecisionFields>
+      )}
+    />
+  </>
+);
 
 export default DecisionsForm;

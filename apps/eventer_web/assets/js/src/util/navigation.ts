@@ -7,7 +7,7 @@ type useNavigationT = () => {
   navigate: navigateT;
 };
 export const useNavigation: useNavigationT = () => {
-  let history = useHistory();
+  const history = useHistory();
 
   const navigate = useCallback<navigateT>(
     (path) => {
