@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import App from './src/App';
+
+const _css = require('../css/app.css');
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
