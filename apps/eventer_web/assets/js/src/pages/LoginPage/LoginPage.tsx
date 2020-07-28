@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import CommonTop from '../../components/Top';
 import CommonTitle from '../../components/Title';
-import Link from '../../components/Link';
 import ExternalLink from '../../components/ExternalLink';
 
 const Top = styled(CommonTop)`
@@ -32,23 +31,21 @@ const Description = styled.div`
   align-self: center;
 `;
 
-const LoginPage: React.FC = () => {
-  return (
-    <>
-      <Top>
-        <Title>Log in to Eventer</Title>
-        <SubTitle>
-          We prefer using social logins. No username/password hassle for you or
-          us, for now. More options to come soon!
-        </SubTitle>
-      </Top>
-      <Description>
-        <ExternalLink asButton={true} href="/auth/google">
-          Google Login
-        </ExternalLink>
-      </Description>
-    </>
-  );
-};
+const LoginPage: React.FC = () => (
+  <>
+    <Top>
+      <Title>Log in to Eventer</Title>
+      <SubTitle>
+        We prefer using social logins. No username/password hassle for you or
+        us, for now. More options to come soon!
+      </SubTitle>
+    </Top>
+    <Description>
+      <ExternalLink asButton href="/auth/google">
+        Google Login
+      </ExternalLink>
+    </Description>
+  </>
+);
 
 export default LoginPage;

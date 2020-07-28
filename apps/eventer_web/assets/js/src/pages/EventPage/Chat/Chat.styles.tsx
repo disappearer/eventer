@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import TextArea from 'react-autosize-textarea';
-import { CHAT_HIDING_BREAKPOINT } from './Chat.util';
 import { Send } from '@styled-icons/ionicons-sharp/Send';
+import { CHAT_HIDING_BREAKPOINT } from './Chat.util';
 
 type chatWrapperPropsT = {
   visible: boolean;

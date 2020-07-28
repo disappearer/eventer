@@ -1,9 +1,9 @@
 import { PlaylistAdd } from '@styled-icons/material';
 import styled from 'styled-components';
-import { CHAT_HIDING_BREAKPOINT } from '../Chat/Chat.util';
 import { Question, Check } from '@styled-icons/evil';
-import RemoveButton from '../../../components/RemoveButton';
 import { Time, Location } from '@styled-icons/ionicons-sharp';
+import { CHAT_HIDING_BREAKPOINT } from '../Chat/Chat.util';
+import RemoveButton from '../../../components/RemoveButton';
 
 export const DecisionsWrapper = styled.div`
   flex: 1;

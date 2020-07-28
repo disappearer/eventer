@@ -14,9 +14,10 @@ const notificationReducer: Reducer<notificationsStateT, actionT> = (
   action,
 ) => {
   switch (action.type) {
-    case SET_IS_TAB_FOCUSED:
+    case SET_IS_TAB_FOCUSED: {
       const { isTabFocused } = action.payload;
       return { ...state, isTabFocused };
+    }
     default:
       return state;
   }

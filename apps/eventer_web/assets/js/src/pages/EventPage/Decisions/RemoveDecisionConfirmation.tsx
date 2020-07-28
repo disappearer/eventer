@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 import Button from '../../../components/Button';
 import EventContext from '../EventContext';
 import { ButtonsGrid, FormGrid, FormTitle } from '../Form.styles';
 import { removeDecisionT } from '../types';
-import { toast } from 'react-toastify';
 
 const RemovedDecision = styled.h4`
   display: inline;
@@ -30,7 +30,9 @@ const RemoveDecisionConfirmation: React.FC<removeDecisionConfirmationPropsT> = (
     const { title } = previousEvent.decisions[id];
     return (
       <FormGrid>
-        Decision <RemovedDecision>{title}</RemovedDecision> has been removed.
+        Decision
+        <RemovedDecision>{title}</RemovedDecision>
+        has been removed.
       </FormGrid>
     );
   }
@@ -49,7 +51,11 @@ const RemoveDecisionConfirmation: React.FC<removeDecisionConfirmationPropsT> = (
   return (
     <FormGrid>
       <FormTitle>Remove decision</FormTitle>
-      <p>Are you sure you want to remove the decision "{title}"?</p>
+      <p>
+        Are you sure you want to remove the decision &quot;
+        {title}
+        &quot;?
+      </p>
       <ButtonsGrid>
         <Button onClick={handleConfirmClick} isSubmitting={isSubmitting}>
           Yes

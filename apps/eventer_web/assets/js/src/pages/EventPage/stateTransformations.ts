@@ -20,12 +20,10 @@ export const mapResponseEventToStateEvent: mapResponseEventToStateEventT = (
     ...eventData
   } = responseEvent;
 
-  const stateDecisions: stateDecisionsT = decisions.reduce((sd, decision) => {
-    return {
-      ...sd,
-      [decision.id]: decision,
-    };
-  }, {});
+  const stateDecisions: stateDecisionsT = decisions.reduce((sd, decision) => ({
+    ...sd,
+    [decision.id]: decision,
+  }), {});
 
   const stateParticipants: stateUsersT = participants.reduce((sd, user) => {
     const { id, ...userData } = user;
@@ -324,11 +322,9 @@ export const updateStateVote: updateStateVoteT = (
   const { poll } = decision;
   if (poll) {
     const { options } = poll;
-    const updatedOptions = options.map((option) =>
-      optionsVotedFor.includes(option.id)
-        ? { ...option, votes: [...option.votes, userId] }
-        : option,
-    );
+    const updatedOptions = options.map((option) => (optionsVotedFor.includes(option.id)
+      ? { ...option, votes: [...option.votes, userId] }
+      : option));
     const optionsWithCustomOption = customOption
       ? [...updatedOptions, { ...customOption, votes: [userId] }]
       : updatedOptions;
@@ -347,7 +343,6 @@ export const updateStateVote: updateStateVoteT = (
         },
       },
     };
-  } else {
-    return currentEvent;
   }
+  return currentEvent;
 };

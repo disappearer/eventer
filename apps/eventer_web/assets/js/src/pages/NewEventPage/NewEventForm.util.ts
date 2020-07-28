@@ -42,8 +42,7 @@ export const handleIndecision: addDecisionIfUndecidedT = (
   values,
   setFieldValue,
 ) => {
-  const isUndecidedObjective =
-    objective === 'time' ? values.timeUndecided : values.placeUndecided;
+  const isUndecidedObjective = objective === 'time' ? values.timeUndecided : values.placeUndecided;
   const { decisions } = values;
   const index = decisions.findIndex(
     (decision) => decision.objective === objective,
@@ -54,24 +53,20 @@ export const handleIndecision: addDecisionIfUndecidedT = (
         {
           title: '',
           description: '',
-          objective: objective,
+          objective,
         },
         ...decisions,
       ]);
     }
-  } else {
-    if (index >= 0) {
-      const filteredDecisions = decisions.filter((_decision, i) => i !== index);
-      setFieldValue('decisions', filteredDecisions);
-    }
+  } else if (index >= 0) {
+    const filteredDecisions = decisions.filter((_decision, i) => i !== index);
+    setFieldValue('decisions', filteredDecisions);
   }
 };
 
 type shouldShowDecisionT = (decision: decisionT, values: valuesT) => boolean;
-export const shouldShowDecision: shouldShowDecisionT = (decision, values) => {
-  return (
-    decision.objective === 'general' ||
-    (decision.objective === 'time' && values.timeUndecided) ||
-    (decision.objective === 'place' && values.placeUndecided)
-  );
-};
+export const shouldShowDecision: shouldShowDecisionT = (decision, values) => (
+  decision.objective === 'general'
+    || (decision.objective === 'time' && values.timeUndecided)
+    || (decision.objective === 'place' && values.placeUndecided)
+);

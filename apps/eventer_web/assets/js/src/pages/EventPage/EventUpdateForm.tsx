@@ -23,58 +23,54 @@ const EventUpdateForm: React.FC<eventUpdateFromPropsT> = ({
   initialValues,
   onSuccess,
   onSubmit,
-}) => {
-  return (
-    <Formik<valuesT>
-      initialValues={initialValues}
-      onSubmit={(values, { setErrors, setSubmitting }) => {
-        onSubmit(
-          values,
-          () => {
-            setSubmitting(false);
-            onSuccess();
-          },
-          (errors) => {
-            setSubmitting(false);
-            setErrors(errors);
-          },
-        );
-      }}
-    >
-      {({ values, handleChange, isSubmitting }) => {
-        return (
+}) => (
+  <Formik<valuesT>
+    initialValues={initialValues}
+    onSubmit={(values, { setErrors, setSubmitting }) => {
+      onSubmit(
+        values,
+        () => {
+          setSubmitting(false);
+          onSuccess();
+        },
+        (errors) => {
+          setSubmitting(false);
+          setErrors(errors);
+        },
+      );
+    }}
+  >
+    {({ values, handleChange, isSubmitting }) => (
+      <FormGrid>
+        <FormTitle>Edit event</FormTitle>
+        <Form>
           <FormGrid>
-            <FormTitle>Edit event</FormTitle>
-            <Form>
-              <FormGrid>
-                <TextField
-                  name="title"
-                  label="Title"
-                  onChange={handleChange}
-                  value={values.title}
-                />
-                <TextField
-                  name="description"
-                  label="Description (optional)"
-                  onChange={handleChange}
-                  value={values.description}
-                />
+            <TextField
+              name="title"
+              label="Title"
+              onChange={handleChange}
+              value={values.title}
+            />
+            <TextField
+              name="description"
+              label="Description (optional)"
+              onChange={handleChange}
+              value={values.description}
+            />
 
-                <ButtonsGrid>
-                  <Button type="submit" isSubmitting={isSubmitting}>
-                    Submit
-                  </Button>
-                  <Button onClick={onSuccess} disabled={isSubmitting}>
-                    Cancel
-                  </Button>
-                </ButtonsGrid>
-              </FormGrid>
-            </Form>
+            <ButtonsGrid>
+              <Button type="submit" isSubmitting={isSubmitting}>
+                Submit
+              </Button>
+              <Button onClick={onSuccess} disabled={isSubmitting}>
+                Cancel
+              </Button>
+            </ButtonsGrid>
           </FormGrid>
-        );
-      }}
-    </Formik>
-  );
-};
+        </Form>
+      </FormGrid>
+    )}
+  </Formik>
+);
 
 export default EventUpdateForm;

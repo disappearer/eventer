@@ -8,7 +8,7 @@ const Label = styled.label`
   display: block;
   font-size: 0.9rem;
   margin-bottom: 5px;
-  color: ${props => props.theme.colors.emperor};
+  color: ${(props) => props.theme.colors.emperor};
 `;
 
 type inputPropsT = {
@@ -20,26 +20,24 @@ const Input = styled.input<inputPropsT>`
   background: transparent;
   outline: none;
   border: none;
-  border-bottom: 1px solid ${props => props.theme.colors.emperor};
+  border-bottom: 1px solid ${(props) => props.theme.colors.emperor};
   font-size: 1rem;
   font-weight: 300;
   font-family: 'Helvetica', 'Arial', sans-serif;
-  color: ${props => props.theme.colors.mineShaft};
+  color: ${(props) => props.theme.colors.mineShaft};
   width: 273px;
-  ${props =>
-    props.inputSize === 'regular'
-      ? `
+  ${(props) => (props.inputSize === 'regular'
+    ? `
     width: 273px
   `
-      : ''}
+    : '')}
 
-  ${props =>
-    props.inputSize === 'small'
-      ? `
+  ${(props) => (props.inputSize === 'small'
+    ? `
     width: 173px;
     font-size: 0.9rem;
   `
-      : ''}
+    : '')}
 
   &:focus {
     border-bottom: 1px solid black;
@@ -54,7 +52,7 @@ const Error = styled.div`
   margin-top: 3px;
   width: 273px;
   font-size: 0.8rem;
-  color: ${props => props.theme.colors.milanoRed};
+  color: ${(props) => props.theme.colors.milanoRed};
 `;
 
 type textFieldPropsT = {
@@ -80,7 +78,7 @@ const TextField: React.FC<textFieldPropsT> = ({
   onFocus = () => {},
   inputSize = 'regular',
 }) => {
-  const [_field, meta, _helpers] = useField(name); 
+  const [_field, meta, _helpers] = useField(name);
   return (
     <FieldWrapper>
       {!noLabel && <Label htmlFor={name}>{label}</Label>}

@@ -7,14 +7,14 @@ import '../../../css/react-datepicker.css';
 const Error = styled.div`
   margin-top: 3px;
   font-size: 0.8rem;
-  color: ${props => props.theme.colors.milanoRed};
+  color: ${(props) => props.theme.colors.milanoRed};
 `;
 
 const Label = styled.label`
   display: block;
   font-size: 0.9rem;
   margin-bottom: 5px;
-  color: ${props => props.theme.colors.emperor};
+  color: ${(props) => props.theme.colors.emperor};
 `;
 
 type timeFieldPropsT = {
@@ -28,7 +28,7 @@ const TimeField: React.FC<timeFieldPropsT> = ({
   onChange,
   selected,
   disabled,
-  name = 'time'
+  name = 'time',
 }) => {
   const [_field, meta, _helpers] = useField(name);
   return (

@@ -24,7 +24,9 @@ type pollPropsT = {
   pending: boolean;
 };
 
-const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote, pending }) => {
+const Poll: React.FC<pollPropsT> = ({
+  decisionId, poll, onVote, pending,
+}) => {
   const {
     question,
     custom_answer_enabled,
@@ -46,12 +48,10 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote, pending }) => {
       if (multiple_answers_enabled) {
         if (currentlySelectedOptions.includes(id)) {
           return currentlySelectedOptions.filter((optionId) => optionId !== id);
-        } else {
-          return [...currentlySelectedOptions, id];
         }
-      } else {
-        return currentlySelectedOptions === [id] ? [] : [id];
+        return [...currentlySelectedOptions, id];
       }
+      return currentlySelectedOptions === [id] ? [] : [id];
     });
   };
 
@@ -63,9 +63,8 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote, pending }) => {
     setCustomOptionText(event.target.value);
   };
 
-  const canSubmitVote =
-    selectedOptions.length > 0 &&
-    (selectedOptions.includes('custom')
+  const canSubmitVote = selectedOptions.length > 0
+    && (selectedOptions.includes('custom')
       ? customOptionText !== '' || selectedOptions.length > 1
       : true);
 
@@ -94,52 +93,51 @@ const Poll: React.FC<pollPropsT> = ({ decisionId, poll, onVote, pending }) => {
             );
           }}
         >
-          {({ isSubmitting }) => {
-            return (
-              <Form>
-                <Options>
-                  <Description>
-                    {options.length > 0 && 'Choose an answer'}
-                    {options.length > 0 &&
-                      custom_answer_enabled &&
-                      ' or provide your own'}
-                    {options.length === 0 && 'Provide your answer'}.
-                    {multiple_answers_enabled &&
-                      options.length > 0 &&
-                      ' You can choose more than one.'}
-                  </Description>
-                  {options.map(({ id, text }) => (
-                    <Option
-                      selected={selectedOptions.includes(id)}
-                      key={id}
-                      onClick={() => toggleSelectedOption(id)}
-                    >
-                      {text}
-                    </Option>
-                  ))}
-                  {!hasVoted && custom_answer_enabled && (
-                    <CustomOption>
-                      <TextField
-                        inputSize="small"
-                        name="customOption"
-                        placeholder="Custom option"
-                        onFocus={() => toggleSelectedOption('custom')}
-                        onChange={handleCustomOptionTextChange}
-                        value={customOptionText}
-                      />
-                    </CustomOption>
-                  )}
-                </Options>
-                <Button
-                  type="submit"
-                  disabled={!canSubmitVote}
-                  isSubmitting={isSubmitting}
-                >
-                  Submit vote
-                </Button>
-              </Form>
-            );
-          }}
+          {({ isSubmitting }) => (
+            <Form>
+              <Options>
+                <Description>
+                  {options.length > 0 && 'Choose an answer'}
+                  {options.length > 0
+                      && custom_answer_enabled
+                      && ' or provide your own'}
+                  {options.length === 0 && 'Provide your answer'}
+                  .
+                  {multiple_answers_enabled
+                      && options.length > 0
+                      && ' You can choose more than one.'}
+                </Description>
+                {options.map(({ id, text }) => (
+                  <Option
+                    selected={selectedOptions.includes(id)}
+                    key={id}
+                    onClick={() => toggleSelectedOption(id)}
+                  >
+                    {text}
+                  </Option>
+                ))}
+                {!hasVoted && custom_answer_enabled && (
+                <CustomOption>
+                  <TextField
+                    inputSize="small"
+                    name="customOption"
+                    placeholder="Custom option"
+                    onFocus={() => toggleSelectedOption('custom')}
+                    onChange={handleCustomOptionTextChange}
+                    value={customOptionText}
+                  />
+                </CustomOption>
+                )}
+              </Options>
+              <Button
+                type="submit"
+                disabled={!canSubmitVote}
+                isSubmitting={isSubmitting}
+              >
+                Submit vote
+              </Button>
+            </Form>
+          )}
         </Formik>
       )}
     </div>

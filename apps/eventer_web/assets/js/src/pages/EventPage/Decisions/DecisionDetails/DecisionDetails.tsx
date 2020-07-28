@@ -64,7 +64,7 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
 
   const decision = useMemo(
     () => event.decisions[id] || previousEvent.decisions[id],
-    [event.decisions, previousEvent.decisions],
+    [event.decisions, id, previousEvent.decisions],
   );
 
   const {
@@ -82,13 +82,17 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
   if (!event.decisions[id]) {
     return (
       <div>
-        Decision <RemovedDecision>{decision.title}</RemovedDecision> has been
+        Decision
+        <RemovedDecision>{decision.title}</RemovedDecision>
+        has been
         removed.
       </div>
     );
   }
 
-  const { title, description, pending, objective, resolution, poll } = decision;
+  const {
+    title, description, pending, objective, resolution, poll,
+  } = decision;
 
   return (
     <>
@@ -201,8 +205,9 @@ const DecisionDetails: React.FC<decisionDetailsPropsT> = ({
           question={
             resolution && (
               <>
-                Are you sure you want to discard resolution "
-                <Markdown>{resolution}</Markdown>"?
+                Are you sure you want to discard resolution &quot;
+                <Markdown>{resolution}</Markdown>
+                &quot;?
               </>
             )
           }

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 import Button from '../../components/Button';
 import { ButtonsGrid, FormGrid, FormTitle } from './Form.styles';
 import { openDiscussionT, specificObjectiveT } from './types';
-import { toast } from 'react-toastify';
 
 const Error = styled.div`
   margin-top: 3px;
@@ -43,19 +43,36 @@ const OpenDiscussionConfirmation: React.FC<openDiscussionConfirmationPropsT> = (
   };
   return (
     <FormGrid>
-      <FormTitle>Open {objective} discussion</FormTitle>
+      <FormTitle>
+        Open
+        {objective}
+        {' '}
+        discussion
+      </FormTitle>
       <p>
-        This will{' '}
+        This will
+        {' '}
         {hasCorrespondingDecision ? (
           <>
-            mark the existing {objective} decision as pending
-            <br /> and discard it's resolution.
+            mark the existing
+            {' '}
+            {objective}
+            {' '}
+            decision as pending
+            <br />
+            {' '}
+            and discard it&quot;s resolution.
           </>
         ) : (
           `create a new ${objective} decision.`
         )}
       </p>
-      <p>Are you sure you want to open {objective} for discussion?</p>
+      <p>
+        Are you sure you want to open
+        {objective}
+        {' '}
+        for discussion?
+      </p>
       <ButtonsGrid>
         <Button onClick={handleConfirmClick} isSubmitting={isSubmitting}>
           Yes

@@ -28,12 +28,10 @@ type linkPropsT = {
   asButton?: boolean;
   to: string;
 };
-const Link: React.FC<linkPropsT> = ({ asButton = false, to, children }) => {
-  return asButton ? (
-    <StyledLinkButton to={to}>{children}</StyledLinkButton>
-  ) : (
-    <StyledLink to={to}>{children}</StyledLink>
-  );
-};
+const Link: React.FC<linkPropsT> = ({ asButton = false, to, children }) => (asButton ? (
+  <StyledLinkButton to={to}>{children}</StyledLinkButton>
+) : (
+  <StyledLink to={to}>{children}</StyledLink>
+));
 
 export default Link;

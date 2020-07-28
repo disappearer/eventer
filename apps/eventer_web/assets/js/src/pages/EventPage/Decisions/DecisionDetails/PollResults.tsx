@@ -19,15 +19,28 @@ const OptionText = styled.div`
   padding: 5px 17px;
   text-align: center;
   border-radius: 27px;
-  border: 1px solid ${props => props.theme.colors.pale};
-  color: ${props => props.theme.colors.emperor};
+  border: 1px solid ${(props) => props.theme.colors.pale};
+  color: ${(props) => props.theme.colors.emperor};
 `;
 
 const Voters = styled.div`
   font-size: 0.8rem;
-  color: ${props => props.theme.colors.emperor};
+  color: ${(props) => props.theme.colors.emperor};
   max-width: 269px;
 `;
+
+type getVotersT = (option: optionT, event: stateEventT) => string;
+const getVoters: getVotersT = (option, event) => {
+  if (option.votes.length === 0) {
+    return 'Nobody voted';
+  }
+  const { participants, exParticipants } = event;
+  const voters = option.votes.reduce((voters, voterId) => {
+    const voter = participants[voterId] || exParticipants[voterId];
+    return `${voters} ${voter.name},`;
+  }, 'Voted by: ');
+  return voters.slice(0, -1);
+};
 
 type pollResultsT = {
   options: optionT[];
@@ -37,7 +50,7 @@ const PollResults: React.FC<pollResultsT> = ({ options }) => {
 
   return (
     <Options>
-      {options.map(option => (
+      {options.map((option) => (
         <Option key={option.id}>
           <OptionText>{option.text}</OptionText>
           <Voters>{getVoters(option, event)}</Voters>
@@ -48,17 +61,3 @@ const PollResults: React.FC<pollResultsT> = ({ options }) => {
 };
 
 export default PollResults;
-
-type getVotersT = (option: optionT, event: stateEventT) => string;
-const getVoters: getVotersT = (option, event) => {
-  if (option.votes.length === 0) {
-    return 'Nobody voted';
-  } else {
-    const { participants, exParticipants } = event;
-    const voters = option.votes.reduce((voters, voterId) => {
-      const voter = participants[voterId] || exParticipants[voterId];
-      return `${voters} ${voter.name},`;
-    }, 'Voted by: ');
-    return voters.slice(0, -1);
-  }
-};

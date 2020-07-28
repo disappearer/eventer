@@ -26,14 +26,12 @@ const ExternalLink: React.FC<linkPropsT> = ({
   asButton = false,
   children,
   ...props
-}) => {
-  return asButton ? (
-    <StyledAnchorButton {...props}>{children}</StyledAnchorButton>
-  ) : (
-    <StyledAnchor target="_blank" {...props}>
-      {children}
-    </StyledAnchor>
-  );
-};
+}) => (asButton ? (
+  <StyledAnchorButton {...props}>{children}</StyledAnchorButton>
+) : (
+  <StyledAnchor target="_blank" {...props}>
+    {children}
+  </StyledAnchor>
+));
 
 export default ExternalLink;

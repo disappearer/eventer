@@ -1,4 +1,4 @@
-import { userDataT } from './userReducer';
+import { userDataT } from './userTypes';
 
 export const SET_USER = 'SET_USER';
 export const REMOVE_USER = 'REMOVE_USER';
@@ -15,11 +15,7 @@ export type actionT =
   | ack<'REMOVE_USER', {}>;
 
 type setUserT = (a: userDataT) => actionT;
-export const setUser: setUserT = (user: userDataT) => {
-  return { type: SET_USER, payload: { user } };
-};
+export const setUser: setUserT = (user: userDataT) => ({ type: SET_USER, payload: { user } });
 
 type removeUserT = () => actionT;
-export const removeUser: removeUserT = () => {
-  return { type: REMOVE_USER, payload: {} };
-};
+export const removeUser: removeUserT = () => ({ type: REMOVE_USER, payload: {} });

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import Button from '../../../../components/Button';
 import { ButtonsGrid, FormTitle, FormGrid } from '../../Form.styles';
-import { toast } from 'react-toastify';
 
 type propsT = {
   title: string;

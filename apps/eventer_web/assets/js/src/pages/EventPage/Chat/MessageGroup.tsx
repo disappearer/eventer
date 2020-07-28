@@ -11,7 +11,7 @@ import {
 } from './Chat.styles';
 import EventContext from '../EventContext';
 import avatarPlaceholder from '../../../../../static/images/avatar-placeholder.png';
-import { messageGroupT } from './Chat.util';
+import { messageGroupT } from './chatTypes';
 
 type messageGroupPropsT = {
   messageItem: messageGroupT;

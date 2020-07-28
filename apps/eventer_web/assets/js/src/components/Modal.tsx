@@ -1,7 +1,26 @@
 import React, { RefObject, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { CHAT_HIDING_BREAKPOINT } from '../pages/EventPage/Chat/Chat.util';
 import { Close } from '@styled-icons/evil/Close';
+import { CHAT_HIDING_BREAKPOINT } from '../pages/EventPage/Chat/Chat.util';
+
+type useOutsideClickHandlerT = (
+  ref: RefObject<HTMLDivElement>,
+  callback: () => void,
+) => void;
+const useOutsideClickHandler: useOutsideClickHandlerT = (ref, callback) => {
+  function handleClickOutside(event: any) {
+    if (ref.current === event.target) {
+      callback();
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  });
+};
 
 const ModalWrapper = styled.div`
   padding: 40px;
@@ -41,7 +60,7 @@ const Modal: React.FC<modalPropsT> = ({
   useOutsideClickHandler(modalRef, hideModal);
 
   const handleEscapeKeyPress = (event: KeyboardEvent) => {
-    if (event.key == 'Escape') {
+    if (event.key === 'Escape') {
       hideModal();
     }
   };
@@ -71,22 +90,3 @@ const Modal: React.FC<modalPropsT> = ({
 };
 
 export default Modal;
-
-type useOutsideClickHandlerT = (
-  ref: RefObject<HTMLDivElement>,
-  callback: () => void,
-) => void;
-const useOutsideClickHandler: useOutsideClickHandlerT = (ref, callback) => {
-  function handleClickOutside(event: any) {
-    if (ref.current === event.target) {
-      callback();
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  });
-};

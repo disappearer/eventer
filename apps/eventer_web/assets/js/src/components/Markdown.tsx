@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import React from 'react';
+import React, { FC } from 'react';
+
 import MarkdownComponent from 'markdown-to-jsx';
 import ExternalLink from './ExternalLink';
 
@@ -11,8 +11,7 @@ const Markdown: FC = ({ children }) => (
           component: ExternalLink,
           props: {
             external: true,
-            onClick: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) =>
-              e.stopPropagation(),
+            onClick: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => e.stopPropagation(),
           },
         },
       },

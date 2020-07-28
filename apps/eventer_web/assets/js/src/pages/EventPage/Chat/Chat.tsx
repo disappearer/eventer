@@ -22,7 +22,7 @@ type chatPropsT = {
 
 const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
   const {
-    event: { participants, exParticipants },
+    event: { participants },
   } = useContext(EventContext);
   const user = useAuthorizedUser();
 
@@ -51,10 +51,11 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
         return `${userNames[0]} is typing...`;
       case 2:
         return `${userNames[0]} and ${userNames[1]} are typing...`;
-      default:
+      default: {
         const allButLast = userNames.slice(0, -1);
         const last = userNames[userNames.length - 1];
         return `${allButLast.join(', ')} and ${last} are typing...`;
+      }
     }
   }, [participants, typists]);
 
@@ -66,17 +67,7 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
       e.preventDefault();
       setMessageText(e.target.value);
     },
-    [messageText],
-  );
-
-  const handleEnterKeyPress = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.charCode == 13 && !e.shiftKey) {
-        e.preventDefault();
-        submitForm();
-      }
-    },
-    [messageText],
+    [handleTyping],
   );
 
   const submitForm = useCallback(() => {
@@ -85,7 +76,17 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
       sendMessage(trimmedMessage, Date.now());
     }
     setMessageText('');
-  }, [messageText]);
+  }, [messageText, sendMessage]);
+
+  const handleEnterKeyPress = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.charCode === 13 && !e.shiftKey) {
+        e.preventDefault();
+        submitForm();
+      }
+    },
+    [submitForm],
+  );
 
   const inputRef = useRef<HTMLDivElement>(null);
   const previousInputHeightRef = useRef<number>(0);
@@ -96,10 +97,10 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
       const { height } = inputElement.getBoundingClientRect();
       previousInputHeightRef.current = height;
     }
-  }, [inputRef.current, previousInputHeightRef]);
+  }, [previousInputHeightRef]);
 
   const handleResize = useCallback(
-    (e: Event) => {
+    () => {
       const inputElement = inputRef.current;
       if (inputElement) {
         const { height } = inputElement.getBoundingClientRect();
@@ -110,7 +111,7 @@ const Chat: React.FC<chatPropsT> = ({ visible, channel: channelOption }) => {
         previousInputHeightRef.current = height;
       }
     },
-    [previousInputHeightRef, inputRef.current],
+    [scroll],
   );
 
   return (

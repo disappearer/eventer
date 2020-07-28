@@ -5,37 +5,26 @@ import {
   isYesterday,
   parseISO,
 } from 'date-fns';
-import { messageT } from './Chat.hooks';
+import { groupChatMessagesT, dayMessagesT, singleMessageT } from './chatTypes';
 
 export const CHAT_HIDING_BREAKPOINT = '490';
 
-export type singleMessageT = {
-  isGroup: false;
-  message: messageT;
-};
+function getDay(date: Date): string {
+  switch (true) {
+    case isToday(date):
+      return 'Today';
+    case isYesterday(date):
+      return 'Yesterday';
+    default:
+      return format(date, 'eeee, dd. LLL');
+  }
+}
 
-export type messageGroupT = {
-  isGroup: true;
-  userId: number;
-  startTime: Date;
-  messages: messageT[];
-};
-
-export type chatMessageT = singleMessageT | messageGroupT;
-
-export type dayMessagesT = {
-  day: string;
-  messages: chatMessageT[];
-};
-
-type groupChatMessagesT = (messages: messageT[]) => dayMessagesT[];
-
-export const groupChatMessages: groupChatMessagesT = messages => {
-  return messages.reduce<dayMessagesT[]>((groupedMessages, newMessage) => {
-    const newMessageDate =
-      newMessage.inserted_at === '...'
-        ? new Date()
-        : parseISO(newMessage.inserted_at + 'Z');
+export const groupChatMessages: groupChatMessagesT = (messages) => messages
+  .reduce<dayMessagesT[]>((groupedMessages, newMessage) => {
+    const newMessageDate = newMessage.inserted_at === '...'
+      ? new Date()
+      : parseISO(`${newMessage.inserted_at}Z`);
     const day = getDay(newMessageDate);
 
     if (groupedMessages.length > 0) {
@@ -46,9 +35,9 @@ export const groupChatMessages: groupChatMessagesT = messages => {
         if (lastMessagesItem.isGroup) {
           const { userId, startTime } = lastMessagesItem;
           if (
-            !newMessage.is_bot &&
-            userId === newMessage.user_id &&
-            differenceInMinutes(newMessageDate, startTime) <= 5
+            !newMessage.is_bot
+            && userId === newMessage.user_id
+            && differenceInMinutes(newMessageDate, startTime) <= 5
           ) {
             lastMessagesItem.messages = [
               ...lastMessagesItem.messages,
@@ -62,12 +51,12 @@ export const groupChatMessages: groupChatMessagesT = messages => {
           }
         } else {
           const { message: lastMessage } = lastMessagesItem;
-          const lastMessageDate = parseISO(lastMessage.inserted_at + 'Z');
+          const lastMessageDate = parseISO(`${lastMessage.inserted_at}Z`);
           if (
-            !newMessage.is_bot &&
-            !lastMessage.is_bot &&
-            lastMessage.user_id === newMessage.user_id &&
-            differenceInMinutes(newMessageDate, lastMessageDate) <= 5
+            !newMessage.is_bot
+            && !lastMessage.is_bot
+            && lastMessage.user_id === newMessage.user_id
+            && differenceInMinutes(newMessageDate, lastMessageDate) <= 5
           ) {
             lastDay.messages[messages.length - 1] = {
               isGroup: true,
@@ -83,30 +72,16 @@ export const groupChatMessages: groupChatMessagesT = messages => {
           }
         }
         return groupedMessages;
-      } else {
-        const newDay: dayMessagesT = {
-          day,
-          messages: [{ isGroup: false, message: newMessage }],
-        };
-        return [...groupedMessages, newDay];
       }
-    } else {
       const newDay: dayMessagesT = {
         day,
         messages: [{ isGroup: false, message: newMessage }],
       };
-      return [newDay];
+      return [...groupedMessages, newDay];
     }
+    const newDay: dayMessagesT = {
+      day,
+      messages: [{ isGroup: false, message: newMessage }],
+    };
+    return [newDay];
   }, [] as dayMessagesT[]);
-};
-
-function getDay(date: Date): string {
-  switch (true) {
-    case isToday(date):
-      return 'Today';
-    case isYesterday(date):
-      return 'Yesterday';
-    default:
-      return format(date, 'eeee, dd. LLL');
-  }
-}

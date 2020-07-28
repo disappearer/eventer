@@ -25,55 +25,51 @@ const DecisionUpdateForm: React.FC<decisionUpdateFromPropsT> = ({
   id,
   onSuccess,
   onSubmit,
-}) => {
-  return (
-    <Formik<valuesT>
-      initialValues={initialValues}
-      onSubmit={(values, { setErrors, setSubmitting }) => {
-        onSubmit(
-          { id, ...values },
-          () => {
-            setSubmitting(false);
-            onSuccess();
-          },
-          (errors) => {
-            setSubmitting(false);
-            setErrors(errors);
-          },
-        );
-      }}
-    >
-      {({ values, handleChange, isSubmitting }) => {
-        return (
-          <Form>
-            <FormGrid>
-              <FormTitle>Edit decision</FormTitle>
-              <TextField
-                name="title"
-                label="Title"
-                onChange={handleChange}
-                value={values.title}
-              />
-              <TextField
-                name="description"
-                label="Description (optional)"
-                onChange={handleChange}
-                value={values.description}
-              />
-              <ButtonsGrid>
-                <Button type="submit" isSubmitting={isSubmitting}>
-                  Submit
-                </Button>
-                <Button onClick={onSuccess} disabled={isSubmitting}>
-                  Cancel
-                </Button>
-              </ButtonsGrid>
-            </FormGrid>
-          </Form>
-        );
-      }}
-    </Formik>
-  );
-};
+}) => (
+  <Formik<valuesT>
+    initialValues={initialValues}
+    onSubmit={(values, { setErrors, setSubmitting }) => {
+      onSubmit(
+        { id, ...values },
+        () => {
+          setSubmitting(false);
+          onSuccess();
+        },
+        (errors) => {
+          setSubmitting(false);
+          setErrors(errors);
+        },
+      );
+    }}
+  >
+    {({ values, handleChange, isSubmitting }) => (
+      <Form>
+        <FormGrid>
+          <FormTitle>Edit decision</FormTitle>
+          <TextField
+            name="title"
+            label="Title"
+            onChange={handleChange}
+            value={values.title}
+          />
+          <TextField
+            name="description"
+            label="Description (optional)"
+            onChange={handleChange}
+            value={values.description}
+          />
+          <ButtonsGrid>
+            <Button type="submit" isSubmitting={isSubmitting}>
+              Submit
+            </Button>
+            <Button onClick={onSuccess} disabled={isSubmitting}>
+              Cancel
+            </Button>
+          </ButtonsGrid>
+        </FormGrid>
+      </Form>
+    )}
+  </Formik>
+);
 
 export default DecisionUpdateForm;

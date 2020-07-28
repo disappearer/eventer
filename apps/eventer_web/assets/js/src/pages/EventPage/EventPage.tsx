@@ -156,7 +156,7 @@ const EventPage: React.FC = () => {
                           closeModal={hideModal}
                         />
                       );
-                    case 'OpenDiscussionConfirmation':
+                    case 'OpenDiscussionConfirmation': {
                       const decisionExists = hasExistingDecision(
                         decisions,
                         child.objective,
@@ -169,6 +169,9 @@ const EventPage: React.FC = () => {
                           closeModal={hideModal}
                         />
                       );
+                    }
+                    default:
+                      return undefined;
                   }
                 },
               )}

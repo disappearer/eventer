@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import Button from '../../components/Button';
 import { Edit, Share } from '@styled-icons/material';
+import Button from '../../components/Button';
 import { CHAT_HIDING_BREAKPOINT } from './Chat/Chat.util';
 
 export const BREAKPOINT_1 = '380';
@@ -69,9 +69,8 @@ export const ParticipationButton = styled(Button)<{ action: 'join' | 'leave' }>`
   letter-spacing: 0.1rem;
   font-size: 0.75rem;
 
-  ${({ theme, action }) =>
-    action === 'leave'
-      ? `
+  ${({ theme, action }) => (action === 'leave'
+    ? `
   color: ${theme.colors.grey};
   border: 1px solid ${theme.colors.grey};
   outline: 0;
@@ -89,7 +88,7 @@ export const ParticipationButton = styled(Button)<{ action: 'join' | 'leave' }>`
     box-shadow: 0 0 5px ${theme.colors.silver};
   }
   `
-      : `
+    : `
       padding: 5px 9px;
       box-sizing: border-box;
       color: ${theme.colors.roseOfSharon};
@@ -106,7 +105,7 @@ export const ParticipationButton = styled(Button)<{ action: 'join' | 'leave' }>`
         box-shadow: 0 0 5px ${theme.colors.milanoRedTransparenter};
         background: transparent;
       }
-    `}
+    `)}
 `;
 
 export const TimePlace = styled.div`
@@ -269,9 +268,7 @@ export const PresenceIndicator = styled.div<{ isOnline?: boolean }>`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  border: 1px solid ${({ isOnline, theme }) =>
-    isOnline ? theme.colors.main : theme.colors.grey};
+  border: 1px solid ${({ isOnline, theme }) => (isOnline ? theme.colors.main : theme.colors.grey)};
 }
-  background: ${({ isOnline, theme }) =>
-    isOnline ? theme.colors.main : 'transparent'}
+  background: ${({ isOnline, theme }) => (isOnline ? theme.colors.main : 'transparent')}
 `;

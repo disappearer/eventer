@@ -1,11 +1,9 @@
-import { userDataT } from '../features/authentication/userReducer';
+import { userDataT } from '../features/authentication/userTypes';
 import { get, getReturnT, post } from './api';
 
 type fetchUserResponseT = { user: userDataT };
 type fetchUserT = () => Promise<getReturnT<fetchUserResponseT>>;
-export const fetchUser: fetchUserT = () => {
-  return get<fetchUserResponseT>('/api/me');
-};
+export const fetchUser: fetchUserT = () => get<fetchUserResponseT>('/api/me');
 
 export type tokenDataT = {
   os: string;

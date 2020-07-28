@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useEffect } from 'react';
+import ReactTooltip from 'react-tooltip';
 import Markdown from '../../../components/Markdown';
 import { formatTime } from '../../../util/time';
 import useParticipation from '../hooks/useParticipation';
@@ -19,7 +20,6 @@ import {
   TimeIcon,
   LocationIcon,
 } from './Decisions.styles';
-import ReactTooltip from 'react-tooltip';
 import { getOSAndBrowser } from '../../../util/deviceInfo';
 
 type decisionsPropsT = {
@@ -44,18 +44,16 @@ const Decisions: React.FC<decisionsPropsT> = ({
     [],
   );
 
-  const sortedDecisions = useMemo(() => {
-    return Object.values(decisions).sort((a, b) => {
-      switch (true) {
-        case a.pending && !b.pending:
-          return -1;
-        case !a.pending && b.pending:
-          return 1;
-        default:
-          return 0;
-      }
-    });
-  }, [decisions]);
+  const sortedDecisions = useMemo(() => Object.values(decisions).sort((a, b) => {
+    switch (true) {
+      case a.pending && !b.pending:
+        return -1;
+      case !a.pending && b.pending:
+        return 1;
+      default:
+        return 0;
+    }
+  }), [decisions]);
 
   const isMobile = useMemo(() => {
     const { os } = getOSAndBrowser();
@@ -79,11 +77,12 @@ const Decisions: React.FC<decisionsPropsT> = ({
       </DecisionListTitleLine>
       <DecisionList>
         {sortedDecisions.map(
-          ({ id, title, pending, objective, resolution }) => {
-            const formattedResolution =
-              resolution && objective === 'time'
-                ? formatTime(resolution)
-                : resolution;
+          ({
+            id, title, pending, objective, resolution,
+          }) => {
+            const formattedResolution = resolution && objective === 'time'
+              ? formatTime(resolution)
+              : resolution;
             return (
               <Decision key={id} onClick={() => onDecisionClick(id)}>
                 <DecisionTitleLine>

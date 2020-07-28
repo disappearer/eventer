@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-undef */
 importScripts('https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js');
 importScripts(
   'https://www.gstatic.com/firebasejs/7.14.2/firebase-messaging.js',
@@ -15,23 +17,21 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
-messaging.setBackgroundMessageHandler(function (payload) {
+messaging.setBackgroundMessageHandler((payload) => {
   const promiseChain = clients
     .matchAll({
       type: 'window',
       includeUncontrolled: true,
     })
     .then((windowClients) => {
-      for (let i = 0; i < windowClients.length; i++) {
+      for (let i = 0; i < windowClients.length; i += 1) {
         const windowClient = windowClients[i];
         windowClient.postMessage(payload);
       }
     })
-    .then(() => {
-      return registration.showNotification('my notification title');
-    });
+    .then(() => registration.showNotification('my notification title'));
   return promiseChain;
 });
-self.addEventListener('notificationclick', function (event) {
+self.addEventListener('notificationclick', (event) => {
   console.log(event);
 });

@@ -3,7 +3,6 @@ import { format, parseISO } from 'date-fns';
 
 import {
   Avatar,
-  BotMessage,
   Message,
   MessageText,
   TimeStamp,
@@ -13,22 +12,23 @@ import {
 import EventContext from '../EventContext';
 import Markdown from '../../../components/Markdown';
 import avatarPlaceholder from '../../../../../static/images/avatar-placeholder.png';
-import { singleMessageT } from './Chat.util';
+import { singleMessageT } from './chatTypes';
 import BotChatMessage from './BotChatMessage';
 
 type singleMessagePropsT = {
   messageItem: singleMessageT;
 };
 
-export const SingleMessage: FC<singleMessagePropsT> = ({ messageItem }) => {
+const SingleMessage: FC<singleMessagePropsT> = ({ messageItem }) => {
   const {
     event: { participants, exParticipants },
   } = useContext(EventContext);
-  const { id, text, inserted_at, user_id, is_bot } = messageItem.message;
-  const at =
-    inserted_at === '...'
-      ? inserted_at
-      : format(parseISO(inserted_at + 'Z'), 'h:mm b');
+  const {
+    id, text, inserted_at, user_id, is_bot,
+  } = messageItem.message;
+  const at = inserted_at === '...'
+    ? inserted_at
+    : format(parseISO(`${inserted_at}Z`), 'h:mm b');
 
   if (is_bot) {
     return <BotChatMessage id={id} text={text} at={at} />;

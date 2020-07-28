@@ -23,12 +23,14 @@ const userReducer: Reducer<eventT, actionT> = (
   switch (action.type) {
     case TOGGLE_CHAT:
       return { ...state, isChatVisible: !state.isChatVisible };
-    case SET_IS_CHAT_VISIBLE:
+    case SET_IS_CHAT_VISIBLE: {
       const { isChatVisible } = action.payload;
       return { ...state, isChatVisible };
-    case SET_IS_CHANNEL_JOINED:
+    }
+    case SET_IS_CHANNEL_JOINED: {
       const { isChannelJoined } = action.payload;
       return { ...state, isChannelJoined };
+    }
     default:
       return state;
   }

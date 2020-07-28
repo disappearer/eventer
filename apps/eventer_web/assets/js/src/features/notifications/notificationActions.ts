@@ -9,8 +9,7 @@ type ack<typeT extends actionTypeT, payloadT> = {
 
 export type actionT = ack<'SET_IS_TAB_FOCUSED', { isTabFocused: boolean }>;
 
-
 type setIsTabFocusedT = (a: boolean) => actionT;
-export const setIsTabFocused: setIsTabFocusedT = (isTabFocused) => {
-  return { type: SET_IS_TAB_FOCUSED, payload: { isTabFocused } };
-};
+export const setIsTabFocused: setIsTabFocusedT = (isTabFocused) => (
+  { type: SET_IS_TAB_FOCUSED, payload: { isTabFocused } }
+);
