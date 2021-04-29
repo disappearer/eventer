@@ -29,6 +29,8 @@ module.exports = {
     'airbnb',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
   ],
   rules: {
     'arrow-parens': 0,
