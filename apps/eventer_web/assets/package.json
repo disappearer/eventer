@@ -40,7 +40,7 @@
     "styled-icons": "^10.4.2",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",
-    "ua-parser-js": "^0.7.24"
+    "ua-parser-js": "^0.7.33"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
